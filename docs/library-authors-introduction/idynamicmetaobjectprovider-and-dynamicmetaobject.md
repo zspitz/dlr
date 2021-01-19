@@ -23,13 +23,11 @@ public override DynamicMetaObject BindSetMember(
     SetMemberBinder binder, DynamicMetaObject value)
 {
     var self = this.Expression;
-
     var keyExpr = Expression.Constant(binder.Name);
     var valueExpr = Expression.Convert(
                         value.Expression,
                         typeof(object)
                     );
-
     var target =
         Expression.Call(
             Expression.Convert(self, typeof(FastNBag)),
@@ -37,10 +35,8 @@ public override DynamicMetaObject BindSetMember(
             keyExpr,
             valueExpr
         );
-
     var restrictions = BindingRestrictions
                           .GetTypeRestriction(self, typeof(FastNBag));
-
     return new DynamicMetaObject(target, restrictions);
 }
 ```
@@ -61,11 +57,8 @@ public override DynamicMetaObject BindGetMember
 {
     var self = this.Expression;
     var bag = (FastNBag)base.Value;
-
     int index = bag.GetFastIndex(binder.Name);
-
     Expression target;
-
     // If match found in fast array:
     if (index != -1)
     {
@@ -83,7 +76,6 @@ public override DynamicMetaObject BindGetMember
         // Fetch result from dictionary.
         var keyExpr = Expression.Constant(binder.Name);
         var valueExpr = Expression.Variable(typeof(object));
-
         var dictCheckExpr =
             Expression.Call(
                 Expression.Convert(self, typeof(FastNBag)),
@@ -96,7 +88,6 @@ public override DynamicMetaObject BindGetMember
                 binder.FallbackGetMember(this).Expression,
                 Expression.Default(typeof(object))
             );
-
         target =
             Expression.Block(
                 new [] { valueExpr },
@@ -121,7 +112,6 @@ public override DynamicMetaObject BindGetMember
             binder.FallbackGetMember(this).Expression;
         var updateExpr =
             binder.GetUpdateExpression(versionMatchExpr.Type);
-
         target =
             Expression.Condition(
                 versionCheckExpr,
@@ -129,10 +119,8 @@ public override DynamicMetaObject BindGetMember
                 updateExpr
             );
     }
-
     var restrictions = BindingRestrictions
                            .GetInstanceRestriction(self, bag);
-
     return new DynamicMetaObject(target, restrictions);
 }
 ```
@@ -171,7 +159,6 @@ To provide this member list, we override GetDynamicMemberNames in the MetaFastNB
 public override IEnumerable<string> GetDynamicMemberNames()
 {
     var bag = (FastNBag)base.Value;
-
     return bag.GetKeys();
 }
 ```
@@ -183,9 +170,7 @@ public IEnumerable<string> GetKeys()
 {
     var fastKeys = fastTable.Keys;
     var hashKeys = hashTable.Keys;
-
     var keys = fastKeys.Concat(hashKeys);
-
     return keys;
 }
 ```

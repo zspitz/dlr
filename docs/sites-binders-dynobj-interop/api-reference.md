@@ -11,20 +11,17 @@ An instance of **DynamicMetaObject** (abbreviated MO) represents the binding log
 ``` csharp
 public class DynamicMetaObject {
     public static readonly DynamicMetaObject[] EmptyMetaObjects;
-
     public DynamicMetaObject
         (Expression expression, BindingRestrictions restrictions, 
          Object value);
     public DynamicMetaObject
         (Expression expression, BindingRestrictions restrictions);
-
     public Expression Expression { get; }
     public Boolean HasValue { get; }
     public Type LimitType { get; }
     public BindingRestrictions Restrictions { get; }
     public Type RuntimeType { get; }
     public Object Value { get; }
-
     public virtual DynamicMetaObject BindBinaryOperation
         (BinaryOperationBinder binder, DynamicMetaObject arg);
     public virtual DynamicMetaObject BindConvert(ConvertBinder binder);
@@ -49,10 +46,8 @@ public class DynamicMetaObject {
         (SetMemberBinder binder, DynamicMetaObject value);
     public virtual DynamicMetaObject BindUnaryOperation
         (UnaryOperationBinder binder);
-
     public static DynamicMetaObject Create
         (Object value, Expression expression);
-
     public virtual IEnumerable<String> GetDynamicMemberNames();
 ```
 
@@ -102,9 +97,10 @@ For example, an object representing an XML node may implement IDynamicMetaObject
 
 <h3 id="class-summary-1">6.2.1 Class Summary</h3>
 
+``` csharp
 public interface IDynamicMetaObjectProvider {
-
-DynamicMetaObject GetMetaObject(Expression parameter);
+    DynamicMetaObject GetMetaObject(Expression parameter);
+```
 
 <h3 id="getmetaobject-method">6.2.2 GetMetaObject Method</h3>
 
@@ -120,27 +116,19 @@ Most language implementers will not directly derive from CallSiteBinder, but rat
 
 <h3 id="class-summary-2">6.3.1 Class Summary</h3>
 
+``` csharp
 public abstract class CallSiteBinder {
-
-protected CallSiteBinder();
-
-public static LabelTarget UpdateLabel { get; }
-
-public abstract Expression Bind
-
-(Object\[\] args,
-
-ReadOnlyCollection&lt;ParameterExpression&gt; parameters,
-
-LabelTarget returnLabel);
-
-public virtual T BindDelegate&lt;T&gt;
-
-(CallSite&lt;T&gt; site,
-
-Object\[\] args);
-
-protected void CacheTarget&lt;T&gt;(T target);
+    protected CallSiteBinder();
+    public static LabelTarget UpdateLabel { get; }
+    public abstract Expression Bind
+        (Object[] args,
+         ReadOnlyCollection<ParameterExpression> parameters,
+         LabelTarget returnLabel);
+    public virtual T BindDelegate<T>
+        (CallSite<T> site,
+         Object[] args);
+    protected void CacheTarget<T>(T target);
+```
 
 <h3 id="bind-method">6.3.2 Bind Method</h3>
 
@@ -208,37 +196,29 @@ This support has been moved to Codeplex only, in the Microsoft.Dynamic.dll. It i
 
 To support consuming COM objects dynamically, your language’s binder classes must explicitly attempt COM binding, as seen below for GetMember operations:
 
+``` csharp
 DynamicMetaObject com;
-
 if (System.Dynamic.ComBinder.TryBindGetMember
-
-(this, target, out com)) {
-
-return com;
-
+                                 (this, target, out com)) {
+    return com;
 }
+```
 
 For more information on the members of ComBinder, you may download the full DLR sources, including the COM binder at the [DLR CodePlex site](http://www.codeplex.com/dlr).
 
 <h3 id="class-summary-3">6.4.4 Class Summary</h3>
 
+``` csharp
 public abstract class DynamicMetaObjectBinder : CallSiteBinder {
-
-protected DynamicMetaObjectBinder();
-
-public virtual Type ReturnType { get; }
-
-public abstract DynamicMetaObject Bind
-
-(DynamicMetaObject target, DynamicMetaObject\[\] args);
-
-public DynamicMetaObject Defer(params DynamicMetaObject\[\] args);
-
-public DynamicMetaObject Defer
-
-(DynamicMetaObject target, params DynamicMetaObject\[\] args);
-
-public Expression GetUpdateExpression(Type type);
+    protected DynamicMetaObjectBinder();
+    public virtual Type ReturnType { get; }
+    public abstract DynamicMetaObject Bind
+        (DynamicMetaObject target, DynamicMetaObject[] args);
+    public DynamicMetaObject Defer(params DynamicMetaObject[] args);
+    public DynamicMetaObject Defer
+        (DynamicMetaObject target, params DynamicMetaObject[] args);
+    public Expression GetUpdateExpression(Type type);
+```
 
 <h3 id="bind-method-1">6.4.5 Bind Method</h3>
 
@@ -274,21 +254,16 @@ If the member doesn't exist, the binder may return an expression that creates a 
 
 <h3 id="class-summary-4">6.5.1 Class Summary</h3>
 
+``` csharp
 public abstract class GetMemberBinder : DynamicMetaObjectBinder {
-
-protected GetMemberBinder(String name, Boolean ignoreCase);
-
-public Boolean IgnoreCase { get; }
-
-public String Name { get; }
-
-public abstract DynamicMetaObject FallbackGetMember
-
-(DynamicMetaObject target, DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackGetMember
-
-(DynamicMetaObject target);
+    protected GetMemberBinder(String name, Boolean ignoreCase);
+    public Boolean IgnoreCase { get; }
+    public String Name { get; }
+    public abstract DynamicMetaObject FallbackGetMember
+        (DynamicMetaObject target, DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackGetMember
+        (DynamicMetaObject target);
+```
 
 <h3 id="name-property">6.5.2 Name Property</h3>
 
@@ -310,23 +285,17 @@ By convention, SetMemberBinder implementations should return rules whose result 
 
 <h3 id="class-summary-5">6.6.1 Class Summary</h3>
 
+``` csharp
 public abstract class SetMemberBinder : DynamicMetaObjectBinder {
-
-protected SetMemberBinder(String name, Boolean ignoreCase);
-
-public Boolean IgnoreCase { get; }
-
-public String Name { get; }
-
-public abstract DynamicMetaObject FallbackSetMember
-
-(DynamicMetaObject target, DynamicMetaObject value,
-
-DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackSetMember
-
-(DynamicMetaObject target, DynamicMetaObject value);
+    protected SetMemberBinder(String name, Boolean ignoreCase);
+    public Boolean IgnoreCase { get; }
+    public String Name { get; }
+    public abstract DynamicMetaObject FallbackSetMember
+        (DynamicMetaObject target, DynamicMetaObject value, 
+         DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackSetMember
+        (DynamicMetaObject target, DynamicMetaObject value);
+```
 
 <h3 id="name-property-1">6.6.2 Name Property</h3>
 
@@ -346,21 +315,16 @@ This may not be supported on all objects.
 
 <h3 id="class-summary-6">6.7.1 Class Summary</h3>
 
+``` csharp
 public abstract class DeleteMemberBinder : DynamicMetaObjectBinder {
-
-protected DeleteMemberBinder(String name, Boolean ignoreCase);
-
-public Boolean IgnoreCase { get; }
-
-public String Name { get; }
-
-public abstract DynamicMetaObject FallbackDeleteMember
-
-(DynamicMetaObject target, DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackDeleteMember
-
-(DynamicMetaObject target);
+    protected DeleteMemberBinder(String name, Boolean ignoreCase);
+    public Boolean IgnoreCase { get; }
+    public String Name { get; }
+    public abstract DynamicMetaObject FallbackDeleteMember
+        (DynamicMetaObject target, DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackDeleteMember
+        (DynamicMetaObject target);
+```
 
 <h3 id="name-property-2">6.7.2 Name Property</h3>
 
@@ -380,21 +344,16 @@ If the element doesn't exist, the binder may return an expression that creates a
 
 <h3 id="class-summary-7">6.8.1 Class Summary</h3>
 
+``` csharp
 public abstract class GetIndexBinder : DynamicMetaObjectBinder {
-
-protected GetIndexBinder(CallInfo CallInfo);
-
-public CallInfo CallInfo { get; }
-
-public abstract DynamicMetaObject FallbackGetIndex
-
-(DynamicMetaObject target, DynamicMetaObject\[\] indexes,
-
-DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackGetIndex
-
-(DynamicMetaObject target, DynamicMetaObject\[\] indexes);
+    protected GetIndexBinder(CallInfo CallInfo);
+    public CallInfo CallInfo { get; }
+    public abstract DynamicMetaObject FallbackGetIndex
+        (DynamicMetaObject target, DynamicMetaObject[] indexes, 
+         DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackGetIndex
+        (DynamicMetaObject target, DynamicMetaObject[] indexes);
+```
 
 <h3 id="calllnfo-property">6.8.2 Calllnfo Property</h3>
 
@@ -412,23 +371,17 @@ By convention, SetIndexBinder implementations should return rules whose result v
 
 <h3 id="class-summary-8">6.9.1 Class Summary</h3>
 
+``` csharp
 public abstract class SetIndexBinder : DynamicMetaObjectBinder {
-
-protected SetIndexBinder(CallInfo CallInfo);
-
-public CallInfo CallInfo { get; }
-
-public abstract DynamicMetaObject FallbackSetIndex
-
-(DynamicMetaObject target, DynamicMetaObject\[\] indexes,
-
-DynamicMetaObject value, DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackSetIndex
-
-(DynamicMetaObject target, DynamicMetaObject\[\] indexes,
-
-DynamicMetaObject value);
+    protected SetIndexBinder(CallInfo CallInfo);
+    public CallInfo CallInfo { get; }
+    public abstract DynamicMetaObject FallbackSetIndex
+        (DynamicMetaObject target, DynamicMetaObject[] indexes, 
+         DynamicMetaObject value, DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackSetIndex
+        (DynamicMetaObject target, DynamicMetaObject[] indexes, 
+         DynamicMetaObject value);
+```
 
 <h3 id="calllnfo-property-1">6.9.2 Calllnfo Property</h3>
 
@@ -444,21 +397,16 @@ This may not be supported on all indexable objects.
 
 <h3 id="class-summary-9">6.10.1 Class Summary</h3>
 
+``` csharp
 public abstract class DeleteIndexBinder : DynamicMetaObjectBinder {
-
-protected DeleteIndexBinder(CallInfo CallInfo);
-
-public CallInfo CallInfo { get; }
-
-public abstract DynamicMetaObject FallbackDeleteIndex
-
-(DynamicMetaObject target, DynamicMetaObject\[\] indexes,
-
-DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackDeleteIndex
-
-(DynamicMetaObject target, DynamicMetaObject\[\] indexes);
+    protected DeleteIndexBinder(CallInfo CallInfo);
+    public CallInfo CallInfo { get; }
+    public abstract DynamicMetaObject FallbackDeleteIndex
+        (DynamicMetaObject target, DynamicMetaObject[] indexes, 
+         DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackDeleteIndex
+        (DynamicMetaObject target, DynamicMetaObject[] indexes);
+```
 
 <h3 id="calllnfo-property-2">6.10.2 Calllnfo Property</h3>
 
@@ -472,21 +420,16 @@ Represents invocation of an invocable object, such as a delegate or first-class 
 
 <h3 id="class-summary-10">6.11.1 Class Summary</h3>
 
+``` csharp
 public abstract class InvokeBinder : DynamicMetaObjectBinder {
-
-protected InvokeBinder(CallInfo CallInfo);
-
-public CallInfo CallInfo { get; }
-
-public abstract DynamicMetaObject FallbackInvoke
-
-(DynamicMetaObject target, DynamicMetaObject\[\] args,
-
-DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackInvoke(DynamicMetaObject target,
-
-DynamicMetaObject\[\] args);
+    protected InvokeBinder(CallInfo CallInfo);
+    public CallInfo CallInfo { get; }
+    public abstract DynamicMetaObject FallbackInvoke
+        (DynamicMetaObject target, DynamicMetaObject[] args, 
+         DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackInvoke(DynamicMetaObject target, 
+         DynamicMetaObject[] args);
+```
 
 <h3 id="calllnfo-property-3">6.11.2 Calllnfo Property</h3>
 
@@ -502,33 +445,22 @@ If invoking a member is an atomic operation in a language, its compiler can choo
 
 <h3 id="class-summary-11">6.12.1 Class Summary</h3>
 
+``` csharp
 public abstract class InvokeMemberBinder : DynamicMetaObjectBinder {
-
-protected InvokeMemberBinder
-
-(String name, Boolean ignoreCase, CallInfo CallInfo);
-
-public CallInfo CallInfo { get; }
-
-public Boolean IgnoreCase { get; }
-
-public String Name { get; }
-
-public abstract DynamicMetaObject FallbackInvoke(
-
-DynamicMetaObject target, DynamicMetaObject\[\] args,
-
-DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackInvokeMember(
-
-DynamicMetaObject target, DynamicMetaObject\[\] args);
-
-public abstract DynamicMetaObject FallbackInvokeMember
-
-(DynamicMetaObject target, DynamicMetaObject\[\] args,
-
-DynamicMetaObject errorSuggestion);
+    protected InvokeMemberBinder
+        (String name, Boolean ignoreCase, CallInfo CallInfo);
+    public CallInfo CallInfo { get; }
+    public Boolean IgnoreCase { get; }
+    public String Name { get; }
+    public abstract DynamicMetaObject FallbackInvoke(
+        DynamicMetaObject target, DynamicMetaObject[] args, 
+         DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackInvokeMember(
+        DynamicMetaObject target, DynamicMetaObject[] args);
+    public abstract DynamicMetaObject FallbackInvokeMember
+        (DynamicMetaObject target, DynamicMetaObject[] args, 
+         DynamicMetaObject errorSuggestion);
+```
 
 <h3 id="name-property-3">6.12.2 Name Property</h3>
 
@@ -556,21 +488,16 @@ Represents instantiation of an object with a set of constructor arguments. The o
 
 <h3 id="class-summary-12">6.13.1 Class Summary</h3>
 
+``` csharp
 public abstract class CreateInstanceBinder : DynamicMetaObjectBinder {
-
-protected CreateInstanceBinder(CallInfo CallInfo);
-
-public CallInfo CallInfo { get; }
-
-public abstract DynamicMetaObject FallbackCreateInstance
-
-(DynamicMetaObject target, DynamicMetaObject\[\] args,
-
-DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackCreateInstance
-
-(DynamicMetaObject target, DynamicMetaObject\[\] args);
+    protected CreateInstanceBinder(CallInfo CallInfo);
+    public CallInfo CallInfo { get; }
+    public abstract DynamicMetaObject FallbackCreateInstance
+        (DynamicMetaObject target, DynamicMetaObject[] args, 
+         DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackCreateInstance
+        (DynamicMetaObject target, DynamicMetaObject[] args);
+```
 
 <h3 id="calllnfo-property-5">6.13.2 Calllnfo Property</h3>
 
@@ -586,19 +513,15 @@ This conversion may be marked as being an implicit compiler-inferred conversion,
 
 <h3 id="class-summary-13">6.14.1 Class Summary</h3>
 
+``` csharp
 public abstract class ConvertBinder : DynamicMetaObjectBinder {
-
-protected ConvertBinder(Type type, Boolean explicit);
-
-public Boolean Explicit { get; }
-
-public Type Type { get; }
-
-public abstract DynamicMetaObject FallbackConvert
-
-(DynamicMetaObject target, DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackConvert(DynamicMetaObject target);
+    protected ConvertBinder(Type type, Boolean explicit);
+    public Boolean Explicit { get; }
+    public Type Type { get; }
+    public abstract DynamicMetaObject FallbackConvert
+        (DynamicMetaObject target, DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackConvert(DynamicMetaObject target);
+```
 
 <h3 id="type-property">6.14.2 Type Property</h3>
 
@@ -618,19 +541,15 @@ Contains an ExpressionType value that specifies the unary operation to perform, 
 
 <h3 id="class-summary-14">6.15.1 Class Summary</h3>
 
+``` csharp
 public abstract class UnaryOperationBinder : DynamicMetaObjectBinder {
-
-protected UnaryOperationBinder(ExpressionType operation);
-
-public ExpressionType Operation { get; }
-
-public abstract DynamicMetaObject FallbackUnaryOperation
-
-(DynamicMetaObject target, DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackUnaryOperation
-
-(DynamicMetaObject target);
+    protected UnaryOperationBinder(ExpressionType operation);
+    public ExpressionType Operation { get; }
+    public abstract DynamicMetaObject FallbackUnaryOperation
+        (DynamicMetaObject target, DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackUnaryOperation
+        (DynamicMetaObject target);
+```
 
 <h3 id="operation-property">6.15.2 Operation Property</h3>
 
@@ -646,19 +565,15 @@ Contains an ExpressionType value that specifies the binary operation to perform,
 
 <h3 id="class-summary-15">6.16.1 Class Summary</h3>
 
+``` csharp
 public abstract class BinaryOperationBinder : DynamicMetaObjectBinder {
-
-protected BinaryOperationBinder(ExpressionType operation);
-
-public ExpressionType Operation { get; }
-
-public abstract DynamicMetaObject FallbackBinaryOperation
-
-(DynamicMetaObject target, DynamicMetaObject errorSuggestion);
-
-public DynamicMetaObject FallbackBinaryOperation
-
-(DynamicMetaObject target);
+    protected BinaryOperationBinder(ExpressionType operation);
+    public ExpressionType Operation { get; }
+    public abstract DynamicMetaObject FallbackBinaryOperation
+        (DynamicMetaObject target, DynamicMetaObject errorSuggestion);
+    public DynamicMetaObject FallbackBinaryOperation
+        (DynamicMetaObject target);
+```
 
 <h3 id="operation-property-1">6.16.2 Operation Property</h3>
 
@@ -672,15 +587,13 @@ Note that when you are encoding an InvokeMemberBinder, you should not include th
 
 <h3 id="class-summary-16">6.17.1 Class Summary</h3>
 
+``` csharp
 public sealed class CallInfo {
-
-public CallInfo(Int32 argCount, IEnumerable&lt;String&gt; argNames);
-
-public CallInfo(Int32 argCount, params String\[\] argNames);
-
-public int ArgumentCount { get; }
-
-public ReadOnlyCollection&lt;string&gt; ArgumentNames {get; }
+    public CallInfo(Int32 argCount, IEnumerable<String> argNames);
+    public CallInfo(Int32 argCount, params String[] argNames);
+    public int ArgumentCount { get; }
+    public ReadOnlyCollection<string> ArgumentNames {get; }
+```
 
 <h3 id="argumentcount-property">6.17.2 ArgumentCount Property</h3>
 
@@ -700,29 +613,20 @@ It is not recommended to implement restrictions that test that a value has a nul
 
 <h3 id="class-summary-17">6.18.1 Class Summary</h3>
 
+``` csharp
 public abstract class BindingRestrictions {
-
-public static readonly BindingRestrictions Empty;
-
-public static BindingRestrictions Combine
-
-(IList&lt;DynamicMetaObject&gt; contributingObjects);
-
-public static BindingRestrictions GetExpressionRestriction
-
-(Expression expression);
-
-public static BindingRestrictions GetInstanceRestriction
-
-(Expression expression, Object instance);
-
-public static BindingRestrictions GetTypeRestriction
-
-(Expression expression, Type type);
-
-public BindingRestrictions Merge(BindingRestrictions restrictions);
-
-public Expression ToExpression();
+    public static readonly BindingRestrictions Empty;
+    public static BindingRestrictions Combine
+        (IList<DynamicMetaObject> contributingObjects);
+    public static BindingRestrictions GetExpressionRestriction
+        (Expression expression);
+    public static BindingRestrictions GetInstanceRestriction
+        (Expression expression, Object instance);
+    public static BindingRestrictions GetTypeRestriction
+        (Expression expression, Type type);
+    public BindingRestrictions Merge(BindingRestrictions restrictions);
+    public Expression ToExpression();
+```
 
 <h3 id="gettyperestriction-method">6.18.2 GetTypeRestriction Method</h3>
 
@@ -752,27 +656,19 @@ When emitting a dynamic call site, the compiler must first generate a CallSite&l
 
 <h3 id="class-summary-18">6.19.1 Class Summary</h3>
 
+``` csharp
 public abstract class CallSite {
-
-public CallSiteBinder Binder { get; }
-
-public static CallSite Create
-
-(Type delegateType, CallSiteBinder binder);
-
+    public CallSiteBinder Binder { get; }
+    public static CallSite Create
+        (Type delegateType, CallSiteBinder binder);
 }
-
-public sealed class CallSite&lt;T&gt; : CallSite {
-
-public T Target;
-
-public T Update { get; }
-
-public static CallSite&lt;T&gt; Create
-
-(CallSiteBinder binder);
-
+public sealed class CallSite<T> : CallSite {
+    public T Target;
+    public T Update { get; }
+    public static CallSite<T> Create
+        (CallSiteBinder binder);
 }
+```
 
 <h3 id="create-static-method-1">6.19.2 Create Static Method</h3>
 
@@ -792,13 +688,12 @@ An instance of StrongBox&lt;T&gt; may be used by binders to represent values pas
 
 <h3 id="class-summary-19">6.20.1 Class Summary</h3>
 
-public class StrongBox&lt;T&gt; {
-
-public T Value;
-
-public StrongBox&lt;T&gt;(T value);
-
-public StrongBox&lt;T&gt;();
+``` csharp
+public class StrongBox<T> {
+    public T Value;
+    public StrongBox<T>(T value);
+    public StrongBox<T>();
+```
 
 <h2 id="dynamicobject-class">6.21 DynamicObject Class</h2>
 
@@ -808,61 +703,36 @@ For more information about DynamicObject, check out the accompanying Getting Sta
 
 <h3 id="class-summary-20">6.21.1 Class Summary</h3>
 
+``` csharp
 public class DynamicObject : IDynamicMetaObjectProvider {
-
-protected DynamicObject();
-
-public virtual Boolean TryBinaryOperation
-
-(BinaryOperationBinder binder, Object arg, out Object result);
-
-public virtual Boolean TryConvert
-
-(ConvertBinder binder, out Object result);
-
-public virtual Boolean TryCreateInstance
-
-(CreateInstanceBinder binder, Object\[\] args,
-
-out Object result);
-
-public virtual Boolean TryDeleteIndex
-
-(DeleteIndexBinder binder, Object\[\] indexes);
-
-public virtual Boolean TryDeleteMember(DeleteMemberBinder binder);
-
-public virtual Boolean TryGetIndex
-
-(GetIndexBinder binder, Object\[\] args, out Object result);
-
-public virtual Boolean TryGetMember
-
-(GetMemberBinder binder, out Object result);
-
-public virtual Boolean TryInvoke
-
-(InvokeBinder binder, Object\[\] args, out Object result);
-
-public virtual Boolean TryInvokeMember
-
-(InvokeMemberBinder binder, Object\[\] args, out Object result);
-
-public virtual Boolean TrySetIndex
-
-(SetIndexBinder binder, Object\[\] indexes, Object value);
-
-public virtual Boolean TrySetMember
-
-(SetMemberBinder binder, Object value);
-
-public virtual Boolean TryUnaryOperation
-
-(UnaryOperationBinder binder, out Object result);
-
-public virtual DynamicMetaObject GetMetaObject
-
-(Expression parameter);
+    protected DynamicObject();
+    public virtual Boolean TryBinaryOperation
+        (BinaryOperationBinder binder, Object arg, out Object result);
+    public virtual Boolean TryConvert
+        (ConvertBinder binder, out Object result);
+    public virtual Boolean TryCreateInstance
+        (CreateInstanceBinder binder, Object[] args, 
+         out Object result);
+    public virtual Boolean TryDeleteIndex
+        (DeleteIndexBinder binder, Object[] indexes);
+    public virtual Boolean TryDeleteMember(DeleteMemberBinder binder);
+    public virtual Boolean TryGetIndex
+        (GetIndexBinder binder, Object[] args, out Object result);
+    public virtual Boolean TryGetMember
+        (GetMemberBinder binder, out Object result);
+    public virtual Boolean TryInvoke
+        (InvokeBinder binder, Object[] args, out Object result);
+    public virtual Boolean TryInvokeMember
+        (InvokeMemberBinder binder, Object[] args, out Object result);
+    public virtual Boolean TrySetIndex
+        (SetIndexBinder binder, Object[] indexes, Object value);
+    public virtual Boolean TrySetMember
+        (SetMemberBinder binder, Object value);
+    public virtual Boolean TryUnaryOperation
+        (UnaryOperationBinder binder, out Object result);
+    public virtual DynamicMetaObject GetMetaObject
+        (Expression parameter);
+```
 
 <h2 id="expandoobject-class">6.22 ExpandoObject Class</h2>
 
@@ -872,6 +742,7 @@ For more information about ExpandoObject, check out the accompanying Getting Sta
 
 <h3 id="class-summary-21">6.22.1 Class Summary</h3>
 
-public sealed class ExpandoObject : IDynamicMetaObjectProvider, IDictionary&lt;String,Object&gt;, ICollection&lt;KeyValuePair&lt;String,Object&gt;&gt;, IEnumerable&lt;KeyValuePair&lt;String,Object&gt;&gt;, IEnumerable {
-
-public ExpandoObject();
+``` csharp
+public sealed class ExpandoObject : IDynamicMetaObjectProvider, IDictionary<String,Object>, ICollection<KeyValuePair<String,Object>>, IEnumerable<KeyValuePair<String,Object>>, IEnumerable {
+    public ExpandoObject();
+```

@@ -8,79 +8,45 @@ Sympl uses the **defun** keyword form to define functions. **Defun** takes a nam
 
 Code generation for defun is pretty easy. At a high-level, you add the parameter names to a new, nested AnalysisScope, analyze the sub expressions, and then emit an assignment to a file scope global whose value is a LambdaExpression. When the code in a file is gathered into an outer Lambda and compiled, all the contained lambdas get compiled (see section for more information on executing Sympl files). Here's the code from etgen.cs, which is discussed more below:
 
+``` csharp
 public static DynamicExpression AnalyzeDefunExpr
-
-(SymplDefunExpr expr, AnalysisScope scope) {
-
-if (!scope.IsModule) {
-
-throw new InvalidOperationException(
-
-"Use Defmethod or Lambda when not defining " +
-
-"top-level function.");
-
+        (SymplDefunExpr expr, AnalysisScope scope) {
+    if (!scope.IsModule) {
+        throw new InvalidOperationException(
+            "Use Defmethod or Lambda when not defining " + 
+            "top-level function.");
+    }
+    return Expression.Dynamic(
+               scope.GetRuntime().GetSetMemberBinder(expr.Name),
+               typeof(object),
+               scope.ModuleExpr,
+               AnalyzeLambdaDef(expr.Params, expr.Body, scope,
+                                "defun " + expr.Name));
 }
-
-return Expression.Dynamic(
-
-scope.GetRuntime().GetSetMemberBinder(expr.Name),
-
-typeof(object),
-
-scope.ModuleExpr,
-
-AnalyzeLambdaDef(expr.Params, expr.Body, scope,
-
-"defun " + expr.Name));
-
-}
-
 private static Expression AnalyzeLambdaDef
-
-(IdOrKeywordToken\[\] parms, SymplExpr\[\] body,
-
-AnalysisScope scope, string description) {
-
-var funscope = new AnalysisScope(scope, description);
-
-funscope.IsLambda = true; // needed for return support.
-
-var paramsInOrder = new List&lt;ParameterExpression&gt;();
-
-foreach (var p in parms) {
-
-var pe = Expression.Parameter(typeof(object), p.Name);
-
-paramsInOrder.Add(pe);
-
-funscope.Names\[p.Name.ToLower()\] = pe;
-
-}
-
-var bodyexprs = new List&lt;Expression&gt;();
-
-foreach (var e in body) {
-
-bodyexprs.Add(AnalyzeExpr(e, funscope));
-
-}
-
-var funcTypeArgs = new List&lt;Type&gt;();
-
-for (int i = 0; i &lt; parms.Length + 1; i++) {
-
-funcTypeArgs.Add(typeof(object));
-
-}
-
-return Expression.Lambda(
-
-Expression.GetFuncType(funcTypeArgs.ToArray()),
-
-Expression.Block(bodyexprs),
-
-paramsInOrder);
+        (IdOrKeywordToken[] parms, SymplExpr[] body,
+         AnalysisScope scope, string description) {
+    var funscope = new AnalysisScope(scope, description);
+    funscope.IsLambda = true;  // needed for return support.
+    var paramsInOrder = new List<ParameterExpression>();
+    foreach (var p in parms) {
+        var pe = Expression.Parameter(typeof(object), p.Name);
+        paramsInOrder.Add(pe);
+        funscope.Names[p.Name.ToLower()] = pe;
+    }
+    var bodyexprs = new List<Expression>();
+    foreach (var e in body) {
+        bodyexprs.Add(AnalyzeExpr(e, funscope));
+    }
+    var funcTypeArgs = new List<Type>();
+    for (int i = 0; i < parms.Length + 1; i++) {
+        funcTypeArgs.Add(typeof(object));
+    }
+    return Expression.Lambda(
+               Expression.GetFuncType(funcTypeArgs.ToArray()),
+               Expression.Block(bodyexprs),
+               paramsInOrder);
+```
 
 Looking at the helper AnalyzeLambdaDef first, functions definitions need to push an AnalysisScope on the chain. The scope can serve a few purposes. Sympl uses it to hold the locals for the function's parameters. Any references to these names, barring any intervening **let\*** bindings, will resolve to the ParameterExpressions stored in this new AnalysisScope. References from nested **lambda** expressions will automatically become closure environment references thanks to Expression Trees.
 
@@ -94,23 +60,17 @@ Now AnalyzeDefunExpr can emit the code. There is a SetMember DynamicExpression t
 
 This is the code from AnalyzeFunCallExpr in etgen.cs (discussed further in section ) for invoking Sympl functions (or any callable object from another language, a library, or a delegate from .NET):
 
+``` csharp
 var fun = AnalyzeExpr(expr.Function, scope);
-
-List&lt;Expression&gt; args = new List&lt;Expression&gt;();
-
+List<Expression> args = new List<Expression>();
 args.Add(fun);
-
-args.AddRange(expr.Arguments.Select(a =&gt; AnalyzeExpr(a, scope)));
-
+args.AddRange(expr.Arguments.Select(a => AnalyzeExpr(a, scope)));
 return Expression.Dynamic(
-
-scope.GetRuntime()
-
-.GetInvokeBinder(new CallInfo(expr.Arguments.Length)),
-
-typeof(object),
-
-args);
+    scope.GetRuntime()
+         .GetInvokeBinder(new CallInfo(expr.Arguments.Length)),
+    typeof(object),
+    args);
+```
 
 <h2 id="symplinvokebinder-and-binding-function-calls">5.2 SymplInvokeBinder and Binding Function Calls</h2>
 
@@ -118,73 +78,42 @@ At runtime, when trying to call a Sympl function, a delegate will flow into the 
 
 Here's the code for SymplInvokeBinder from runtime.cs, which is discussed in detail below:
 
+``` csharp
 public class SymplInvokeBinder : InvokeBinder {
-
-public SymplInvokeBinder(CallInfo callinfo) : base(callinfo) {
-
-}
-
-public override DynamicMetaObject FallbackInvoke(
-
-DynamicMetaObject targetMO, DynamicMetaObject\[\] argMOs,
-
-DynamicMetaObject errorSuggestion) {
-
-// ... Deleted COM support and checking for Defer for now ...
-
-if (targetMO.LimitType.IsSubclassOf(typeof(Delegate))) {
-
-var parms = targetMO.LimitType.GetMethod("Invoke")
-
-.GetParameters();
-
-if (parms.Length == argMOs.Length) {
-
-var callArgs = RuntimeHelpers.ConvertArguments(
-
-argMOs, parms);
-
-var expression = Expression.Invoke(
-
-Expression.Convert(targetMO.Expression,
-
-targetMO.LimitType),
-
-callArgs);
-
-return new DynamicMetaObject(
-
-RuntimeHelpers.EnsureObjectResult(expression),
-
-BindingRestrictions.GetTypeRestriction(
-
-targetMO.Expression,
-
-targetMO.LimitType));
-
-}
-
-}
-
-return errorSuggestion ??
-
-RuntimeHelpers.CreateThrow(
-
-targetMO, argMOs,
-
-BindingRestrictions.GetTypeRestriction(
-
-targetMO.Expression,
-
-targetMO.LimitType),
-
-typeof(InvalidOperationException),
-
-"Wrong number of arguments for function -- " +
-
-targetMO.LimitType.ToString() + " got " +
-
-argMOs.ToString());
+    public SymplInvokeBinder(CallInfo callinfo) : base(callinfo) {
+    }
+    public override DynamicMetaObject FallbackInvoke(
+            DynamicMetaObject targetMO, DynamicMetaObject[] argMOs,
+            DynamicMetaObject errorSuggestion) {
+        // ... Deleted COM support and checking for Defer for now ...
+        if (targetMO.LimitType.IsSubclassOf(typeof(Delegate))) {
+            var parms = targetMO.LimitType.GetMethod("Invoke")
+                                          .GetParameters();
+            if (parms.Length == argMOs.Length) {
+                var callArgs = RuntimeHelpers.ConvertArguments(
+                                                  argMOs, parms);
+                var expression = Expression.Invoke(
+                    Expression.Convert(targetMO.Expression, 
+                                       targetMO.LimitType),
+                    callArgs);
+                return new DynamicMetaObject(
+                    RuntimeHelpers.EnsureObjectResult(expression),
+                    BindingRestrictions.GetTypeRestriction(
+                                           targetMO.Expression,
+                                           targetMO.LimitType));
+            }
+        }
+        return errorSuggestion ??
+            RuntimeHelpers.CreateThrow(
+                targetMO, argMOs, 
+                BindingRestrictions.GetTypeRestriction(
+                                        targetMO.Expression,
+                                        targetMO.LimitType),
+                typeof(InvalidOperationException),
+                "Wrong number of arguments for function -- " +
+                    targetMO.LimitType.ToString() + " got " + 
+                    argMOs.ToString());
+```
 
 Let's first talk about what we aren't talking about now. This code snippet omits the code to check if the target is a COM object and to use built-in COM support. See section for information adding this to your binders. The snippet also omits some very important code that protects binders and DynamicMetaObjects from infinitely looping due to producing bad rules. It is best to discuss this in one place, so see section for how the infinite loop happens and how to prevent it for all binders.
 

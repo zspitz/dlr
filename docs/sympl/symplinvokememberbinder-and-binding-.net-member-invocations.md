@@ -17,93 +17,52 @@ InvokeMemberBinders need FallbackInvokeMember and FallbackInvoke methods. The se
 
 This code is nearly the same as TypeModelMetaObject's BindInvokeMember, with a couple of changes, such as using CreateThrow rather than falling back to a binder. The details are discussed below the code for SymplInvokeMemberBinder's FallbackInvokeMember from runtime.cs:
 
+``` csharp
 public override DynamicMetaObject FallbackInvokeMember(
-
-DynamicMetaObject targetMO, DynamicMetaObject\[\] args,
-
-DynamicMetaObject errorSuggestion) {
-
-// ... Deleted checking for COM and need to Defer for now ...
-
-var flags = BindingFlags.IgnoreCase \| BindingFlags.Instance \|
-
-BindingFlags.Public;
-
-var members = targetMO.LimitType.GetMember(this.Name, flags);
-
-if ((members.Length == 1) && (members\[0\] is PropertyInfo \|\|
-
-members\[0\] is FieldInfo)){
-
-// Code deleted, not implemented yet.
-
-} else {
-
-// Get MethodInfos with right arg counts.
-
-var mi\_mems = members.
-
-Select(m =&gt; m as MethodInfo).
-
-Where(m =&gt; m is MethodInfo &&
-
-((MethodInfo)m).GetParameters().Length ==
-
-args.Length);
-
-List&lt;MethodInfo&gt; res = new List&lt;MethodInfo&gt;();
-
-foreach (var mem in mi\_mems) {
-
-if (RuntimeHelpers.ParametersMatchArguments(
-
-mem.GetParameters(), args)) {
-
-res.Add(mem);
-
-}
-
-}
-
-var restrictions = RuntimeHelpers.GetTargetArgsRestrictions(
-
-targetMO, args, false);
-
-if (res.Count == 0) {
-
-return errorSuggestion ??
-
-RuntimeHelpers.CreateThrow(
-
-targetMO, args, restrictions,
-
-typeof(MissingMemberException),
-
-"Can't bind member invoke -- " +
-
-args.ToString());
-
-}
-
-var callArgs = RuntimeHelpers.ConvertArguments(
-
-args,
-
-res\[0\].GetParameters());
-
-return new DynamicMetaObject(
-
-RuntimeHelpers.EnsureObjectResult(
-
-Expression.Call(
-
-Expression.Convert(targetMO.Expression,
-
-targetMO.LimitType),
-
-res\[0\], callArgs)),
-
-restrictions);
+        DynamicMetaObject targetMO, DynamicMetaObject[] args,
+        DynamicMetaObject errorSuggestion) {
+    // ... Deleted checking for COM and need to Defer for now ...
+    var flags = BindingFlags.IgnoreCase | BindingFlags.Instance |
+                BindingFlags.Public;
+    var members = targetMO.LimitType.GetMember(this.Name, flags);
+    if ((members.Length == 1) && (members[0] is PropertyInfo || 
+                                  members[0] is FieldInfo)){
+        // Code deleted, not implemented yet. 
+    } else {
+        // Get MethodInfos with right arg counts.
+        var mi_mems = members.
+            Select(m => m as MethodInfo).
+            Where(m => m is MethodInfo &&
+                       ((MethodInfo)m).GetParameters().Length ==
+                           args.Length);
+        List<MethodInfo> res = new List<MethodInfo>();
+        foreach (var mem in mi_mems) {
+            if (RuntimeHelpers.ParametersMatchArguments(
+                                   mem.GetParameters(), args)) {
+                res.Add(mem);
+            }
+        }
+        var restrictions = RuntimeHelpers.GetTargetArgsRestrictions(
+                                             targetMO, args, false);
+        if (res.Count == 0) {
+            return errorSuggestion ??
+                RuntimeHelpers.CreateThrow(
+                    targetMO, args, restrictions,
+                    typeof(MissingMemberException),
+                    "Can't bind member invoke -- " + 
+                         args.ToString());
+        }
+        var callArgs = RuntimeHelpers.ConvertArguments(
+                                         args, 
+                                         res[0].GetParameters());
+        return new DynamicMetaObject(
+           RuntimeHelpers.EnsureObjectResult(
+             Expression.Call(
+                Expression.Convert(targetMO.Expression, 
+                                   targetMO.LimitType), 
+                res[0], callArgs)),
+           restrictions);
+```
 
 Let's first talk about what we aren't talking about now. This code snippet omits the code to check if the target is a COM object and to use built-in COM support. See section for information adding this to your binders. The snippet also omits some very important code that protects binders and DynamicMetaObjects from infinitely looping due to producing bad rules. It is best to discuss this in one place, so see section for how the infinite loop happens and how to prevent it for all binders.
 
@@ -123,37 +82,24 @@ This method exists for languages and dynamic objects do not or cannot perform In
 
 Here's the code for SymplInvokeMemberBinder's FallbackInvoke from runtime.cs:
 
+``` csharp
 public override DynamicMetaObject FallbackInvoke(
-
-DynamicMetaObject targetMO, DynamicMetaObject\[\] args,
-
-DynamicMetaObject errorSuggestion) {
-
-var argexprs = new Expression\[args.Length + 1\];
-
-for (int i = 0; i &lt; args.Length; i++) {
-
-argexprs\[i + 1\] = args\[i\].Expression;
-
-}
-
-argexprs\[0\] = targetMO.Expression;
-
-return new DynamicMetaObject(
-
-Expression.Dynamic(
-
-new SymplInvokeBinder(
-
-new CallInfo(args.Length)),
-
-typeof(object),
-
-argexprs),
-
-targetMO.Restrictions.Merge(
-
-BindingRestrictions.Combine(args)));
+        DynamicMetaObject targetMO, DynamicMetaObject[] args,
+        DynamicMetaObject errorSuggestion) {
+    var argexprs = new Expression[args.Length + 1];
+    for (int i = 0; i < args.Length; i++) {
+        argexprs[i + 1] = args[i].Expression;
+    }
+    argexprs[0] = targetMO.Expression;
+    return new DynamicMetaObject(
+                   Expression.Dynamic(
+                       new SymplInvokeBinder(
+                               new CallInfo(args.Length)),
+                       typeof(object),
+                       argexprs),
+                   targetMO.Restrictions.Merge(
+                       BindingRestrictions.Combine(args)));
+```
 
 The target meta-object passed to FallbackInvoke is a callable object, not the target object passed to FallbackInvokeMember that might have a member with the name in the binder's metadata. There are no checks here for COM objects because no callable COM object should flow into FallbackInvoke.
 

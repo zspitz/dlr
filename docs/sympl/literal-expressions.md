@@ -6,9 +6,10 @@ This section describes some Sympl features added along with **eq** before **IF**
 
 These come out of the parser as SymplLiteralExprs with the value tucked in them. This snippet from AnalyzeExpr in etgen is the code generation:
 
+``` csharp
 if (expr is SymplLiteralExpr) {
-
-return Expression.Constant(((SymplLiteralExpr)expr).Value)
+    return Expression.Constant(((SymplLiteralExpr)expr).Value)
+```
 
 <h2 id="keyword-constants">8.2 Keyword Constants</h2>
 
@@ -16,47 +17,29 @@ Literal keyword constants are nil, false, and true. Sympl includes nil for its b
 
 These literal keywords come out of the parser as SymplIdExprs. Section discussed part of AnalyzeIdExpr from etgen.cs, but it omitted the literal keywords branch shown here:
 
+``` csharp
 public static Expression AnalyzeIdExpr(SymplIdExpr expr,
-
-AnalysisScope scope) {
-
-if (expr.IdToken.IsKeywordToken) {
-
-if (expr.IdToken == KeywordToken.Nil)
-
-return Expression.Constant(null, typeof(object));
-
-else if (expr.IdToken == KeywordToken.True)
-
-return Expression.Constant(true);
-
-else if (expr.IdToken == KeywordToken.False)
-
-return Expression.Constant(false);
-
-else
-
-throw new InvalidOperationException(
-
-"Internal: unrecognized keyword literal constant.");
-
-} else {
-
-var param = FindIdDef(expr.IdToken.Name, scope);
-
-if (param != null) {
-
-return param;
-
-} else {
-
-return Expression.Dynamic(
-
-new SymplGetMemberBinder(expr.IdToken.Name),
-
-typeof(object),
-
-scope.GetModuleExpr());
+                                        AnalysisScope scope) {
+    if (expr.IdToken.IsKeywordToken) {
+        if (expr.IdToken == KeywordToken.Nil)
+            return Expression.Constant(null, typeof(object));
+        else if (expr.IdToken == KeywordToken.True)
+            return Expression.Constant(true);
+        else if (expr.IdToken == KeywordToken.False)
+            return Expression.Constant(false);
+        else
+            throw new InvalidOperationException(
+                "Internal: unrecognized keyword literal constant.");
+    } else {
+        var param = FindIdDef(expr.IdToken.Name, scope);
+        if (param != null) {
+            return param;
+        } else {
+            return Expression.Dynamic(
+               new SymplGetMemberBinder(expr.IdToken.Name),
+               typeof(object),
+               scope.GetModuleExpr());
+```
 
 Handling this is straightforward; just turn them into ConstantExpressions with obvious .NET representations.
 
@@ -68,53 +51,32 @@ Sympl does stand for Symbolic Programming Language, so it needs to have symbols 
 
 The high-level idea is that quoted constants are literal constants, so Sympl builds the constant and burns it into the resulting Expression Tree as a ConstantExpression. Here's the code for AnalyzeQuoteExpr and its helper from etgen.cs:
 
+``` csharp
 public static Expression AnalyzeQuoteExpr(SymplQuoteExpr expr,
-
-AnalysisScope scope) {
-
-return Expression.Constant(MakeQuoteConstant(
-
-expr.Expr, scope.GetRuntime()));
-
+                                          AnalysisScope scope) {
+    return Expression.Constant(MakeQuoteConstant(
+                                   expr.Expr, scope.GetRuntime()));
 }
-
 private static object MakeQuoteConstant(object expr,
-
-Sympl symplRuntime) {
-
-if (expr is SymplListExpr) {
-
-SymplListExpr listexpr = (SymplListExpr)expr;
-
-int len = listexpr.Elements.Length;
-
-var exprs = new object\[len\];
-
-for (int i = 0; i &lt; len; i++) {
-
-exprs\[i\] = MakeQuoteConstant(listexpr.Elements\[i\],
-
-symplRuntime);
-
-}
-
-return Cons.\_List(exprs);
-
-} else if (expr is IdOrKeywordToken) {
-
-return symplRuntime.MakeSymbol(
-
-((IdOrKeywordToken)expr).Name);
-
-} else if (expr is LiteralToken) {
-
-return ((LiteralToken)expr).Value;
-
-} else {
-
-throw new InvalidOperationException(
-
-"Internal: quoted list has -- " + expr.ToString());
+                                        Sympl symplRuntime) {
+    if (expr is SymplListExpr) {
+        SymplListExpr listexpr = (SymplListExpr)expr;
+        int len = listexpr.Elements.Length;
+        var exprs = new object[len];
+        for (int i = 0; i < len; i++) {
+            exprs[i] = MakeQuoteConstant(listexpr.Elements[i],
+                                         symplRuntime);
+        }
+        return Cons._List(exprs);
+    } else if (expr is IdOrKeywordToken) {
+        return symplRuntime.MakeSymbol(
+                                ((IdOrKeywordToken)expr).Name);
+    } else if (expr is LiteralToken) {
+        return ((LiteralToken)expr).Value;
+    } else {
+        throw new InvalidOperationException(
+            "Internal: quoted list has -- " + expr.ToString());
+```
 
 As stated above, AnalyzeQuoteExpr just creates a ConstantExpression. MakeQuoteConstant does the work, and it takes a Sympl runtime instance both for runtime helper functions and to intern symbols as they are created.
 
@@ -137,51 +99,32 @@ Sympl provides a **cons** keyword form and a **list** keyword form for creating 
 
 Here is the code for analyzing **cons** and **list** from etgen.cs:
 
+``` csharp
 public static Expression AnalyzeConsExpr (SymplConsExpr expr,
-
-AnalysisScope scope) {
-
-var mi = typeof(RuntimeHelpers).GetMethod("MakeCons");
-
-return Expression.Call(mi, Expression.Convert(
-
-AnalyzeExpr(expr.Left, scope),
-
-typeof(object)),
-
-Expression.Convert(
-
-AnalyzeExpr(expr.Right, scope),
-
-typeof(object)));
-
+                                          AnalysisScope scope) {
+    var mi = typeof(RuntimeHelpers).GetMethod("MakeCons");
+    return Expression.Call(mi, Expression.Convert(
+                                   AnalyzeExpr(expr.Left, scope),
+                                   typeof(object)),
+                           Expression.Convert(
+                               AnalyzeExpr(expr.Right, scope),
+                               typeof(object)));
 }
-
-public static Expression AnalyzeListCallExpr
-
-(SymplListCallExpr expr, AnalysisScope scope) {
-
-var mi = typeof(Cons).GetMethod("\_List");
-
-int len = expr.Elements.Length;
-
-var args = new Expression\[len\];
-
-for (int i = 0; i &lt; len; i++) {
-
-args\[i\] = Expression.Convert(AnalyzeExpr(expr.Elements\[i\],
-
-scope),
-
-typeof(object));
-
-}
-
-return Expression.Call(mi, Expression
-
-.NewArrayInit(typeof(object),
-
-args));
+public static Expression AnalyzeListCallExpr 
+        (SymplListCallExpr expr, AnalysisScope scope) {
+    var mi = typeof(Cons).GetMethod("_List");
+    int len = expr.Elements.Length;
+    var args = new Expression[len];
+    for (int i = 0; i < len; i++) {
+        args[i] = Expression.Convert(AnalyzeExpr(expr.Elements[i], 
+                                                 scope),
+                                     typeof(object));
+    }
+    return Expression.Call(mi, Expression
+                                   .NewArrayInit(typeof(object),
+                                                 args));
+    
+```
 
 Cons is just a Call node for invoking RuntimeHelpers.MakeCons. Sympl analyzes the left and right expressions, and wraps them in Convert nodes to satisfy the Call factory and make sure conversions are explicit for the Expression Tree compiler and .NET CLR. Emitting the code to call MakeCons in the IronPython implementation is not this easy. You can't call the Call factory with MethodInfo for IronPython methods. You need to emit an Invoke DynamicExpression with a no-op InvokeBinder. See the code for comments and explanation.
 

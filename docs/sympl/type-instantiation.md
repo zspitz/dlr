@@ -6,33 +6,27 @@ Sympl has a **new** keyword form. It takes as its first argument an expression t
 
 The analysis and code generation for New is pretty easy since all the work is in runtime binders and the TypeModelMetaObject. Here's the code from etgen.cs:
 
+``` csharp
 public static Expression AnalyzeNewExpr(SymplNewExpr expr,
-
-AnalysisScope scope) {
-
-List&lt;Expression&gt; args = new List&lt;Expression&gt;();
-
-args.Add(AnalyzeExpr(expr.Type, scope));
-
-args.AddRange(expr.Arguments.Select(
-
-a =&gt; AnalyzeExpr(a, scope)));
-
-return Expression.Dynamic(
-
-scope.GetRuntime().GetCreateInstanceBinder(
-
-new CallInfo(expr.Arguments.Length)),
-
-typeof(object),
-
-args);
+                                        AnalysisScope scope) {
+    List<Expression> args = new List<Expression>();
+    args.Add(AnalyzeExpr(expr.Type, scope));
+    args.AddRange(expr.Arguments.Select(
+                                    a => AnalyzeExpr(a, scope)));
+    return Expression.Dynamic(
+        scope.GetRuntime().GetCreateInstanceBinder(
+                             new CallInfo(expr.Arguments.Length)),
+        typeof(object),
+        args);
+```
 
 AnalyzeNewExpr just analyzes the type expression and all the arguments to build a list of arguments for a DynamicExpression with a SymplCreateInstanceBinder. The metadata for binding is a description of the arguments. For Sympl, this is just an argument count, but note that the count does not include the target type expression even though it is in the 'args' variable passed to the Dynamic factory method.
 
 For now, ignore GetCreateInstanceBinder. Imagine this is just a call to the constructor:
 
+``` csharp
 new SymplCreateInstanceBinder(CallInfo)
+```
 
 GetCreateInstanceBinder produces canonical binders, a single binder instance used on every call site with the same metadata. This is important for DLR L2 caching of rules. See section for how Sympl makes canonical binders and why, and see sites-binders-dynobj-interop.doc for more details on CallSite rule caching.
 
@@ -50,57 +44,34 @@ In this case one of Sympl's TypeModel objects (representing StringBuilder) flows
 
 Here's the code from sympl.cs (the python code is in runtime.py):
 
+``` csharp
 public override DynamicMetaObject BindCreateInstance(
-
-CreateInstanceBinder binder, DynamicMetaObject\[\] args) {
-
-var constructors = ReflType.GetConstructors();
-
-var ctors = constructors.
-
-Where(c =&gt; c.GetParameters().Length == args.Length);
-
-List&lt;ConstructorInfo&gt; res = new List&lt;ConstructorInfo&gt;();
-
-foreach (var c in ctors) {
-
-if (RuntimeHelpers.ParametersMatchArguments(
-
-c.GetParameters(),
-
-args)) {
-
-res.Add(c);
-
-}
-
-}
-
-if (res.Count == 0) {
-
-return binder.FallbackCreateInstance(
-
-RuntimeHelpers.GetRuntimeTypeMoFromModel(this),
-
-args);
-
-}
-
-var restrictions = RuntimeHelpers.GetTargetArgsRestrictions(
-
-this, args, true);
-
-var ctorArgs =
-
-RuntimeHelpers.ConvertArguments(
-
-args, res\[0\].GetParameters());
-
-return new DynamicMetaObject(
-
-Expression.New(res\[0\], ctorArgs),
-
-restrictions);
+           CreateInstanceBinder binder, DynamicMetaObject[] args) {
+    var constructors = ReflType.GetConstructors();
+    var ctors = constructors.
+        Where(c => c.GetParameters().Length == args.Length);
+    List<ConstructorInfo> res = new List<ConstructorInfo>();
+    foreach (var c in ctors) {
+        if (RuntimeHelpers.ParametersMatchArguments(
+                               c.GetParameters(),
+                               args)) {
+            res.Add(c);
+        }
+    }
+    if (res.Count == 0) {
+        return binder.FallbackCreateInstance(
+                   RuntimeHelpers.GetRuntimeTypeMoFromModel(this),
+                   args);
+    }
+    var restrictions = RuntimeHelpers.GetTargetArgsRestrictions(
+                        this, args, true);
+    var ctorArgs =
+        RuntimeHelpers.ConvertArguments(
+        args, res[0].GetParameters());
+    return new DynamicMetaObject(
+       Expression.New(res[0], ctorArgs),
+       restrictions);
+```
 
 First BindCreateInstance gets the underlying RuntimeType's constructors and finds those with marching parameter counts. Then Sympl filters for constructors with matching parameters as discussed in section on TypeModelMetaObject's BindInvokeMember method.
 
@@ -121,103 +92,58 @@ In this case one of the DLR's default DynamicMetaObjects for static .NET objects
 
 Here's the code from runtime.cs:
 
+``` csharp
 public class SymplCreateInstanceBinder : CreateInstanceBinder {
-
-public SymplCreateInstanceBinder(CallInfo callinfo)
-
-: base(callinfo) {
-
-}
-
-public override DynamicMetaObject FallbackCreateInstance(
-
-DynamicMetaObject target,
-
-DynamicMetaObject\[\] args,
-
-DynamicMetaObject errorSuggestion) {
-
-// ... Deleted checking for Defer for now ...
-
-if (!typeof(Type).IsAssignableFrom(target.LimitType)) {
-
-return errorSuggestion ??
-
-RuntimeHelpers.CreateThrow(
-
-target, args, BindingRestrictions.Empty,
-
-typeof(InvalidOperationException),
-
-"Type object must be used when " +
-
-"creating instance -- " +
-
-args.ToString());
-
-}
-
-var type = target.Value as Type;
-
-Debug.Assert(type != null);
-
-var constructors = type.GetConstructors();
-
-// Get constructors with right arg counts.
-
-var ctors = constructors.
-
-Where(c =&gt; c.GetParameters().Length == args.Length);
-
-List&lt;ConstructorInfo&gt; res = new List&lt;ConstructorInfo&gt;();
-
-foreach (var c in ctors) {
-
-if (RuntimeHelpers.ParametersMatchArguments(
-
-c.GetParameters(),
-
-args)) {
-
-res.Add(c);
-
-}
-
-}
-
-var restrictions =
-
-RuntimeHelpers.GetTargetArgsRestrictions(
-
-target, args, true);
-
-if (res.Count == 0) {
-
-return errorSuggestion ??
-
-RuntimeHelpers.CreateThrow(
-
-target, args, restrictions,
-
-typeof(MissingMemberException),
-
-"Can't bind create instance -- " +
-
-args.ToString());
-
-}
-
-var ctorArgs =
-
-RuntimeHelpers.ConvertArguments(
-
-args, res\[0\].GetParameters());
-
-return new DynamicMetaObject(
-
-Expression.New(res\[0\], ctorArgs),
-
-restrictions);
+    public SymplCreateInstanceBinder(CallInfo callinfo)
+        : base(callinfo) {
+    }
+    public override DynamicMetaObject FallbackCreateInstance(
+                        DynamicMetaObject target,
+                        DynamicMetaObject[] args,
+                        DynamicMetaObject errorSuggestion) {
+        // ... Deleted checking for Defer for now ...
+        if (!typeof(Type).IsAssignableFrom(target.LimitType)) {
+                return errorSuggestion ??
+                    RuntimeHelpers.CreateThrow(
+                       target, args, BindingRestrictions.Empty,
+                       typeof(InvalidOperationException),
+                              "Type object must be used when " +
+                              "creating instance -- " + 
+                               args.ToString());
+        }
+        var type = target.Value as Type;
+        Debug.Assert(type != null);
+        var constructors = type.GetConstructors();
+        // Get constructors with right arg counts.
+        var ctors = constructors.
+            Where(c => c.GetParameters().Length == args.Length);
+        List<ConstructorInfo> res = new List<ConstructorInfo>();
+        foreach (var c in ctors) {
+            if (RuntimeHelpers.ParametersMatchArguments(
+                                   c.GetParameters(),
+                                   args)) {
+                res.Add(c);
+            }
+        }
+        var restrictions =
+            RuntimeHelpers.GetTargetArgsRestrictions(
+                target, args, true);
+        if (res.Count == 0) {
+            return errorSuggestion ??
+                RuntimeHelpers.CreateThrow(
+                   target, args, restrictions,
+                   typeof(MissingMemberException),
+                          "Can't bind create instance -- " + 
+                              args.ToString());
+        }
+        var ctorArgs =
+            RuntimeHelpers.ConvertArguments(
+            args, res[0].GetParameters());
+        return new DynamicMetaObject(
+           Expression.New(res[0], ctorArgs),
+           restrictions);
+    
+```
 
 Let's first talk about what we aren't talking about now. This code snippet omits some very important code that protects binders and DynamicMetaObjects from infinitely looping due to producing bad rules. It is best to discuss this in one place, so see section for how the infinite loop happens and how to prevent it for all binders.
 
@@ -235,34 +161,22 @@ This expression turns into an InvokeMember DynamicExpression. The resulting Call
 
 Here's the code for RuntimeHelpers.GetRuntimeTypeMoFromModel from runtime.cs, which converts a DynamicMetaObject holding a TypeModel value to one holding a RuntimeType value:
 
+``` csharp
 public static DynamicMetaObject GetRuntimeTypeMoFromModel
-
-(DynamicMetaObject typeModelMO) {
-
-Debug.Assert((typeModelMO.LimitType == typeof(TypeModel)),
-
-"Internal: MO is not a TypeModel?!");
-
-// Get tm.ReflType
-
-var pi = typeof(TypeModel).GetProperty("ReflType");
-
-Debug.Assert(pi != null);
-
-return new DynamicMetaObject(
-
-Expression.Property(
-
-Expression.Convert(typeModelMO.Expression,
-
-typeof(TypeModel)),
-
-pi),
-
-typeModelMO.Restrictions.Merge(
-
-BindingRestrictions.GetTypeRestriction(
-
-typeModelMO.Expression, typeof(TypeModel))));
+                  (DynamicMetaObject typeModelMO) {
+    Debug.Assert((typeModelMO.LimitType == typeof(TypeModel)),
+                 "Internal: MO is not a TypeModel?!");
+    // Get tm.ReflType
+    var pi = typeof(TypeModel).GetProperty("ReflType");
+    Debug.Assert(pi != null);
+    return new DynamicMetaObject(
+        Expression.Property(
+            Expression.Convert(typeModelMO.Expression, 
+                               typeof(TypeModel)),
+            pi),
+        typeModelMO.Restrictions.Merge(
+            BindingRestrictions.GetTypeRestriction(
+                typeModelMO.Expression, typeof(TypeModel))));
+```
 
 The key here is to refrain from lifting the RuntimeType value out of the TypeModel and burning it into the rule as a ConstantExpression. Instead this function returns an Expression in the DynamicMetaObject that fetches the ReflType property from the result of the Expression in the TypeModel's meta-object. This allows the rule to work more generally.

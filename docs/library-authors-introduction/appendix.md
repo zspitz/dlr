@@ -89,23 +89,17 @@ using System.Linq;
 using System.Dynamic;
 using System.Linq.Expressions;
 using System.ComponentModel;
-
 namespace Bags
 {
     public class FastNBag : IDynamicMetaObjectProvider, INotifyPropertyChanged
     {
         private object[] fastArray;
         private Dictionary<string, int> fastTable;
-
         private Dictionary<string, object> hashTable
             = new Dictionary<string, object>();
-
         private readonly int fastCount;
-
         public int Version { get; set; }
-
         public event PropertyChangedEventHandler PropertyChanged;
-
         
         public FastNBag(int fastCount)
         {
@@ -113,7 +107,6 @@ namespace Bags
             this.fastArray = new object[fastCount];
             this.fastTable = new Dictionary<string, int>(fastCount);
         }
-
         public bool TryGetValue(string key, out object value)
         {
             int index = GetFastIndex(key);
@@ -132,7 +125,6 @@ namespace Bags
                 return false;
             }
         }
-
         public void SetValue(string key, object value)
         {
             int index = GetFastIndex(key);
@@ -147,25 +139,20 @@ namespace Bags
                 }
                 else
                     hashTable[key] = value;
-
             Version++;
-
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(key));
             }
         }
-
         public object GetFastValue(int index)
         {
             return fastArray[index];
         }
-
         public void SetFastValue(int index, object value)
         {
             fastArray[index] = value;
         }
-
         public int GetFastIndex(string key)
         {
             int index;
@@ -174,44 +161,32 @@ namespace Bags
             else
                 return -1;
         }
-
         public IEnumerable<string> GetKeys()
         {
             var fastKeys = fastTable.Keys;
             var hashKeys = hashTable.Keys;
-
             var keys = fastKeys.Concat(hashKeys);
-
             return keys;
         }
-
         public bool CheckVersion(int ruleVersion)
         {
             return (Version == ruleVersion);
         }
-
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {
             return new MetaFastNBag(parameter, this);
         }
-
-
-
         private class MetaFastNBag : DynamicMetaObject
         {
             public MetaFastNBag(Expression expression, FastNBag value)
                 : base(expression, BindingRestrictions.Empty, value) { }
-
             public override DynamicMetaObject BindGetMember
                     (GetMemberBinder binder)
             {
                 var self = this.Expression;
                 var bag = (FastNBag)base.Value;
-
                 int index = bag.GetFastIndex(binder.Name);
-
                 Expression target;
-
                 // If match found in fast array:
                 if (index != -1)
                 {
@@ -229,7 +204,6 @@ namespace Bags
                     // Fetch result from dictionary.
                     var keyExpr = Expression.Constant(binder.Name);
                     var valueExpr = Expression.Variable(typeof(object));
-
                     var dictCheckExpr =
                         Expression.Call(
                             Expression.Convert(self, typeof(FastNBag)),
@@ -242,7 +216,6 @@ namespace Bags
                             binder.FallbackGetMember(this).Expression,
                             Expression.Default(typeof(object))
                         );
-
                     target =
                         Expression.Block(
                             new [] { valueExpr },
@@ -267,7 +240,6 @@ namespace Bags
                         binder.FallbackGetMember(this).Expression;
                     var updateExpr =
                         binder.GetUpdateExpression(versionMatchExpr.Type);
-
                     target =
                         Expression.Condition(
                             versionCheckExpr,
@@ -275,25 +247,19 @@ namespace Bags
                             updateExpr
                         );
                 }
-
                 var restrictions = BindingRestrictions
                                        .GetInstanceRestriction(self, bag);
-
                 return new DynamicMetaObject(target, restrictions);
             }
-
-
             public override DynamicMetaObject BindSetMember(
                 SetMemberBinder binder, DynamicMetaObject value)
             {
                 var self = this.Expression;
-
                 var keyExpr = Expression.Constant(binder.Name);
                 var valueExpr = Expression.Convert(
                                     value.Expression,
                                     typeof(object)
                                 );
-
                 var target =
                     Expression.Call(
                         Expression.Convert(self, typeof(FastNBag)),
@@ -301,17 +267,13 @@ namespace Bags
                         keyExpr,
                         valueExpr
                     );
-
                 var restrictions = BindingRestrictions
                                       .GetTypeRestriction(self, typeof(FastNBag));
-
                 return new DynamicMetaObject(target, restrictions);
             }
-
             public override IEnumerable<string> GetDynamicMemberNames()
             {
                 var bag = (FastNBag)base.Value;
-
                 return bag.GetKeys();
             }
         }

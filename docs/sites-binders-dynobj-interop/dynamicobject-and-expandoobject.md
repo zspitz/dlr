@@ -15,7 +15,6 @@ public abstract class DynamicObject : IDynamicMetaObjectProvider {
     public virtual bool TrySetMember(SetMemberBinder binder,
                                      object value)
     public virtual bool TryDeleteMember(DeleteMemberBinder binder)
-
     public virtual bool TryConvert(ConvertBinder binder,
                                    out object result)        
     public virtual bool TryUnaryOperation
@@ -23,7 +22,6 @@ public abstract class DynamicObject : IDynamicMetaObjectProvider {
     public virtual bool TryBinaryOperation
         (BinaryOperationBinder binder, object arg,
          out object result)
-
     public virtual bool TryInvoke
         (InvokeBinder binder, object[] args, out object result)
     public virtual bool TryInvokeMember

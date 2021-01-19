@@ -50,7 +50,7 @@ Let's look at a couple of examples:
 
 - We model 'if' with ConditionalExpression, which returns the value of its consequent or alternative expression, whichever executes. The types of the branches must match the type of the ConditionalExpression. If there's no alternative expression, then we use a DefaultExpression with the matching type. Languages with distinct notions for statements often have a 'e1 ? e2 : e3' expression since their 'if' cannot return values, but they can model this with ConditionalExpression.
 
-DefaultExpression serves two useful purposes in our expression-based model. First the Expression.Empty factory returns a DefaultExpression with Type void. This can be useful if you need an expression in a value-resulting position that matches the containing expressions result type. The second use of DefaultExpression is when you do have a non-void Expression in which you do need to sometimes return the "default(T)" value. Without this expression, you would have to generate a lot more ET to express "default(T)".
+DefaultExpression serves two useful purposes in our expression-based model. First the Expression.Empty factory returns a DefaultExpression with Type void. This can be useful if you need an expression in a value-resulting position that matches the containing expressions result type. The second use of DefaultExpression is when you do have a non-void Expression in which you do need to sometimes return the "`default(T)`" value. Without this expression, you would have to generate a lot more ET to express "`default(T)`".
 
 Often you do not need to use Expression.Empty to match a containing node's result type. There are expressions used in common patterns, typically control flow expression, where the result value is not used. For these common patterns, some nodes implicitly convert to void or squelch a result value. SwitchExpression, ConditionalExpression, TryExpression, BlockExpression, LambdaExpression, GotoExpression, and LabelExpression all automatically convert their result expression to void if they themselves have a void Type property (or delegate with result type in the case of lambdas).
 
@@ -80,7 +80,9 @@ There are three categories or states of being bound for modeling expressions. Mo
 
 Consider a language that supported LINQ-like expression and that also had late-bound member access (for example, if VB added late-bound LINQ). You would then need to model unbound trees for the lambda expression in the following pseudo-code:
 
-> o.Where( lambda (x) =&gt; x &gt; 0 ) \#o had late bound semantics
+``` csharp
+o.Where( lambda (x) => x > 0 )   #o had late bound semantics
+```
 
 To be able to execute an ET modeling this code, you would need to inspect the runtime type of 'o', search its 'Where' overloads, and pattern match for one that can take a delegate. Furthermore, you would need to match lambda expression to the delegate. The delegate needs take an argument and returns a value with some type. The delegate's type for 'x' needs to make sense to bind '&gt;' to an implementation taking the type of 'x', an operand assignable from integer, and returning the type of the delegate.
 
@@ -94,7 +96,7 @@ A key observation in this situation is that the late-bound node representing the
 
 - could be dynamic expression
 
-A dynamic expression often has a Type property that is Object, but its Type that is not null. It might not be Object as well. For example, in "if x &gt; y" the ET node for '&gt;' could be typed Boolean even if it is a dynamic node.
+A dynamic expression often has a Type property that is Object, but its Type that is not null. It might not be Object as well. For example, in "`if x > y`" the ET node for '&gt;' could be typed Boolean even if it is a dynamic node.
 
 **The ET v2 model includes dynamically bound nodes that:**
 

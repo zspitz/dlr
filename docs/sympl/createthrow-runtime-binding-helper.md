@@ -4,67 +4,40 @@ As we noted in the high-level description of execution flow when searching for a
 
 Since there's enough boiler plate code to creating this ThrowExpression, Sympl has a runtime helper function in the RuntimeHelpers class from runtime.cs:
 
+``` csharp
 public static DynamicMetaObject CreateThrow
-
-(DynamicMetaObject target, DynamicMetaObject\[\] args,
-
-BindingRestrictions moreTests,
-
-Type exception, params object\[\] exceptionArgs) {
-
-Expression\[\] argExprs = null;
-
-Type\[\] argTypes = Type.EmptyTypes;
-
-int i;
-
-if (exceptionArgs != null) {
-
-i = exceptionArgs.Length;
-
-argExprs = new Expression\[i\];
-
-argTypes = new Type\[i\];
-
-i = 0;
-
-foreach (object o in exceptionArgs) {
-
-Expression e = Expression.Constant(o);
-
-argExprs\[i\] = e;
-
-argTypes\[i\] = e.Type;
-
-i += 1;
-
-}
-
-}
-
-ConstructorInfo constructor =
-
-exception.GetConstructor(argTypes);
-
-if (constructor == null) {
-
-throw new ArgumentException(
-
-"Type doesn't have constructor with a given signature");
-
-}
-
-return new DynamicMetaObject(
-
-Expression.Throw(
-
-Expression.New(constructor, argExprs),
-
-typeof(object)),
-
-target.Restrictions.Merge(
-
-BindingRestrictions.Combine(args)).Merge(moreTests));
+        (DynamicMetaObject target, DynamicMetaObject[] args,
+         BindingRestrictions moreTests,
+         Type exception, params object[] exceptionArgs) {
+    Expression[] argExprs = null;
+    Type[] argTypes = Type.EmptyTypes;
+    int i;
+    if (exceptionArgs != null) {
+        i = exceptionArgs.Length;
+        argExprs = new Expression[i];
+        argTypes = new Type[i];
+        i = 0;
+        foreach (object o in exceptionArgs) {
+            Expression e = Expression.Constant(o);
+            argExprs[i] = e;
+            argTypes[i] = e.Type;
+            i += 1;
+        }
+    }
+    ConstructorInfo constructor = 
+                       exception.GetConstructor(argTypes);
+    if (constructor == null) {
+        throw new ArgumentException(
+            "Type doesn't have constructor with a given signature");
+    }
+    return new DynamicMetaObject(
+        Expression.Throw(
+            Expression.New(constructor, argExprs),
+            typeof(object)),
+        target.Restrictions.Merge(
+           BindingRestrictions.Combine(args)).Merge(moreTests));
+    
+```
 
 This function takes the target and arguments that were passed to a binder's FallbackX method. Since this ThrowExpression is a binding result (and therefore a rule), it is important to put the right restrictions on it. Otherwise, the rule might fire as a false positives and throw when a successful binding could be found. CreateThrow takes moreTests for this purpose. The function also takes the exception type and arguments for the ThrowExpression.
 

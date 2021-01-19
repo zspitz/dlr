@@ -4,21 +4,16 @@ This support has been moved to Codeplex only (after the writing of the Sympl sam
 
 Having your language work late bound using IDispatch on COM objects is very easy. You can look at any of the FallbackX methods to see how Sympl does this, but here's an example from FallbackGetMember in runtime.cs:
 
+``` csharp
 public override DynamicMetaObject FallbackGetMember(
-
-DynamicMetaObject targetMO,
-
-DynamicMetaObject errorSuggestion) {
-
-// First try COM binding.
-
-DynamicMetaObject result;
-
-if (ComBinder.TryBindGetMember(this, targetMO, out result,
-
-true)) {
-
-return result;
+        DynamicMetaObject targetMO,
+        DynamicMetaObject errorSuggestion) {
+    // First try COM binding.
+    DynamicMetaObject result;
+    if (ComBinder.TryBindGetMember(this, targetMO, out result, 
+                                   true)) {
+        return result;
+```
 
 You can look at the code for ComBinder, and for each TryBindX member, add coded similar to the above to your corresponding XBinder.
 

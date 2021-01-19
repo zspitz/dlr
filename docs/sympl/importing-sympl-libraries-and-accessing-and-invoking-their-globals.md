@@ -17,18 +17,14 @@ Sympl compiles "(lists.append" to an InvokeMember DynamicExpression. The meta-ob
 
 At this point in Sympl's implementation evolution, its SymplInvokeMemberBinder had a FallbackInvokeMember method that just returned the result of CreateThrow. Its FallbackInvoke method was essentially:
 
+``` csharp
 return new DynamicMetaObject(
-
-Expression.Dynamic(
-
-new SymplInvokeBinder(new CallInfo(args.Length)),
-
-typeof(object),
-
-argexprs),
-
-targetMO.Restrictions.Merge(
-
-BindingRestrictions.Combine(args)));
+               Expression.Dynamic(
+                   new SymplInvokeBinder(new CallInfo(args.Length)),
+                   typeof(object),
+                   argexprs),
+               targetMO.Restrictions.Merge(
+                   BindingRestrictions.Combine(args)));
+```
 
 This was not only enough to get cross-library calls working, it became the final implementation. The code in SymplInvokeBinder.FallbackInvoke (discussed in section ) is doing all the work in the nested CallSite resulting from this DynamicExpression.

@@ -8,47 +8,29 @@ SymplGetIndexBinder and SymplSetIndexBinder both use the RuntimeHelpers method G
 
 Here's the code from runtime.cs, which is described further below:
 
+``` csharp
 public override DynamicMetaObject FallbackGetIndex(
-
-DynamicMetaObject target, DynamicMetaObject\[\] indexes,
-
-DynamicMetaObject errorSuggestion) {
-
-// ... Deleted checking for COM and need to Defer for now ...
-
-// Give good error for Cons.
-
-if (target.LimitType == typeof(Cons)) {
-
-if (indexes.Length != 1)
-
-return errorSuggestion ??
-
-RuntimeHelpers.CreateThrow(
-
-target, indexes, BindingRestrictions.Empty,
-
-typeof(InvalidOperationException),
-
-"Indexing list takes single index. " +
-
-"Got " + indexes.Length.ToString());
-
-}
-
-var indexingExpr =
-
-RuntimeHelpers.EnsureObjectResult(
-
-RuntimeHelpers.GetIndexingExpression(target,
-
-indexes));
-
-var restrictions = RuntimeHelpers.GetTargetArgsRestrictions(
-
-target, indexes, false);
-
-return new DynamicMetaObject(indexingExpr, restrictions);
+             DynamicMetaObject target, DynamicMetaObject[] indexes,
+             DynamicMetaObject errorSuggestion) {
+    // ... Deleted checking for COM and need to Defer for now ...
+    // Give good error for Cons.
+    if (target.LimitType == typeof(Cons)) {
+        if (indexes.Length != 1)
+            return errorSuggestion ??
+                RuntimeHelpers.CreateThrow(
+                     target, indexes, BindingRestrictions.Empty,
+                     typeof(InvalidOperationException),
+                     "Indexing list takes single index.  " +
+                        "Got " + indexes.Length.ToString());
+    }
+    var indexingExpr =
+            RuntimeHelpers.EnsureObjectResult(
+                RuntimeHelpers.GetIndexingExpression(target,
+                                                     indexes));
+    var restrictions = RuntimeHelpers.GetTargetArgsRestrictions(
+                                          target, indexes, false);
+    return new DynamicMetaObject(indexingExpr, restrictions);
+```
 
 Let's first talk about what we aren't talking about now. This code snippet omits the code to check if the target is a COM object and to use built-in COM support. See section for information adding this to your binders. The snippet also omits some very important code that protects binders and DynamicMetaObjects from infinitely looping due to producing bad rules. It is best to discuss this in one place, so see section for how the infinite loop happens and how to prevent it for all binders.
 
@@ -60,133 +42,72 @@ SymplGetIndexBinder and SymplSetIndexBinder both use the RuntimeHelpers method G
 
 Here's the code from RuntimeHelpers in runtime.cs, which is further explained below:
 
+``` csharp
 public static Expression GetIndexingExpression(
-
-DynamicMetaObject target,
-
-DynamicMetaObject\[\] indexes) {
-
-Debug.Assert(target.HasValue &&
-
-target.LimitType != typeof(Array));
-
-var indexExpressions = indexes.Select(
-
-i =&gt; Expression.Convert(i.Expression, i.LimitType))
-
-.ToArray();
-
-// HANDLE CONS
-
-if (target.LimitType == typeof(Cons)) {
-
-// Call RuntimeHelper.GetConsElt
-
-var args = new List&lt;Expression&gt;();
-
-// The first argument is the list
-
-args.Add(
-
-Expression.Convert(
-
-target.Expression,
-
-target.LimitType)
-
-);
-
-args.AddRange(indexExpressions);
-
-return Expression.Call(
-
-typeof(RuntimeHelpers),
-
-"GetConsElt",
-
-null,
-
-args.ToArray());
-
-// HANDLE ARRAY
-
-} else if (target.LimitType.IsArray) {
-
-// the target has an array type
-
-return Expression.ArrayAccess(
-
-Expression.Convert(target.Expression,
-
-target.LimitType),
-
-indexExpressions
-
-);
-
-// HANDLE INDEXERS
-
-} else {
-
-var props = target.LimitType.GetProperties();
-
-var indexers = props.
-
-Where(p =&gt; p.GetIndexParameters().Length &gt; 0).ToArray();
-
-indexers = indexers.
-
-Where(idx =&gt; idx.GetIndexParameters().Length ==
-
-indexes.Length).ToArray();
-
-var res = new List&lt;PropertyInfo&gt;();
-
-foreach (var idxer in indexers) {
-
-if (RuntimeHelpers.ParametersMatchArguments(
-
-idxer.GetIndexParameters(),
-
-indexes)) {
-
-// all parameter types match
-
-res.Add(idxer);
-
-}
-
-}
-
-if (res.Count == 0) {
-
-return Expression.Throw(
-
-Expression.New(
-
-typeof(MissingMemberException)
-
-.GetConstructor(new Type\[\]
-
-{ typeof(string) }),
-
-Expression.Constant(
-
-"Can't bind because there is no " +
-
-"matching indexer.")
-
-)
-
-);
-
-}
-
-return Expression.MakeIndex(
-
-Expression.Convert(target.Expression, target.LimitType),
-
-res\[0\], indexExpressions);
+                              DynamicMetaObject target,
+                              DynamicMetaObject[] indexes) {
+    Debug.Assert(target.HasValue &&
+                 target.LimitType != typeof(Array));
+    var indexExpressions = indexes.Select(
+        i => Expression.Convert(i.Expression, i.LimitType))
+        .ToArray();
+    // HANDLE CONS    
+    if (target.LimitType == typeof(Cons)) {
+        // Call RuntimeHelper.GetConsElt
+        var args = new List<Expression>();
+        // The first argument is the list
+        args.Add(
+            Expression.Convert(
+                target.Expression, 
+                target.LimitType)
+        );
+        args.AddRange(indexExpressions);
+        return Expression.Call(
+            typeof(RuntimeHelpers),
+            "GetConsElt",
+            null,
+            args.ToArray());
+    // HANDLE ARRAY
+    } else if (target.LimitType.IsArray) {
+        // the target has an array type
+        return Expression.ArrayAccess(
+            Expression.Convert(target.Expression,
+                               target.LimitType),
+            indexExpressions
+        );
+    // HANDLE INDEXERS
+    } else {
+        var props = target.LimitType.GetProperties();
+        var indexers = props.
+            Where(p => p.GetIndexParameters().Length > 0).ToArray();
+        indexers = indexers.
+            Where(idx => idx.GetIndexParameters().Length == 
+                         indexes.Length).ToArray();
+        var res = new List<PropertyInfo>();
+        foreach (var idxer in indexers) {
+            if (RuntimeHelpers.ParametersMatchArguments(
+                                  idxer.GetIndexParameters(), 
+                                  indexes)) {
+                // all parameter types match
+                res.Add(idxer);
+            }
+        }
+        if (res.Count == 0) {
+            return Expression.Throw(
+                Expression.New(
+                    typeof(MissingMemberException)
+                        .GetConstructor(new Type[] 
+                                           { typeof(string) }),
+                    Expression.Constant(
+                       "Can't bind because there is no " +
+                           "matching indexer.")
+                )
+            );
+        }
+        return Expression.MakeIndex(
+            Expression.Convert(target.Expression, target.LimitType),
+            res[0], indexExpressions);
+```
 
 The first thing GetIndexingExpression does is get ConvertExpressions for all the indexing arguments. It converts them to the specific LimitType of the DynamicMetaObject. See section for a discussion of using LimitType over RuntimeType. It may seem odd to convert the object to the type that LimitType reports it to be, but the type of the meta-object's expression might be more general and require an explicit Convert node to satisfy the strict typing of the Expression Tree factory or the actual emitted code that executes. The Expression Tree compiler removes unnecessary Convert nodes.
 
@@ -200,111 +121,61 @@ The third kind of indexing Sympl supports is looking for an indexer or indexed p
 
 Here's the code from runtime.cs, which is described further below:
 
+``` csharp
 public override DynamicMetaObject FallbackSetIndex(
-
-DynamicMetaObject target, DynamicMetaObject\[\] indexes,
-
-DynamicMetaObject value,
-
-DynamicMetaObject errorSuggestion) {
-
-// ... Deleted checking for COM and need to Defer for now ...
-
-Expression valueExpr = value.Expression;
-
-if (value.LimitType == typeof(TypeModel)) {
-
-valueExpr = RuntimeHelpers.GetRuntimeTypeMoFromModel(value)
-
-.Expression;
-
-}
-
-Debug.Assert(target.HasValue &&
-
-target.LimitType != typeof(Array));
-
-Expression setIndexExpr;
-
-if (target.LimitType == typeof(Cons)) {
-
-if (indexes.Length != 1) {
-
-return errorSuggestion ??
-
-RuntimeHelpers.CreateThrow(
-
-target, indexes, BindingRestrictions.Empty,
-
-typeof(InvalidOperationException),
-
-"Indexing list takes single index. " +
-
-"Got " + indexes);
-
-}
-
-// Call RuntimeHelper.SetConsElt
-
-List&lt;Expression&gt; args = new List&lt;Expression&gt;();
-
-// The first argument is the list
-
-args.Add(
-
-Expression.Convert(
-
-target.Expression,
-
-target.LimitType)
-
-);
-
-// The second argument is the index.
-
-args.Add(Expression.Convert(indexes\[0\].Expression,
-
-indexes\[0\].LimitType));
-
-// The last argument is the value
-
-args.Add(Expression.Convert(valueExpr, typeof(object)));
-
-// Sympl helper returns value stored.
-
-setIndexExpr = Expression.Call(
-
-typeof(RuntimeHelpers),
-
-"SetConsElt",
-
-null,
-
-args.ToArray());
-
-} else {
-
-Expression indexingExpr =
-
-RuntimeHelpers.GetIndexingExpression(target,
-
-indexes);
-
-setIndexExpr = Expression.Assign(indexingExpr, valueExpr);
-
-}
-
-BindingRestrictions restrictions =
-
-RuntimeHelpers.GetTargetArgsRestrictions(target, indexes,
-
-false);
-
-return new DynamicMetaObject(
-
-RuntimeHelpers.EnsureObjectResult(setIndexExpr),
-
-restrictions);
+           DynamicMetaObject target, DynamicMetaObject[] indexes,
+           DynamicMetaObject value,
+           DynamicMetaObject errorSuggestion) {
+    // ... Deleted checking for COM and need to Defer for now ...
+    Expression valueExpr = value.Expression;
+    if (value.LimitType == typeof(TypeModel)) {
+        valueExpr = RuntimeHelpers.GetRuntimeTypeMoFromModel(value)
+                                  .Expression;
+    }
+    Debug.Assert(target.HasValue &&
+                 target.LimitType != typeof(Array));
+    Expression setIndexExpr;
+    if (target.LimitType == typeof(Cons)) {
+        if (indexes.Length != 1) {
+            return errorSuggestion ??
+                RuntimeHelpers.CreateThrow(
+                     target, indexes, BindingRestrictions.Empty,
+                     typeof(InvalidOperationException),
+                     "Indexing list takes single index.  " +
+                        "Got " + indexes);
+        }
+        // Call RuntimeHelper.SetConsElt
+        List<Expression> args = new List<Expression>();
+        // The first argument is the list
+        args.Add(
+            Expression.Convert(
+                target.Expression,
+                target.LimitType)
+        );
+        // The second argument is the index.
+        args.Add(Expression.Convert(indexes[0].Expression,
+                                    indexes[0].LimitType));
+        // The last argument is the value
+        args.Add(Expression.Convert(valueExpr, typeof(object)));
+        // Sympl helper returns value stored.
+        setIndexExpr = Expression.Call(
+            typeof(RuntimeHelpers),
+            "SetConsElt",
+            null,
+            args.ToArray());
+    } else {
+        Expression indexingExpr = 
+                      RuntimeHelpers.GetIndexingExpression(target,
+                                                           indexes);
+        setIndexExpr = Expression.Assign(indexingExpr, valueExpr);
+    }
+    BindingRestrictions restrictions =
+         RuntimeHelpers.GetTargetArgsRestrictions(target, indexes, 
+                                                  false);
+    return new DynamicMetaObject(
+        RuntimeHelpers.EnsureObjectResult(setIndexExpr),
+        restrictions);
+```
 
 Let's first talk about what we aren't talking about now. This code snippet omits the code to check if the target is a COM object and to use built-in COM support. See section for information adding this to your binders. The snippet also omits some very important code that protects binders and DynamicMetaObjects from infinitely looping due to producing bad rules. It is best to discuss this in one place, so see section for how the infinite loop happens and how to prevent it for all binders.
 

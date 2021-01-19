@@ -17,85 +17,48 @@ All these operators are all keyword forms that AnalyzeBinaryExpr in etgen.cs ana
 
 Here's the code for AnalyzeBinaryExpr, which is discussed further below:
 
+``` csharp
 public static Expression AnalyzeBinaryExpr(SymplBinaryExpr expr,
-
-AnalysisScope scope) {
-
-if (expr.Operation == ExpressionType.And) {
-
-return AnalyzeIfExpr(
-
-new SymplIfExpr(
-
-expr.Left, expr.Right, null),
-
-scope);
-
-} else if (expr.Operation == ExpressionType.Or) {
-
-// (Let\* (tmp1 x)
-
-// (If tmp1 tmp1
-
-// (Let\* (tmp2 y) (If tmp2 tmp2))))
-
-IdOrKeywordToken tmp2 = new IdOrKeywordToken(
-
-"\_\_tmpLetVariable2");
-
-var tmpExpr2 = new SymplIdExpr(tmp2);
-
-var binding2 = new LetBinding(tmp2, expr.Right); ;
-
-var ifExpr2 = new SymplIfExpr(
-
-tmpExpr2, tmpExpr2, null);
-
-var letExpr2 = new SymplLetStarExpr(
-
-new\[\] { binding2 },
-
-new\[\] { ifExpr2 });
-
-// Build outer let\*
-
-IdOrKeywordToken tmp1 = new IdOrKeywordToken(
-
-"\_\_tmpLetVariable1");
-
-var tmpExpr1 = new SymplIdExpr(tmp1);
-
-LetBinding binding1 = new LetBinding(tmp1, expr.Left); ;
-
-SymplExpr ifExpr1 = new SymplIfExpr(
-
-tmpExpr1, tmpExpr1, letExpr2);
-
-return AnalyzeLetStarExpr(
-
-new SymplLetStarExpr(
-
-new\[\] { binding1 },
-
-new\[\] { ifExpr1 }
-
-),
-
-scope
-
-);
-
-}
-
-return Expression.Dynamic(
-
-scope.GetRuntime().GetBinaryOperationBinder(expr.Operation),
-
-typeof(object),
-
-AnalyzeExpr(expr.Left, scope),
-
-AnalyzeExpr(expr.Right, scope));
+                                           AnalysisScope scope) {
+    if (expr.Operation == ExpressionType.And) {
+        return AnalyzeIfExpr(
+            new SymplIfExpr(
+                expr.Left, expr.Right, null),
+            scope); 
+    } else if (expr.Operation == ExpressionType.Or) {
+        // (Let* (tmp1 x) 
+        //    (If tmp1 tmp1  
+        //       (Let* (tmp2 y) (If tmp2 tmp2))))
+        IdOrKeywordToken tmp2 = new IdOrKeywordToken(
+            "__tmpLetVariable2");
+        var tmpExpr2 = new SymplIdExpr(tmp2);
+        var binding2 = new LetBinding(tmp2, expr.Right); ;
+        var ifExpr2 = new SymplIfExpr(
+            tmpExpr2, tmpExpr2, null);
+        var letExpr2 = new SymplLetStarExpr(
+                new[] { binding2 },
+                new[] { ifExpr2 });
+        // Build outer let*
+        IdOrKeywordToken tmp1 = new IdOrKeywordToken(
+            "__tmpLetVariable1");
+        var tmpExpr1 = new SymplIdExpr(tmp1);
+        LetBinding binding1 = new LetBinding(tmp1, expr.Left); ;
+        SymplExpr ifExpr1 = new SymplIfExpr(
+            tmpExpr1, tmpExpr1, letExpr2);
+        return AnalyzeLetStarExpr(
+            new SymplLetStarExpr(
+                new[] { binding1 },
+                new[] { ifExpr1 }
+            ),
+            scope
+        );
+    }
+    return Expression.Dynamic(
+        scope.GetRuntime().GetBinaryOperationBinder(expr.Operation),
+            typeof(object),
+            AnalyzeExpr(expr.Left, scope),
+            AnalyzeExpr(expr.Right, scope));
+```
 
 Because **and** and **or** have equivalent semantic to **IF** (with some temporary bindings for **or**), the code above creates ASTs for **IF** and re-uses the AnalyzeIfExpr and AnalyzeLetStarExpr. Sympl could also have "open coded" the equivalent Expression Tree code generation here.
 
@@ -105,29 +68,20 @@ If the operation is other than **and** and **or**, AnalyzeBinaryExpr emits a Dyn
 
 The only unary operation Sympl supports is logical negation. Here's the code for AnalyzeUnaryExpr in etgen.cs:
 
+``` csharp
 public static Expression AnalyzeUnaryExpr(SymplUnaryExpr expr,
-
-AnalysisScope scope) {
-
-if (expr.Operation == ExpressionType.Not) {
-
-return Expression.Not(WrapBooleanTest(
-
-AnalyzeExpr(expr.Operand,
-
-scope)));
-
-}
-
-return Expression.Dynamic(
-
-scope.GetRuntime()
-
-.GetUnaryOperationBinder(expr.Operation),
-
-typeof(object),
-
-AnalyzeExpr(expr.Operand, scope));
+                                          AnalysisScope scope) {
+    if (expr.Operation == ExpressionType.Not) {
+        return Expression.Not(WrapBooleanTest(
+                                 AnalyzeExpr(expr.Operand,
+                                             scope)));
+        }
+    return Expression.Dynamic(
+                scope.GetRuntime()
+                     .GetUnaryOperationBinder(expr.Operation),
+                typeof(object),
+                AnalyzeExpr(expr.Operand, scope));
+```
 
 Execution never reaches the DynamicExpression result. This is there as plumbing and an example should Sympl support other unary operations, such as binary or arithmetic negation.
 
@@ -137,35 +91,23 @@ Sympl's logical **not** translates directly to an Expression Tree Not node as lo
 
 Binding binary operations is pretty easy in Sympl. Here's the code for the binder's FallbackBinaryOperation in runtime.cs:
 
+``` csharp
 public override DynamicMetaObject FallbackBinaryOperation(
-
-DynamicMetaObject target, DynamicMetaObject arg,
-
-DynamicMetaObject errorSuggestion) {
-
-var restrictions = target.Restrictions.Merge(arg.Restrictions)
-
-.Merge(BindingRestrictions.GetTypeRestriction(
-
-target.Expression, target.LimitType))
-
-.Merge(BindingRestrictions.GetTypeRestriction(
-
-arg.Expression, arg.LimitType));
-
-return new DynamicMetaObject(
-
-RuntimeHelpers.EnsureObjectResult(
-
-Expression.MakeBinary(
-
-this.Operation,
-
-Expression.Convert(target.Expression, target.LimitType),
-
-Expression.Convert(arg.Expression, arg.LimitType))),
-
-restrictions);
+            DynamicMetaObject target, DynamicMetaObject arg,
+            DynamicMetaObject errorSuggestion) {
+    var restrictions = target.Restrictions.Merge(arg.Restrictions)
+            .Merge(BindingRestrictions.GetTypeRestriction(
+                target.Expression, target.LimitType))
+            .Merge(BindingRestrictions.GetTypeRestriction(
+                arg.Expression, arg.LimitType));
+    return new DynamicMetaObject(
+        RuntimeHelpers.EnsureObjectResult(
+          Expression.MakeBinary(
+            this.Operation,
+            Expression.Convert(target.Expression, target.LimitType),
+            Expression.Convert(arg.Expression, arg.LimitType))),
+        restrictions);
+```
 
 This function gathers all the restrictions for the arguments and merges them with the target's restrictions. Then it also merges in restrictions to ensure the arguments are the same LimitType as they have during this pass through the CallSite; the rule produced is only good for those types.
 
@@ -177,26 +119,17 @@ As stated above, Sympl never really uses its UnaryOperationBinder. It exists a p
 
 Here's the code form runtime.cs.
 
+``` csharp
 public override DynamicMetaObject FallbackUnaryOperation(
-
-DynamicMetaObject target,
-
-DynamicMetaObject errorSuggestion) {
-
-return new DynamicMetaObject(
-
-RuntimeHelpers.EnsureObjectResult(
-
-Expression.MakeUnary(
-
-this.Operation,
-
-Expression.Convert(target.Expression, target.LimitType),
-
-target.LimitType)),
-
-target.Restrictions.Merge(
-
-BindingRestrictions.GetTypeRestriction(
-
-target.Expression, target.LimitType)));
+           DynamicMetaObject target,
+           DynamicMetaObject errorSuggestion) {
+    return new DynamicMetaObject(
+        RuntimeHelpers.EnsureObjectResult(
+          Expression.MakeUnary(
+            this.Operation,
+            Expression.Convert(target.Expression, target.LimitType),
+            target.LimitType)),
+         target.Restrictions.Merge(
+             BindingRestrictions.GetTypeRestriction(
+                 target.Expression, target.LimitType)));
+```

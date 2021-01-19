@@ -11,7 +11,6 @@ public abstract class DynamicObject : IDynamicMetaObjectProvider {
     public virtual bool TrySetMember(SetMemberBinder binder,
                                      object value)
     public virtual bool TryDeleteMember(DeleteMemberBinder binder)
-
     public virtual bool TryConvert(ConvertBinder binder,
                                    out object result)        
     public virtual bool TryUnaryOperation
@@ -19,8 +18,6 @@ public abstract class DynamicObject : IDynamicMetaObjectProvider {
     public virtual bool TryBinaryOperation
         (BinaryOperationBinder binder, object arg,
          out object result)
-
-
     public virtual bool TryInvoke
         (InvokeBinder binder, object[] args, out object result)
     public virtual bool TryInvokeMember
@@ -51,12 +48,10 @@ As a simple example of using DynamicObject, let’s implement DynamicBag, our ow
 public class DynamicBag : DynamicObject {
     Dictionary<string, object> items
         = new Dictionary<string, object>();
-
     public override bool TryGetMember(
         GetMemberBinder binder, out object result) {
         return items.TryGetValue(binder.Name, out result);
     }
-
     public override bool TrySetMember(
         SetMemberBinder binder, object value) {
         items[binder.Name] = value;
@@ -74,19 +69,15 @@ Because the DynamicObject base class implements IDynamicMetaObjectProvider, this
 ``` csharp
 static void Main(string[] args) {
     dynamic student, teacher;
-
     student = new DynamicBag();
     student.Name = "Billy";
     student.Age = 12;
-
     teacher = new DynamicBag();
     teacher.Name = "Ms. Anderson";
     teacher.Age = "thirty";
-
     WritePerson(student);
     WritePerson(teacher);
 }
-
 private static void WritePerson(dynamic person) {
     Console.WriteLine("{0} is {1} years old.",
                       person.Name, person.Age);
@@ -101,13 +92,10 @@ We can do some simple optimizations to tune our object. Let’s say we want to a
 public class NamedBag : DynamicObject {
     Dictionary<string, object> items
         = new Dictionary<string, object>();
-
     public string Name;
-
     public string LowercaseName {
         get { return Name.ToLower(); }
     }
-
     public override bool TryGetMember(GetMemberBinder binder,
                                       out object result) {
         // Don't need to test for "Name" or "LowercaseName".
@@ -115,7 +103,6 @@ public class NamedBag : DynamicObject {
         result = items[binder.Name];
         return true;
     }
-
     public override bool TrySetMember(SetMemberBinder binder,
                                       object value) {
         //if (binder.Name == "LowercaseName") return false;

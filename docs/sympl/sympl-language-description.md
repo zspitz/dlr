@@ -140,7 +140,6 @@ Sympl may consider adding these too (with break and continue as well):
 (for ([id init-expr [step-expr]]) ;;while is (for () (test) ...)
      (test-expr [result-expr])
   expr*)
-
 (foreach (id seq-expr [result-expr]) expr*)
 ```
 
@@ -297,166 +296,87 @@ The following are keywords in Sympl:
 
 <h2 id="example-code-mostly-from-test.sympl">21.9 Example Code (mostly from test.sympl)</h2>
 
+``` csharp
 (import system.windows.forms)
-
 (defun nconc (lst1 lst2)
-
-(if (eq lst2 nil)
-
-lst1
-
-(if (eq lst1 nil)
-
-lst2
-
-(block (if (eq lst1.Rest nil)
-
-(set lst1.Rest lst2)
-
-(nconc lst1.Rest lst2))
-
-lst1))))
-
+   (if (eq lst2 nil)
+       lst1
+       (if (eq lst1 nil)
+           lst2
+           (block (if (eq lst1.Rest nil)
+                      (set lst1.Rest lst2)
+                      (nconc lst1.Rest lst2))
+                  lst1))))
 (defun reverse (l)
-
-(let\* ((reverse-aux nil))
-
-(set reverse-aux
-
-(lambda (remainder result)
-
-(if remainder
-
-(reverse-aux remainder.Rest
-
-(cons remainder.First result))
-
-result)))
-
-(reverse-aux l nil)))
-
+   (let* ((reverse-aux nil))
+      (set reverse-aux
+	    (lambda (remainder result)
+	       (if remainder
+	          (reverse-aux remainder.Rest 
+                             (cons remainder.First result))
+	          result)))
+      (reverse-aux l nil)))
 (import system)
-
 (system.console.WriteLine "hey")
-
 (defun print (x)
-
-(if (eq x nil)
-
-(system.console.writeline "nil")
-
-(system.console.writeline x))
-
-x\)
-
+   (if (eq x nil)
+       (system.console.writeline "nil")
+       (system.console.writeline x))
+   x)
 (print nil)
-
 (print 3)
-
 (print (print "cool"))
-
 (set blah 5)
-
 (print blah)
-
 (defun foo2 (x)
-
-(print x)
-
-(let\* ((x "let x")
-
-(y 7))
-
-;; shadow binding local names
-
-(print x)
-
-(print y)
-
-(set x 5)
-
-(print x))
-
-(print x)
-
-(print blah)
-
-;; shadow binding global names
-
-(let\* ((blah "let blah"))
-
-(print blah)
-
-(set blah "bill")
-
-(print blah))
-
-(print blah)
-
-(set blah 17))
-
+   (print x)
+   (let* ((x "let x")
+          (y 7))
+      ;; shadow binding local names
+      (print x) 
+      (print y)
+      (set x 5)
+      (print x))
+   (print x)
+   (print blah)
+   ;; shadow binding global names
+   (let* ((blah "let blah"))
+      (print blah)
+      (set blah "bill")
+      (print blah))
+   (print blah)
+   (set blah 17))
 ((lambda (z) (princ "non ID expr fun: ") (print z)) "yes")
-
-(set closure (let\* ((x 5))
-
-(lambda (z) (princ z) (print x))))
-
+(set closure (let* ((x 5)) 
+               (lambda (z) (princ z) (print x))))
 (closure "closure: ")
-
 (print nil)
-
 (print true)
-
 (print false)
-
 (print (list x alist (list blah "bill" (list 'dev "martin") 10) 'todd))
-
-(if (eq '(one).Rest nil) ;\_getRest nil)
-
-(print "tail was nil"))
-
+(if (eq '(one).Rest nil) ;_getRest nil)
+    (print "tail was nil"))
 (if (eq '(one two) nil)
-
-(print "whatever")
-
-(print "(one two) is not nil"))
-
+    (print "whatever")
+    (print "(one two) is not nil"))
 ;; Sympl library of list functions.
-
 (import lists)
-
 (set steve (cons 'steve 'grunt))
-
 (set db (list (cons 'bill 'pm) (cons 'martin 'dev) (cons 'todd 'test)
-
-steve))
-
+              steve))
 (print (lists.assoc 'todd db))
-
 (print (lists.member steve db))
-
-(let\* ((x '(2 6 8 9 4 10)))
-
-(print
-
-(loop
-
-(if (eq x.First 9)
-
-(break x.Rest)
-
-(set x x.Rest)))))
-
+(let* ((x '(2 6 8 9 4 10)))
+   (print
+      (loop
+         (if (eq x.First 9)
+             (break x.Rest)
+             (set x x.Rest)))))
 (set x (new System.Text.StringBuilder "hello"))
-
 (x.Append " world!")
-
 (print (x.ToString))
-
-(print (x.ToString 0 5))
-
+(print (x.ToString 0 5)) 
 (set y (new (x.GetType) (x.ToString)))
-
 (print (y.ToString))
-
 (print y.Length)
+```

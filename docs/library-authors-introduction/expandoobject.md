@@ -7,19 +7,15 @@ For example, you could use instances of the ExpandoObject class to hold onto Nam
 ``` csharp
 static void Main(string[] args) {
     dynamic student, teacher;
-
     student = new ExpandoObject();
     student.Name = "Billy";
     student.Age = 12;
-
     teacher = new ExpandoObject();
     teacher.Name = "Ms. Anderson";
     teacher.Age = "thirty";
-
     WritePerson(student);
     WritePerson(teacher);
 }
-
 private static void WritePerson(dynamic person) {
     Console.WriteLine("{0} is {1} years old.",
                       person.Name, person.Age);
@@ -38,19 +34,16 @@ You can also store lambda expressions as delegate values to define first-class f
 ``` csharp
 static void Main(string[] args) {
     dynamic employee = new ExpandoObject();
-
     employee.Name = "Mr. Smith";
     employee.Age = 42;
     employee.CelebrateBirthday 
         = (Action<dynamic>)(person => { person.Age++; });
-
     WritePerson(employee);
     // Note: ExpandoObject doesn't support InvokeMember with an
     // implicit self parameter.  You fetch a member and supply
     // all arguments explicitly.
     employee.CelebrateBirthday(employee);
 }
-
 private static void WritePerson(dynamic person) {
     Console.WriteLine("{0} is {1} years old.",
                       person.Name, person.Age);

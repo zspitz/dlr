@@ -12,45 +12,29 @@ ScriptRuntime has a single constructor and two convenience factory methods. You 
 
 <h3 id="class-summary">4.1.1 Class Summary</h3>
 
+``` csharp
 public class ScriptRuntime : MarshalByRefObject
-
-public ScriptRuntime(ScriptRuntimeSetup setup)
-
-public static ScriptRuntime CreateFromConfiguration()
-
-public static ScriptRuntime
-
-CreateRemote(AppDomain domain, ScriptRuntimeSetup setup)
-
-public ScriptScope ExecuteFile(string path)
-
-public ScriptScope Globals { get; set;}
-
-public ScriptScope CreateScope()
-
-public ScriptScope CreateScope(IDynamicMetaObjectProvider storage)
-
-public ScriptEngine GetEngine(string languageId)
-
-public ScriptEngine GetEngineByFileExtension(string extension)
-
-public string\[\] GetRegisteredFileExtensions()
-
-public string\[\] GetRegisteredLanguageIdentifiers()
-
-public void LoadAssembly(Assembly assm)
-
-~~public ObjectOperations Operations { get; }~~
-
-~~public ObjectOperations CreateOperations()~~
-
-public ScriptRuntimeSetup Setup { get; }
-
-public ScriptHost Host { get; }
-
-public ScriptIO IO { get; }
-
-public void Shutdown()
+    public ScriptRuntime(ScriptRuntimeSetup setup)
+    public static ScriptRuntime CreateFromConfiguration()
+    public static ScriptRuntime 
+        CreateRemote(AppDomain domain, ScriptRuntimeSetup setup)
+    public ScriptScope ExecuteFile(string path)
+    public ScriptScope Globals { get; set;}
+    public ScriptScope CreateScope()
+    public ScriptScope CreateScope(IDynamicMetaObjectProvider storage)
+	
+    public ScriptEngine GetEngine(string languageId)
+    public ScriptEngine GetEngineByFileExtension(string extension)
+    public string[] GetRegisteredFileExtensions()
+    public string[] GetRegisteredLanguageIdentifiers()
+    public void LoadAssembly(Assembly assm)
+    public ObjectOperations Operations { get; }
+    public ObjectOperations CreateOperations() 
+    public ScriptRuntimeSetup Setup { get; }
+    public ScriptHost Host { get; }
+    public ScriptIO IO { get; }
+    public void Shutdown()
+```
 
 <h3 id="constructor">4.1.2 Constructor</h3>
 
@@ -64,7 +48,9 @@ After calling this method, modifying the ScriptRuntimeSetup object throws an exc
 
 Signature:
 
+``` csharp
 public ScriptRuntime(ScriptRuntimeSetup setup)
+```
 
 <h3 id="create-methods">4.1.3 Create\* Methods</h3>
 
@@ -72,17 +58,19 @@ These factory methods construct and return ScriptRuntimes. They primarily are fo
 
 CreateFromConfiguration is just a convenience for:
 
+``` csharp
 new ScriptRuntime(ScriptRuntimeSetup.ReadConfiguration())
+```
 
 CreateRemote creates the ScriptRuntime in the specified domain, instantiates the ScriptRuntimeSetup.HostType in that domain, and returns the ScriptRuntime. Any arguments specified in ScriptRuntimeSetup.HostArguments must derive from MBRO or serialize across app domain boundaries. The same holds for any values in ScriptRuntimeSetup.Options and any LanguageSetup.Options.
 
 Signatures:
 
+``` csharp
 public static ScriptRuntime CreateFromConfiguration()
-
-public static ScriptRuntime
-
-CreateRemote(AppDomain domain, ScriptRuntimeSetup setup)
+public static ScriptRuntime 
+    CreateRemote(AppDomain domain, ScriptRuntimeSetup setup)
+```
 
 <h3 id="executefile-method">4.1.4 ExecuteFile Method</h3>
 
@@ -92,7 +80,9 @@ This convenience method exists for Level 1 hosting scenarios where the path is l
 
 Signature:
 
+``` csharp
 public ScriptScope ExecuteFile(string path)
+```
 
 Each time this method is called it create a fresh ScriptScope in which to run the source. Calling Engine.GetScope returns the last ScriptScope created for repeated invocations of ExecuteFile on the same path.
 
@@ -112,7 +102,9 @@ This convenience method exists for Level 1 hosting scenarios where the host want
 
 Signature:
 
+``` csharp
 public ScriptScope UseFile(string path)
+```
 
 <h3 id="globals-property">4.1.6 Globals Property</h3>
 
@@ -120,7 +112,9 @@ This property returns the "global object" or name bindings of the ScriptRuntime 
 
 Signature:
 
+``` csharp
 public ScriptScope Globals { get; set; }
+```
 
 <h3 id="createscope-method">4.1.7 CreateScope Method</h3>
 
@@ -128,9 +122,10 @@ This method returns a new ScriptScope.
 
 Signatures:
 
+``` csharp
 public ScriptScope CreateScope()
-
 public ScriptScope CreateScope(IDynamicMetaObjectProvider storage)
+```
 
 The storage parameter lets you supply the dictionary of the scope so that you can provide late bound values for some name lookups. If storage is null, this method throws an ArgumentNullException.
 
@@ -140,7 +135,9 @@ This method returns the one engine associated with this ScriptRuntime that match
 
 Signature:
 
+``` csharp
 public ScriptEngine GetEngine(string languageId)
+```
 
 If languageId is null, or it does not map to an engine in the ScriptRuntime's configuration, then this method throws an exception.
 
@@ -152,7 +149,9 @@ This loads the engine and initializes it if needed. The file extension associati
 
 Signature:
 
+``` csharp
 public ScriptEngine GetEngineByFileExtension(string extension)
+```
 
 If extension is null, or it does not map to an engine in the ScriptRuntime's configuration, then this method throws an exception.
 
@@ -164,7 +163,9 @@ If extension is null, or it does not map to an engine in the ScriptRuntime's con
 
 ~~Signature:~~
 
-~~public ScriptEngine GetEngineByMimeType(string mimetype);~~
+``` csharp
+public ScriptEngine GetEngineByMimeType(string mimetype);
+```
 
 ~~If mimetype is null, or it does not map to an engine in the ScriptRuntime's configuration, then this method throws an exception.~~
 
@@ -174,7 +175,9 @@ This method returns an array of strings (without periods) where each element is 
 
 Signature:
 
-public string\[\] GetRegisteredFileExtensions()
+``` csharp
+public string[] GetRegisteredFileExtensions()
+```
 
 <h3 id="getregisteredlanguageidentifiers-method">4.1.12 GetRegisteredLanguageIdentifiers Method</h3>
 
@@ -182,7 +185,9 @@ This method returns an array of strings where each element is a registered langu
 
 Signature:
 
-public string\[\] GetRegisteredLanguageIdentifiers()
+``` csharp
+public string[] GetRegisteredLanguageIdentifiers()
+```
 
 <h3 id="loadassembly-method">4.1.13 LoadAssembly Method</h3>
 
@@ -192,7 +197,9 @@ By default, the DLR seeds the ScriptRuntime with Mscorlib and System assemblies.
 
 Signature:
 
+``` csharp
 public void LoadAssembly(Assembly assm)
+```
 
 *The following is the old behavior that was cut in lieu of the more flexible, langauge-specific support above (kept here should it come back before adding these APIs to .NET):*
 
@@ -216,7 +223,9 @@ See CreateOperations for alternatives.
 
 Signature:
 
+``` csharp
 public ObjectOperations Operations { get; }
+```
 
 <h3 id="createoperations-methods">4.1.15 CreateOperations Methods</h3>
 
@@ -228,7 +237,9 @@ There currently is little guidance on how to choose when to create new ObjectOpe
 
 Signature:
 
-public ObjectOperations CreateOperations()
+``` csharp
+public ObjectOperations CreateOperations() 
+```
 
 <h3 id="setup-property">4.1.16 Setup Property</h3>
 
@@ -236,7 +247,9 @@ This property returns a read-only ScriptRuntimeSetup object describing the confi
 
 Signature:
 
+``` csharp
 public ScriptRuntimeSetup Setup { get; }
+```
 
 <h3 id="host-property">4.1.17 Host Property</h3>
 
@@ -244,7 +257,9 @@ This property returns the ScriptHost associated with the ScriptRuntime. This is 
 
 Signature:
 
+``` csharp
 public ScriptHost Host { get; }
+```
 
 <h3 id="io-property">4.1.18 IO Property</h3>
 
@@ -252,7 +267,9 @@ This property returns the ScriptIO associated with the ScriptRuntime. The Script
 
 Signature:
 
+``` csharp
 public ScriptIO IO { get; }
+```
 
 <h3 id="shutdown-method">4.1.19 Shutdown Method</h3>
 
@@ -262,7 +279,9 @@ There are no other guarantees from this method. For example, It is undefined whe
 
 Signature:
 
+``` csharp
 public void Shutdown()
+```
 
 <h2 id="scriptscope-class">4.2 ScriptScope Class</h2>
 
@@ -280,35 +299,23 @@ Note, members that take or return ObjectHandles are not present on Silverlight.
 
 <h3 id="class-summary-1">4.2.1 Class Summary</h3>
 
+``` csharp
 public class ScriptScope : MarshalByRefObject {
-
-public object GetVariable(string name)
-
-public ObjectHandle GetVariableHandle(string name)
-
-public bool RemoveVariable(string name)
-
-public void SetVariable(string name, object value)
-
-public void SetVariable(string name, ObjectHandle handle)
-
-public bool TryGetVariable(string name, out object value)
-
-public bool TryGetVariableHandle(string name,
-
-out ObjectHandle handle)
-
-public T GetVariable&lt;T&gt;(string name)
-
-public bool TryGetVariable&lt;T&gt;(string name, out T value)
-
-public bool ContainsVariable(string name)
-
-public IEnumerable&lt;string&gt; GetVariableNames()
-
-public IEnumerable&lt;KeyValuePair&lt;string, object&gt;&gt; GetItems()
-
-public ScriptEngine Engine { get;}
+    public object GetVariable(string name)
+    public ObjectHandle GetVariableHandle(string name)
+    public bool RemoveVariable(string name)
+    public void SetVariable(string name, object value)
+    public void SetVariable(string name, ObjectHandle handle)
+    public bool TryGetVariable(string name, out object value)
+    public bool TryGetVariableHandle(string name, 
+                                       out ObjectHandle handle)
+    public T GetVariable<T>(string name)
+    public bool TryGetVariable<T>(string name, out T value)
+    public bool ContainsVariable(string name)
+    public IEnumerable<string> GetVariableNames()
+    public IEnumerable<KeyValuePair<string, object>> GetItems()
+    public ScriptEngine Engine { get;}
+```
 
 <h3 id="getvariable-methods">4.2.2 GetVariable\* Methods</h3>
 
@@ -318,11 +325,11 @@ If there is no engine associated with the scope (see ScriptRuntime.CreateScope),
 
 Signatures:
 
+``` csharp
 public object GetVariable(string name)
-
 public ObjectHandle GetVariableHandle(string name)
-
-public T GetVariable&lt;T&gt;(string name)
+public T GetVariable<T>(string name)
+```
 
 GetVariableHandle is useful when the ScriptScope is remote so that you get back an ObjectHandle referring to the value.
 
@@ -338,9 +345,10 @@ If there is no engine associated with the scope (see ScriptRuntime.CreateScope),
 
 Signatures:
 
+``` csharp
 public void SetVariable(string name, object value)
-
 public void SetVariable(string name, ObjectHandle handle)
+```
 
 <h3 id="trygetvariable-methods">4.2.4 TryGetVariable\* Methods</h3>
 
@@ -350,13 +358,12 @@ If there is no engine associated with the scope (see ScriptRuntime.CreateScope),
 
 Signatures:
 
+``` csharp
 public bool TryGetVariable(string name, out object value)
-
-public bool TryGetVariableHandle(string name,
-
-out ObjectHandle handle)
-
-public bool TryGetVariable&lt;T&gt;(string name, out T value)
+public bool TryGetVariableHandle(string name, 
+                                   out ObjectHandle handle)
+public bool TryGetVariable<T>(string name, out T value)
+```
 
 TryGetVariableHandle is useful when the ScriptScope is remote so that you get back an ObjectHandle referring to the value.
 
@@ -372,7 +379,9 @@ If there is no engine associated with the scope (see ScriptRuntime.CreateScope),
 
 Signature:
 
+``` csharp
 public bool ContainsVariable(string name)
+```
 
 <h3 id="getvariablenames-method">4.2.6 GetVariableNames Method</h3>
 
@@ -380,7 +389,9 @@ This method returns an enumeration of strings, one string for each variable name
 
 Signature:
 
-public IEnumerable&lt;string&gt; GetVariableNames()
+``` csharp
+public IEnumerable<string> GetVariableNames()
+```
 
 <h3 id="getitems-method">4.2.7 GetItems Method</h3>
 
@@ -388,7 +399,9 @@ This method returns an IEnumerable of variable name/value pairs, one for each va
 
 Signature:
 
-public IEnumerable&lt;KeyValuePair&lt;string, object&gt;&gt; GetItems ()
+``` csharp
+public IEnumerable<KeyValuePair<string, object>> GetItems ()
+```
 
 <h3 id="removevariable-method">4.2.8 RemoveVariable Method</h3>
 
@@ -400,7 +413,9 @@ Some languages may refuse to remove some variables. If the scope has an associat
 
 Signature:
 
+``` csharp
 public bool RemoveVariable(string name)
+```
 
 <h3 id="engine-property">4.2.9 Engine Property</h3>
 
@@ -408,7 +423,9 @@ This property returns the engine associated with this scope. If the scope was cr
 
 Signature:
 
+``` csharp
 public ScriptEngine Engine { get;}
+```
 
 <h2 id="scriptengine-class">4.3 ScriptEngine Class</h2>
 
@@ -420,129 +437,70 @@ Note, members that take or return ObjectHandles are not present on Silverlight.
 
 <h3 id="class-summary-2">4.3.1 Class Summary</h3>
 
+``` csharp
 public class ScriptEngine : MarshalByRefObject {
-
-internal ScriptEngine()
-
-public ScriptRuntime Runtime { get; }
-
-public string LanguageDisplayName { get; }
-
-public string\[\] GetRegisteredIdentifiers()
-
-public string\[\] GetRegisteredExtensions()
-
-public object Execute(string expression)
-
-public object Execute(string expression, ScriptScope scope)
-
-public T Execute&lt;T&gt;(string code)
-
-public T Execute&lt;T&gt;(string expression, ScriptScope scope)
-
-public ObjectHandle ExecuteAndWrap(string expression)
-
-public ObjectHandle ExecuteAndWrap(string expression,
-
-ScriptScope scope)
-
-public ScriptScope ExecuteFile(string path)
-
-public ScriptScope ExecuteFile(string path, ScriptScope scope)
-
-public ScriptScope GetScope(string path)
-
-public ObjectOperations Operations { get; }
-
-public ObjectOperations CreateOperations()
-
-public ObjectOperations CreateOperations(ScriptScope Scope)
-
-public ScriptSource CreateScriptSourceFromString
-
-(string expression)
-
-public ScriptSource CreateScriptSourceFromString
-
-(string expression, string path)
-
-public ScriptSource CreateScriptSourceFromString
-
-(string code, SourceCodeKind kind)
-
-public ScriptSource CreateScriptSourceFromString
-
-(string code, string path, SourceCodeKind kind)
-
-public ScriptSource CreateScriptSourceFromFile(string path)
-
-public ScriptSource CreateScriptSourceFromFile
-
-(string path, System.Text.Encoding encoding)
-
-public ScriptSource CreateScriptSourceFromFile
-
-(string path, System.Text.Encoding encoding,
-
-SourceCodeKind kind)
-
-public ScriptSource CreateScriptSource
-
-(StreamContentProvider contentProvider, string path)
-
-public ScriptSource CreateScriptSource
-
-(StreamContentProvider contentProvider, string path,
-
-System.Text.Encoding encoding)
-
-public ScriptSource CreateScriptSource
-
-(StreamContentProvider contentProvider, string path,
-
-System.Text.Encoding encoding, SourceCodeKind kind)
-
-public ScriptSource CreateScriptSource
-
-(TextContentProvider contentProvider, string path,
-
-SourceCodeKind kind)
-
-public ScriptSource CreateScriptSource(CodeObject content)
-
-public ScriptSource CreateScriptSource(CodeObject content,
-
-string path)
-
-public ScriptSource CreateScriptSource(CodeObject content,
-
-SourceCodeKind kind)
-
-public ScriptSource CreateScriptSource
-
-(System.CodeDom.CodeObject code,
-
-string path, SourceCodeKind kind)
-
-public ScriptScope CreateScope()
-
-public ScriptScope CreateScope(IDynamicMetaObjectProvider globals)
-
-public ServiceType GetService&lt;ServiceType&gt;(params object\[\] args)
-
-where ServiceType : class
-
-public LanguageSetup Setup { get; }
-
-public CompilerOptions GetCompilerOptions()
-
-public CompilerOptions GetCompilerOptions(ScriptScope scope)
-
-    public ICollection&lt;string&gt; GetSourceSearchPaths()
-
-public void SetSearchPaths (ICollection&lt;string&gt; paths)
-
-public System.Version LanguageVersion { get; }
+    internal ScriptEngine()
+    public ScriptRuntime Runtime { get; }
+    public string LanguageDisplayName { get; }
+    public string[] GetRegisteredIdentifiers()
+    public string[] GetRegisteredExtensions()
+    public object Execute(string expression)
+    public object Execute(string expression, ScriptScope scope)
+    public T Execute<T>(string code)
+    public T Execute<T>(string expression, ScriptScope scope)
+    public ObjectHandle ExecuteAndWrap(string expression)
+    public ObjectHandle ExecuteAndWrap(string expression, 
+                                       ScriptScope scope)
+    public ScriptScope ExecuteFile(string path)
+    public ScriptScope ExecuteFile(string path, ScriptScope scope) 
+    public ScriptScope GetScope(string path)
+    public ObjectOperations Operations { get; }
+    public ObjectOperations CreateOperations() 
+    public ObjectOperations CreateOperations(ScriptScope Scope) 
+    public ScriptSource CreateScriptSourceFromString
+        (string expression) 
+    public ScriptSource CreateScriptSourceFromString
+        (string expression, string path) 
+    public ScriptSource CreateScriptSourceFromString
+        (string code, SourceCodeKind kind) 
+    public ScriptSource CreateScriptSourceFromString
+        (string code, string path, SourceCodeKind kind) 
+    public ScriptSource CreateScriptSourceFromFile(string path) 
+    public ScriptSource CreateScriptSourceFromFile
+        (string path, System.Text.Encoding encoding) 
+    public ScriptSource CreateScriptSourceFromFile
+        (string path, System.Text.Encoding encoding, 
+         SourceCodeKind kind) 
+    public ScriptSource CreateScriptSource
+        (StreamContentProvider contentProvider, string path)
+    public ScriptSource CreateScriptSource
+       (StreamContentProvider contentProvider, string path, 
+        System.Text.Encoding encoding)
+    public ScriptSource CreateScriptSource
+        (StreamContentProvider contentProvider, string path, 
+         System.Text.Encoding encoding, SourceCodeKind kind)
+    public ScriptSource CreateScriptSource
+        (TextContentProvider contentProvider, string path, 
+         SourceCodeKind kind)
+    public ScriptSource CreateScriptSource(CodeObject content)
+    public ScriptSource CreateScriptSource(CodeObject content, 
+                                           string path)
+    public ScriptSource CreateScriptSource(CodeObject content,
+                                           SourceCodeKind kind)
+    public ScriptSource CreateScriptSource
+                        (System.CodeDom.CodeObject code,
+                         string path, SourceCodeKind kind)
+    public ScriptScope CreateScope()
+    public ScriptScope CreateScope(IDynamicMetaObjectProvider globals)
+    public ServiceType GetService<ServiceType>(params object[] args) 
+                                  where ServiceType : class
+    public LanguageSetup Setup { get; }
+    public CompilerOptions GetCompilerOptions() 
+    public CompilerOptions GetCompilerOptions(ScriptScope scope) 
+    public ICollection<string> GetSourceSearchPaths() 
+    public void SetSearchPaths (ICollection<string> paths)
+    public System.Version LanguageVersion { get; }
+```
 
 <h3 id="runtime-property">4.3.2 Runtime Property</h3>
 
@@ -550,7 +508,9 @@ This property returns the ScriptRuntime for the context in which this engine exe
 
 Signature:
 
+``` csharp
 public ScriptRuntime Runtime { get; }
+```
 
 <h3 id="languagedisplayname-property">4.3.3 LanguageDisplayName Property</h3>
 
@@ -558,7 +518,9 @@ This property returns a display name for the engine or language that is suitable
 
 Signature:
 
+``` csharp
 public string LanguageDisplayName { get; }
+```
 
 <h3 id="getregistered-methods">4.3.4 GetRegistered\* Methods</h3>
 
@@ -568,9 +530,10 @@ Modifying the results of these methods has no effect on configuration of this en
 
 Signatures:
 
-public string\[\] GetRegisteredIdentifiers()
-
-public string\[\] GetRegisteredExtensions()
+``` csharp
+public string[] GetRegisteredIdentifiers()
+public string[] GetRegisteredExtensions()
+```
 
 <h3 id="execute-methods">4.3.5 Execute\* Methods</h3>
 
@@ -582,19 +545,15 @@ ExecuteAndWrap returns an ObjectHandle for use when the engine and/or scope are 
 
 Signatures:
 
+``` csharp
 public object Execute(string expression)
-
 public object Execute(string expression, ScriptScope scope)
-
-public T Execute&lt;T&gt;(string expression)
-
-public T Execute&lt;T&gt;(string expression, ScriptScope scope)
-
+public T Execute<T>(string expression)
+public T Execute<T>(string expression, ScriptScope scope)
 public ObjectHandle ExecuteAndWrap(string expression)
-
-public ObjectHandle ExecuteAndWrap(string expression,
-
-ScriptScope scope)
+public ObjectHandle ExecuteAndWrap(string expression, 
+                                   ScriptScope scope)
+```
 
 <h3 id="executefile-methods">4.3.6 ExecuteFile Methods</h3>
 
@@ -602,9 +561,10 @@ These methods execute the strings the contents of files and return the scope in 
 
 Signatures:
 
+``` csharp
 public ScriptScope ExecuteFile(string path)
-
-public ScriptScope ExecuteFile(string path, ScriptScope scope)
+public ScriptScope ExecuteFile(string path, ScriptScope scope) 
+```
 
 <h3 id="getscope-method">4.3.7 GetScope Method</h3>
 
@@ -616,7 +576,9 @@ Languages may return null. For example, Ruby's require expression executes a fil
 
 Signature:
 
+``` csharp
 public ScriptScope GetScope(string path)
+```
 
 <h3 id="operations-property-1">4.3.8 Operations Property</h3>
 
@@ -626,7 +588,9 @@ See CreateOperations for alternatives.
 
 Signature:
 
+``` csharp
 public ObjectOperations Operations { get; }
+```
 
 <h3 id="createoperations-methods-1">4.3.9 CreateOperations Methods</h3>
 
@@ -636,9 +600,10 @@ There currently is little guidance on how to choose when to create new ObjectOpe
 
 Signature:
 
-public ObjectOperations CreateOperations()
-
-public ObjectOperations CreateOperations(ScriptScope Scope)
+``` csharp
+public ObjectOperations CreateOperations() 
+public ObjectOperations CreateOperations(ScriptScope Scope) 
+```
 
 The overload that takes a ScriptScope supports pretty advanced or subtle scenarios. It allows you to get an ObjectOperations that uses the execution context built up in a ScriptScope. For example, the engine affiliated with the scope could be IronPython, and you could execute code that did an "import clr" or "from \_\_future\_\_ import true\_division". These change execution behaviors within that ScriptScope. If you obtained objects from that scope or executing expressions in that scope, you may want to operate on those objects with the same execution behaviors; however, you generally do not need to worry about these subtleties for typical object interactions.
 
@@ -652,21 +617,16 @@ The ScriptSource's Path property defaults to null. When path is non-null, if exe
 
 Signatures:
 
+``` csharp
 public ScriptSource CreateScriptSourceFromString
-
-(string expression)
-
+    (string expression) 
 public ScriptSource CreateScriptSourceFromString
-
-(string expression, string path)
-
+    (string expression, string path) 
 public ScriptSource CreateScriptSourceFromString
-
-(string code, SourceCodeKind kind)
-
+    (string code, SourceCodeKind kind) 
 public ScriptSource CreateScriptSourceFromString
-
-(string code, string path, SourceCodeKind kind)
+    (string code, string path, SourceCodeKind kind) 
+```
 
 <h3 id="createscriptsourcefromfile-methods">4.3.11 CreateScriptSourceFromFile Methods</h3>
 
@@ -682,65 +642,43 @@ The encoding defaults to the platform encoding.
 
 Signatures:
 
-public ScriptSource CreateScriptSourceFromFile(string path)
-
+``` csharp
+public ScriptSource CreateScriptSourceFromFile(string path) 
 public ScriptSource CreateScriptSourceFromFile
-
-(string path, System.Text.Encoding encoding)
-
+    (string path, System.Text.Encoding encoding) 
 public ScriptSource CreateScriptSourceFromFile
-
-(string path, System.Text.Encoding encoding,
-
-SourceCodeKind kind)
+    (string path, System.Text.Encoding encoding, 
+     SourceCodeKind kind) 
+```
 
 <h3 id="createscriptsource-methods">4.3.12 CreateScriptSource Methods</h3>
 
 These methods returns a ScriptSource based on a CodeDom object or content providers. This is a factory method for creating a ScriptSources with this language binding.
 
+``` csharp
 public ScriptSource CreateScriptSource
-
-(StreamContentProvider contentProvider, string path)
-
+    (StreamContentProvider contentProvider, string path)
 public ScriptSource CreateScriptSource
-
-(StreamContentProvider contentProvider, string path,
-
-System.Text.Encoding encoding)
-
+   (StreamContentProvider contentProvider, string path, 
+    System.Text.Encoding encoding)
 public ScriptSource CreateScriptSource
-
-(StreamContentProvider contentProvider, string path,
-
-System.Text.Encoding encoding, SourceCodeKind kind)
-
+    (StreamContentProvider contentProvider, string path, 
+     System.Text.Encoding encoding, SourceCodeKind kind)
 public ScriptSource CreateScriptSource
-
-(TextContentProvider contentProvider, string path,
-
-SourceCodeKind kind)
-
+    (TextContentProvider contentProvider, string path, 
+     SourceCodeKind kind)
 public ScriptSource CreateScriptSource
-
-(System.CodeDom.CodeObject code,
-
-string path, SourceCodeKind kind)
-
+                    (System.CodeDom.CodeObject code,
+                     string path, SourceCodeKind kind)
 public ScriptSource CreateScriptSource(CodeObject content)
-
+public ScriptSource CreateScriptSource(CodeObject content, 
+                                       string path)
 public ScriptSource CreateScriptSource(CodeObject content,
-
-string path)
-
-public ScriptSource CreateScriptSource(CodeObject content,
-
-SourceCodeKind kind)
-
+                                       SourceCodeKind kind)
 public ScriptSource CreateScriptSource
-
-(System.CodeDom.CodeObject code,
-
-string path, SourceCodeKind kind)
+                    (System.CodeDom.CodeObject code,
+                     string path, SourceCodeKind kind)
+```
 
 The method taking a TextContentProvider lets you supply input from Unicode strings or stream readers. This could be useful for implementing a TextReader over internal host data structures, such as an editor's text representation.
 
@@ -768,9 +706,10 @@ This method returns a new ScriptScope with this engine as the default language f
 
 Signatures:
 
+``` csharp
 public ScriptScope CreateScope()
-
 public ScriptScope CreateScope(IDynamicMetaObjectProvider globals)
+```
 
 The globals parameter lets you supply the dictionary of the scope so that you can provide late bound values for some name lookups. The easiest way to supply your own dictionary is to use ExpandoObject or derive from DynamicObject .
 
@@ -780,37 +719,38 @@ This method returns a language-specific service. It provides a point of extensib
 
 Signature:
 
-public ServiceType GetService&lt;ServiceType&gt;(params object\[\] args)
-
-where ServiceType : class
+``` csharp
+public ServiceType GetService<ServiceType>(params object[] args) 
+                              where ServiceType : class
+```
 
 The following are services expected to be supported:
 
 <table>
 <thead>
 <tr class="header">
-<th>ExceptionOperations</th>
+<th><div class="sourceCode" id="cb1"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ExceptionOperations</span></code></pre></div></th>
 <th>This duplicates some members of Exception and can return a string in the style of this engine's language to describe the exception argument.</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>TokenCategorizer</td>
+<td><div class="sourceCode" id="cb2"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>TokenCategorizer </span></code></pre></div></td>
 <td><p>This is for building tools that want to scan languages and get token info, such as colorization categories.</p>
 <p><em>This type will change and be spec'ed external to this document eventually, see the section below for this type.</em></p></td>
 </tr>
 <tr class="even">
-<td>OptionsParser</td>
+<td><div class="sourceCode" id="cb3"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>OptionsParser </span></code></pre></div></td>
 <td><p>This can parse a command shell (cmd.exe) style command line string. Hosts that are trying to be an interactive console or incorporate standard command line switches of a language's console can get the engine's command line parser.</p>
 <p><em>This is a place holder for DLR v2. Its design will definitely change. We have a big open issue to redesign language and DLR support for building interactive UI, interpreters, tools, etc., with some common support around command lines and consoles.</em></p></td>
 </tr>
 <tr class="odd">
-<td>CommandLine</td>
+<td><div class="sourceCode" id="cb4"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>CommandLine </span></code></pre></div></td>
 <td><p>is a helper object for parsing and processing interactive console input, maintaining a history of input, etc.</p>
 <p><em>This is a place holder for DLR v2. Its design will definitely change. We have a big open issue to redesign language and DLR support for building interactive UI, interpreters, tools, etc., with some common support around command lines and consoles.</em></p></td>
 </tr>
 <tr class="even">
-<td>ScriptConsole</td>
+<td><div class="sourceCode" id="cb5"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ScriptConsole </span></code></pre></div></td>
 <td><p>This is a helper object for the UI of an interpreter, how output is displayed and how we get input. If the language does not implement a ScriptConsole, there is a default Console object they can return.</p>
 <p><em>This is a place holder for DLR v2. Its design will definitely change. We have a big open issue to redesign language and DLR support for building interactive UI, interpreters, tools, etc., with some common support around command lines and consoles. Need to distinguish this and CommandLine.</em></p></td>
 </tr>
@@ -823,7 +763,9 @@ This property returns a read-only LanguageSetup describing the configuration use
 
 Signature:
 
+``` csharp
 public LanguageSetup Setup { get; }
+```
 
 <h3 id="getcompileroptions-method">4.3.16 GetCompilerOptions Method</h3>
 
@@ -833,9 +775,10 @@ If scope is null, this throws an ArgumentNullException.
 
 Signatures:
 
-public CompilerOptions GetCompilerOptions()
-
-public CompilerOptions GetCompilerOptions(ScriptScope scope)
+``` csharp
+public CompilerOptions GetCompilerOptions() 
+public CompilerOptions GetCompilerOptions(ScriptScope scope) 
+```
 
 CompilerOptions type will likely change by the time the DLR Hosting APIs move into the .NET libraries, possibly becoming Dictionary&lt;str,obj&gt;.
 
@@ -847,7 +790,9 @@ These paths do not affect ScriptRuntime.ExecuteFile. The ScriptHost's PlatformAd
 
 Signature:
 
-public ICollection&lt;string&gt; GetSearchPaths ()
+``` csharp
+public ICollection<string> GetSearchPaths () 
+```
 
 <h3 id="setsearchpaths-method">4.3.18 SetSearchPaths Method</h3>
 
@@ -857,7 +802,9 @@ These paths do not affect ScriptRuntime.ExecuteFile. The ScriptHost's PlatformAd
 
 Signature:
 
-public void SetSearchPaths (ICollection&lt;string&gt; paths)
+``` csharp
+public void SetSearchPaths (ICollection<string> paths)
+```
 
 <h3 id="languageversion-property">4.3.19 LanguageVersion Property</h3>
 
@@ -865,7 +812,9 @@ This property returns the language's version.
 
 Signature:
 
+``` csharp
 public System.Version LanguageVersion { get; }
+```
 
 <h2 id="scriptsource-class">4.4 ScriptSource Class</h2>
 
@@ -881,65 +830,38 @@ Note, members that take or return ObjectHandles are not present on Silverlight.
 
 <h3 id="class-summary-3">4.4.1 Class Summary</h3>
 
+``` csharp
 public sealed class ScriptSource : MarshalByRefObject {
-
-internal ScriptSource()
-
-public string Path { get; }
-
-public SourceCodeKind Kind { get;}
-
-public ScriptCodeParseResult GetCodeProperties ()
-
-public ScriptCodeParseResult GetCodeProperties
-
-(CompilerOptions options)
-
-public ScriptEngine Engine { get; }
-
-public CompiledCode Compile()
-
+  internal ScriptSource()
+  public string Path { get; }
+  public SourceCodeKind Kind { get;}
+  public ScriptCodeParseResult GetCodeProperties () 
+  public ScriptCodeParseResult GetCodeProperties 
+                               (CompilerOptions options) 
+  public ScriptEngine Engine { get; }
+  public CompiledCode Compile()
   public CompiledCode Compile(ErrorListener sink)
-
-public CompiledCode Compile(CompilerOptions options)
-
-  public CompiledCode Compile(CompilerOptions options,
-
-ErrorListener sink)
-
-public object Execute()
-
-public object Execute(ScriptScope scope)
-
-public ObjectHandle ExecuteAndWrap ()
-
-public ObjectHandle ExecuteAndWrap (ScriptScope scope)
-
-public T Execute&lt;T&gt;()
-
-public T Execute&lt;T&gt;(ScriptScope scope)
-
-public int ExecuteProgram()
-
-public ScriptCodeReader GetReader()
-
-public Encoding DetectEncoding()
-
-// line/file mapping:
-
-public string GetCode()
-
-public string GetCodeLine(int line)
-
-public string\[\] GetCodeLines(int start, int count)
-
-public SourceSpan MapLine(SourceSpan span)
-
-public SourceLocation MapLine(SourceLocation loc)
-
-public int MapLine(int line)
-
-public string MapLineToFile(int line)
+  public CompiledCode Compile(CompilerOptions options)
+  public CompiledCode Compile(CompilerOptions options, 
+                              ErrorListener sink)
+  public object Execute()
+  public object Execute(ScriptScope scope)
+  public ObjectHandle ExecuteAndWrap ()
+  public ObjectHandle ExecuteAndWrap (ScriptScope scope)
+  public T Execute<T>()
+  public T Execute<T>(ScriptScope scope)
+  public int ExecuteProgram()
+  public ScriptCodeReader GetReader() 
+  public Encoding DetectEncoding() 
+  // line/file mapping:
+  public string GetCode() 
+  public string GetCodeLine(int line) 
+  public string[] GetCodeLines(int start, int count) 
+  public SourceSpan MapLine(SourceSpan span) 
+  public SourceLocation MapLine(SourceLocation loc) 
+  public int MapLine(int line) 
+  public string MapLineToFile(int line) 
+```
 
 <h3 id="path-property">4.4.2 Path Property</h3>
 
@@ -949,7 +871,9 @@ The Path is null if not set explicitly on construction. The path has the value t
 
 Signature:
 
+``` csharp
 public string Path { get; }
+```
 
 <h3 id="kind-property">4.4.3 Kind Property</h3>
 
@@ -959,7 +883,9 @@ If you're unsure, File can be used to direct the language to generally parse the
 
 Signature:
 
+``` csharp
 public SourceCodeKind Kind { get;}
+```
 
 <h3 id="getcodeproperties-methods">4.4.4 GetCodeProperties Methods</h3>
 
@@ -967,11 +893,11 @@ This method returns the properties of the code to support tools. The values indi
 
 Signature:
 
-public ScriptCodeParseResult GetCodeProperties ()
-
-public ScriptCodeParseResult GetCodeProperties
-
-(CompilerOptions options)
+``` csharp
+public ScriptCodeParseResult GetCodeProperties () 
+public ScriptCodeParseResult GetCodeProperties 
+                             (CompilerOptions options) 
+```
 
 CompilerOptions type will likely change by the time the DLR Hosting APIs move into the .NET libraries, possibly becoming Dictionary&lt;str,obj&gt;.
 
@@ -981,7 +907,9 @@ This property returns the language engine associated with this ScriptSource. The
 
 Signature:
 
+``` csharp
 public ScriptEngine Engine { get; }
+```
 
 <h3 id="compile-methods">4.4.6 Compile Methods</h3>
 
@@ -991,15 +919,13 @@ Each call to Compile returns a new CompiledCode object. Each call to Compile alw
 
 Signatures
 
-public CompiledCode Compile()
-
+``` csharp
+    public CompiledCode Compile()
     public CompiledCode Compile(ErrorListener sink)
-
-public CompiledCode Compile(CompilerOptions options)
-
-    public CompiledCode Compile(CompilerOptions options,
-
-ErrorListener sink)
+    public CompiledCode Compile(CompilerOptions options)
+    public CompiledCode Compile(CompilerOptions options, 
+                                ErrorListener sink)
+```
 
 If any arguments are null, these throw ArgumentNullExceptions.
 
@@ -1019,19 +945,15 @@ Each call to Execute always calls on its content provider to get sources, and th
 
 Signatures:
 
+``` csharp
 public object Execute()
-
 public object Execute(ScriptScope scope)
-
 public ObjectHandle ExecuteAndWrap ()
-
 public ObjectHandle ExecuteAndWrap (ScriptScope scope)
-
-public T Execute&lt;T&gt;()
-
-public T Execute&lt;T&gt;(ScriptScope scope)
-
+public T Execute<T>()
+public T Execute<T>(ScriptScope scope)
 public int ExecuteProgram()
+```
 
 Execute returns an object that is the resulting value of running the code. When the ScriptSource is a file or statement, the language decides what is an appropriate value to return. Some languages return the value produced by the last expression or statement, but languages that are not expression based may return null.
 
@@ -1047,7 +969,9 @@ This method returns a derived type of TextReader that is bound to this ScriptSou
 
 Signature:
 
-public ScriptCodeReader GetReader()
+``` csharp
+public ScriptCodeReader GetReader() 
+```
 
 <h3 id="detectencoding-method">4.4.9 DetectEncoding Method</h3>
 
@@ -1055,7 +979,9 @@ This method returns the encoding for the source. The language associated with th
 
 Signature:
 
-public Encoding DetectEncoding()
+``` csharp
+public Encoding DetectEncoding() 
+```
 
 <h3 id="getcode-method">4.4.10 GetCode Method</h3>
 
@@ -1065,7 +991,9 @@ Each call to GetCode always calls on its content provider to get sources, and th
 
 Signature:
 
-public string GetCode()
+``` csharp
+public string GetCode() 
+```
 
 <h3 id="getcodeline-methods">4.4.11 GetCodeLine\* Methods</h3>
 
@@ -1075,9 +1003,10 @@ The line and count arguments can cause indexing to go beyond the end of the sour
 
 Signatures:
 
-public string GetCodeLine(int line)
-
-public string\[\] GetCodeLines(int start, int count)
+``` csharp
+public string GetCodeLine(int line) 
+public string[] GetCodeLines(int start, int count) 
+```
 
 <h3 id="mapline-methods">4.4.12 MapLine Methods</h3>
 
@@ -1085,11 +1014,11 @@ These methods map physical line numbers to virtual line numbers for reporting er
 
 Signatures:
 
-public SourceSpan MapLine(SourceSpan span)
-
-public SourceLocation MapLine(SourceLocation loc)
-
-public int MapLine(int line)
+``` csharp
+public SourceSpan MapLine(SourceSpan span) 
+public SourceLocation MapLine(SourceLocation loc) 
+public int MapLine(int line) 
+```
 
 <h3 id="maplinetofile-method">4.4.13 MapLineToFile Method</h3>
 
@@ -1097,7 +1026,9 @@ This method maps a physical line number to a .NET CLR pdb or file with symbol in
 
 Signature:
 
-public string MapLineToFile(int line)
+``` csharp
+public string MapLineToFile(int line) 
+```
 
 <h2 id="compiledcode-class">4.5 CompiledCode Class</h2>
 
@@ -1109,25 +1040,18 @@ Note, members that take or return ObjectHandles are not present on Silverlight.
 
 <h3 id="class-summary-4">4.5.1 Class Summary</h3>
 
+``` csharp
 public class CompiledCode : MarshalByRefObject {
-
-internal CompiledCode()
-
-public ScriptScope DefaultScope { get; }
-
-public ScriptEngine Engine { get; }
-
-public object Execute()
-
-public object Execute(ScriptScope scope)
-
-public ObjectHandle ExecuteAndWrap()
-
-public ObjectHandle ExecuteAndWrap(ScriptScope scope)
-
-public T Execute&lt;T&gt;()
-
-public T Execute&lt;T&gt;(ScriptScope scope)
+    internal CompiledCode()
+    public ScriptScope DefaultScope { get; }
+    public ScriptEngine Engine { get; }
+    public object Execute() 
+    public object Execute(ScriptScope scope) 
+    public ObjectHandle ExecuteAndWrap() 
+    public ObjectHandle ExecuteAndWrap(ScriptScope scope) 
+    public T Execute<T>() 
+    public T Execute<T>(ScriptScope scope) 
+```
 
 <h3 id="defaultscope-property">4.5.2 DefaultScope Property</h3>
 
@@ -1135,7 +1059,9 @@ This property returns the default ScriptScope in which the code executes. This a
 
 Signature:
 
+``` csharp
 public ScriptScope DefaultScope { get; }
+```
 
 <h3 id="engine-property-2">4.5.3 Engine Property</h3>
 
@@ -1143,7 +1069,9 @@ This property returns the engine that produced the compiled code.
 
 Signature:
 
+``` csharp
 public ScriptEngine Engine { get; }
+```
 
 <h3 id="execute-methods-2">4.5.4 Execute\* Methods</h3>
 
@@ -1151,17 +1079,14 @@ These methods execute the compiled code in a variety of ways. Half of the overlo
 
 Signatures:
 
-public object Execute()
-
-public object Execute(ScriptScope scope)
-
-public ObjectHandle ExecuteAndWrap()
-
-public ObjectHandle ExecuteAndWrap(ScriptScope scope)
-
-public T Execute&lt;T&gt;()
-
-public T Execute&lt;T&gt;(ScriptScope scope)
+``` csharp
+public object Execute() 
+public object Execute(ScriptScope scope) 
+public ObjectHandle ExecuteAndWrap() 
+public ObjectHandle ExecuteAndWrap(ScriptScope scope) 
+public T Execute<T>() 
+public T Execute<T>(ScriptScope scope) 
+```
 
 ExecuteAndWrap returns an ObjectHandle for use when the engine and/or scope are remote.
 
@@ -1183,291 +1108,151 @@ Note, members that take or return ObjectHandles are not present on Silverlight.
 
 <h3 id="class-summary-5">4.6.1 Class Summary</h3>
 
+``` csharp
 public sealed class ObjectOperations : MarshalByRefObject {
-
-public ScriptEngine Engine { get; }
-
-public ObjectHandle Add(ObjectHandle self, ObjectHandle other)
-
-public Object Add(Object self, Object other)
-
-public Object BitwiseAnd(Object self, Object other)
-
-public ObjectHandle BitwiseAnd(ObjectHandle self,
-
-ObjectHandle other)
-
-public ObjectHandle BitwiseOr(ObjectHandle self,
-
-ObjectHandle other)
-
-public Object BitwiseOr(Object self, Object other)
-
-public Boolean ContainsMember(ObjectHandle obj, String name)
-
-public Boolean ContainsMember(Object obj, String name,
-
-Boolean ignoreCase)
-
-public Boolean ContainsMember(Object obj, String name)
-
-public T ConvertTo&lt;T&gt;(Object obj)
-
-public ObjectHandle ConvertTo&lt;T&gt;(ObjectHandle obj)
-
-public Object ConvertTo(Object obj, Type type)
-
-public ObjectHandle ConvertTo(ObjectHandle obj, Type type)
-
-public ObjectHandle CreateInstance(ObjectHandle obj,
-
-params ObjectHandle\[\] parameters)
-
-public ObjectHandle CreateInstance(ObjectHandle obj,
-
-params Object\[\] parameters)
-
-public Object CreateInstance(Object obj,
-
-params Object\[\] parameters)
-
-public Object Divide(Object self, Object other)
-
-public ObjectHandle Divide(ObjectHandle self,
-
-ObjectHandle other)
-
-public Object DoOperation(ExpressionType operation,
-
-Object target)
-
-public TResult DoOperation&lt;TTarget, TResult&gt;
-
-(ExpressionType operation, TTarget target)
-
-public Object DoOperation
-
-(ExpressionType operation, Object target, Object other)
-
-public TResult DoOperation&lt;TTarget, TOther, TResult&gt;
-
-(ExpressionType operation, TTarget target, TOther other)
-
-public Object DoOperation(ExpressionType op,
-
-ObjectHandle target)
-
-public ObjectHandle DoOperation
-
-(ExpressionType op, ObjectHandle target, ObjectHandle other)
-
-public Boolean Equal(Object self, Object other)
-
-public Boolean Equal(ObjectHandle self, ObjectHandle other)
-
-public Object ExclusiveOr(Object self, Object other)
-
-public ObjectHandle ExclusiveOr(ObjectHandle self,
-
-ObjectHandle other)
-
-public T ExplicitConvertTo&lt;T&gt;(Object obj)
-
-public Object ExplicitConvertTo(Object obj, Type type)
-
-public ObjectHandle ExplicitConvertTo(ObjectHandle obj, Type type)
-
-public ObjectHandle ExplicitConvertTo&lt;T&gt;(ObjectHandle obj)
-
-public T ImplicitConvertTo&lt;T&gt;(Object obj)
-
-public Object ImplicitConvertTo(Object obj, Type type)
-
-public ObjectHandle ImplicitConvertTo(ObjectHandle obj, Type type)
-
-public ObjectHandle ImplicitConvertTo&lt;T&gt;(ObjectHandle obj)
-
-public String Format(Object obj)
-
-public String Format(ObjectHandle obj)
-
-public IList&lt;System.String&gt; GetCallSignatures(ObjectHandle obj)
-
-public IList&lt;System.String&gt; GetCallSignatures(Object obj)
-
-public String GetDocumentation(Object obj)
-
-public String GetDocumentation(ObjectHandle obj)
-
-public T GetMember&lt;T&gt;(ObjectHandle obj, String name)
-
-public T GetMember&lt;T&gt;(Object obj, String name, Boolean ignoreCase)
-
-public Object GetMember(Object obj, String name)
-
-public Object GetMember(Object obj, String name,
-
-Boolean ignoreCase)
-
-public ObjectHandle GetMember(ObjectHandle obj, String name)
-
-public T GetMember&lt;T&gt;(Object obj, String name)
-
-public IList&lt;System.String&gt; GetMemberNames(ObjectHandle obj)
-
-public IList&lt;System.String&gt; GetMemberNames(Object obj)
-
-public Boolean GreaterThan(Object self, Object other)
-
-public Boolean GreaterThan(ObjectHandle self, ObjectHandle other)
-
-public Boolean GreaterThanOrEqual(Object self, Object other)
-
-public Boolean GreaterThanOrEqual(ObjectHandle self,
-
-ObjectHandle other)
-
-public ObjectHandle Invoke(ObjectHandle obj,
-
-params ObjectHandle\[\] parameters)
-
-public ObjectHandle Invoke(ObjectHandle obj,
-
-params Object\[\] parameters)
-
-public Object Invoke(Object obj, params Object\[\] parameters)
-
-public Object InvokeMember(Object obj, String memberName,
-
-params Object\[\] parameters)
-
-public Boolean IsCallable(Object obj)
-
-public Boolean IsCallable(ObjectHandle obj)
-
-public ObjectHandle LeftShift(ObjectHandle self,
-
-ObjectHandle other)
-
-public Object LeftShift(Object self, Object other)
-
-public Boolean LessThan(Object self, Object other)
-
-public Boolean LessThan(ObjectHandle self, ObjectHandle other)
-
-public Boolean LessThanOrEqual(ObjectHandle self,
-
-ObjectHandle other)
-
-public Boolean LessThanOrEqual(Object self, Object other)
-
-public ObjectHandle Modulo(ObjectHandle self, ObjectHandle other)
-
-public Object Modulo(Object self, Object other)
-
-public ObjectHandle Multiply(ObjectHandle self, ObjectHandle other)
-
-public Object Multiply(Object self, Object other)
-
-public Boolean NotEqual(Object self, Object other)
-
-public Boolean NotEqual(ObjectHandle self, ObjectHandle other)
-
-public Object Power(Object self, Object other)
-
-public ObjectHandle Power(ObjectHandle self, ObjectHandle other)
-
-public Boolean RemoveMember(Object obj, String name)
-
-public Boolean RemoveMember(ObjectHandle obj, String name)
-
-public Boolean RemoveMember(Object obj, String name,
-
-Boolean ignoreCase)
-
-public ObjectHandle RightShift(ObjectHandle self,
-
-ObjectHandle other)
-
-public Object RightShift(Object self, Object other)
-
-public void SetMember(Object obj, String name, Object value,
-
-Boolean ignoreCase)
-
-public void SetMember(ObjectHandle obj, String name,
-
-ObjectHandle value)
-
-public void SetMember&lt;T&gt;(Object obj, String name, T value,
-
-Boolean ignoreCase)
-
-public void SetMember&lt;T&gt;(Object obj, String name, T value)
-
-public void SetMember&lt;T&gt;(ObjectHandle obj, String name, T value)
-
-public void SetMember(Object obj, String name, Object value)
-
-public ObjectHandle Subtract(ObjectHandle self, ObjectHandle other)
-
-public Object Subtract(Object self, Object other)
-
-public Boolean TryConvertTo&lt;T&gt;(ObjectHandle obj,
-
-out ObjectHandle result)
-
-public Boolean TryConvertTo(Object obj, Type type,
-
-out Object result)
-
-public Boolean TryConvertTo&lt;T&gt;(Object obj, out T result)
-
-public Boolean TryConvertTo(ObjectHandle obj, Type type,
-
-out ObjectHandle result)
-
-public Boolean TryExplicitConvertTo&lt;T&gt;(Object obj, out T result)
-
-public Boolean TryExplicitConvertTo&lt;T&gt;(ObjectHandle obj,
-
-out ObjectHandle result)
-
-public Boolean TryExplicitConvertTo(ObjectHandle obj, Type type,
-
-out ObjectHandle result)
-
-public Boolean TryExplicitConvertTo(Object obj, Type type,
-
-out Object result)
-
-public Boolean TryImplicitConvertTo&lt;T&gt;(Object obj, out T result)
-
-public Boolean TryImplicitConvertTo&lt;T&gt;(ObjectHandle obj,
-
-out ObjectHandle result)
-
-public Boolean TryImplicitConvertTo(ObjectHandle obj, Type type,
-
-out ObjectHandle result)
-
-public Boolean TryImplicitConvertTo(Object obj, Type type,
-
-out Object result)
-
-public Boolean TryGetMember(Object obj, String name,
-
-Boolean ignoreCase, out Object value)
-
-public Boolean TryGetMember(ObjectHandle obj, String name,
-
-out ObjectHandle value)
-
-public Boolean TryGetMember(Object obj, String name,
-
-out Object value)
-
-public T Unwrap&lt;T&gt;(ObjectHandle obj)
+    public ScriptEngine Engine { get; }
+    public ObjectHandle Add(ObjectHandle self, ObjectHandle other)
+    public Object Add(Object self, Object other)
+    public Object BitwiseAnd(Object self, Object other)
+    public ObjectHandle BitwiseAnd(ObjectHandle self,
+                                   ObjectHandle other)
+    public ObjectHandle BitwiseOr(ObjectHandle self,
+                                  ObjectHandle other)
+    public Object BitwiseOr(Object self, Object other)
+    public Boolean ContainsMember(ObjectHandle obj, String name)
+    public Boolean ContainsMember(Object obj, String name,
+                                  Boolean ignoreCase)
+    public Boolean ContainsMember(Object obj, String name)
+    public T ConvertTo<T>(Object obj)
+    public ObjectHandle ConvertTo<T>(ObjectHandle obj)
+    public Object ConvertTo(Object obj, Type type)
+    public ObjectHandle ConvertTo(ObjectHandle obj, Type type)
+    public ObjectHandle CreateInstance(ObjectHandle obj,
+                                      params ObjectHandle[] parameters)
+    public ObjectHandle CreateInstance(ObjectHandle obj,
+                                       params Object[] parameters)
+    public Object CreateInstance(Object obj,
+                                 params Object[] parameters)
+    public Object Divide(Object self, Object other)
+    public ObjectHandle Divide(ObjectHandle self,
+                               ObjectHandle other)
+    public Object DoOperation(ExpressionType operation,
+                              Object target)
+    public TResult DoOperation<TTarget, TResult>
+       (ExpressionType operation, TTarget target)
+    public Object DoOperation
+       (ExpressionType operation, Object target, Object other)
+    public TResult DoOperation<TTarget, TOther, TResult>
+       (ExpressionType operation, TTarget target, TOther other)
+    public Object DoOperation(ExpressionType op,
+                              ObjectHandle target)
+    public ObjectHandle DoOperation
+       (ExpressionType op, ObjectHandle target, ObjectHandle other)
+    public Boolean Equal(Object self, Object other)
+    public Boolean Equal(ObjectHandle self, ObjectHandle other)
+    public Object ExclusiveOr(Object self, Object other)
+    public ObjectHandle ExclusiveOr(ObjectHandle self,
+                                    ObjectHandle other)
+    public T ExplicitConvertTo<T>(Object obj)
+    public Object ExplicitConvertTo(Object obj, Type type)
+    public ObjectHandle ExplicitConvertTo(ObjectHandle obj, Type type)
+    public ObjectHandle ExplicitConvertTo<T>(ObjectHandle obj)
+    public T ImplicitConvertTo<T>(Object obj)
+    public Object ImplicitConvertTo(Object obj, Type type)
+    public ObjectHandle ImplicitConvertTo(ObjectHandle obj, Type type)
+    public ObjectHandle ImplicitConvertTo<T>(ObjectHandle obj)
+    public String Format(Object obj)
+    public String Format(ObjectHandle obj)
+    public IList<System.String> GetCallSignatures(ObjectHandle obj)
+    public IList<System.String> GetCallSignatures(Object obj)
+    public String GetDocumentation(Object obj)
+    public String GetDocumentation(ObjectHandle obj)
+    public T GetMember<T>(ObjectHandle obj, String name)
+    public T GetMember<T>(Object obj, String name, Boolean ignoreCase)
+    public Object GetMember(Object obj, String name)
+    public Object GetMember(Object obj, String name,
+                            Boolean ignoreCase)
+    public ObjectHandle GetMember(ObjectHandle obj, String name)
+    public T GetMember<T>(Object obj, String name)
+    public IList<System.String> GetMemberNames(ObjectHandle obj)
+    public IList<System.String> GetMemberNames(Object obj)
+    public Boolean GreaterThan(Object self, Object other)
+    public Boolean GreaterThan(ObjectHandle self, ObjectHandle other)
+    public Boolean GreaterThanOrEqual(Object self, Object other)
+    public Boolean GreaterThanOrEqual(ObjectHandle self,
+                                      ObjectHandle other)
+    public ObjectHandle Invoke(ObjectHandle obj,
+                               params ObjectHandle[] parameters)
+    public ObjectHandle Invoke(ObjectHandle obj,
+                               params Object[] parameters)
+    public Object Invoke(Object obj, params Object[] parameters)
+    public Object InvokeMember(Object obj, String memberName,
+                               params Object[] parameters)
+    public Boolean IsCallable(Object obj)
+    public Boolean IsCallable(ObjectHandle obj)
+    public ObjectHandle LeftShift(ObjectHandle self,
+                                  ObjectHandle other)
+    public Object LeftShift(Object self, Object other)
+    public Boolean LessThan(Object self, Object other)
+    public Boolean LessThan(ObjectHandle self, ObjectHandle other)
+    public Boolean LessThanOrEqual(ObjectHandle self,
+                                   ObjectHandle other)
+    public Boolean LessThanOrEqual(Object self, Object other)
+    public ObjectHandle Modulo(ObjectHandle self, ObjectHandle other)
+    public Object Modulo(Object self, Object other)
+    public ObjectHandle Multiply(ObjectHandle self, ObjectHandle other)
+    public Object Multiply(Object self, Object other)
+    public Boolean NotEqual(Object self, Object other)
+    public Boolean NotEqual(ObjectHandle self, ObjectHandle other)
+    public Object Power(Object self, Object other)
+    public ObjectHandle Power(ObjectHandle self, ObjectHandle other)
+    public Boolean RemoveMember(Object obj, String name)
+    public Boolean RemoveMember(ObjectHandle obj, String name)
+    public Boolean RemoveMember(Object obj, String name,
+                                Boolean ignoreCase)
+    public ObjectHandle RightShift(ObjectHandle self,
+                                   ObjectHandle other)
+    public Object RightShift(Object self, Object other)
+    public void SetMember(Object obj, String name, Object value,
+                          Boolean ignoreCase)
+    public void SetMember(ObjectHandle obj, String name,
+                          ObjectHandle value)
+    public void SetMember<T>(Object obj, String name, T value,
+                             Boolean ignoreCase)
+    public void SetMember<T>(Object obj, String name, T value)
+    public void SetMember<T>(ObjectHandle obj, String name, T value)
+    public void SetMember(Object obj, String name, Object value)
+    public ObjectHandle Subtract(ObjectHandle self, ObjectHandle other)
+    public Object Subtract(Object self, Object other)
+    public Boolean TryConvertTo<T>(ObjectHandle obj,
+                                   out ObjectHandle result)
+    public Boolean TryConvertTo(Object obj, Type type,
+                                out Object result)
+    public Boolean TryConvertTo<T>(Object obj, out T result)
+    public Boolean TryConvertTo(ObjectHandle obj, Type type,
+                                out ObjectHandle result)
+    public Boolean TryExplicitConvertTo<T>(Object obj, out T result)
+    public Boolean TryExplicitConvertTo<T>(ObjectHandle obj,
+                                           out ObjectHandle result)
+    public Boolean TryExplicitConvertTo(ObjectHandle obj, Type type,
+                                        out ObjectHandle result)
+    public Boolean TryExplicitConvertTo(Object obj, Type type,
+                                        out Object result)
+    public Boolean TryImplicitConvertTo<T>(Object obj, out T result)
+    public Boolean TryImplicitConvertTo<T>(ObjectHandle obj,
+                                           out ObjectHandle result)
+    public Boolean TryImplicitConvertTo(ObjectHandle obj, Type type,
+                                        out ObjectHandle result)
+    public Boolean TryImplicitConvertTo(Object obj, Type type,
+                                        out Object result)
+    public Boolean TryGetMember(Object obj, String name,
+                                Boolean ignoreCase, out Object value)
+    public Boolean TryGetMember(ObjectHandle obj, String name,
+                                out ObjectHandle value)
+    public Boolean TryGetMember(Object obj, String name,
+                                out Object value)
+    public T Unwrap<T>(ObjectHandle obj)
+```
 
 <h3 id="engine-property-3">4.6.2 Engine Property</h3>
 
@@ -1475,7 +1260,9 @@ This property returns the engine bound to this ObjectOperations. The engine bind
 
 Signature:
 
+``` csharp
 public ScriptEngine Engine { get; }
+```
 
 <h3 id="iscallable-methods">4.6.3 IsCallable Methods</h3>
 
@@ -1483,9 +1270,10 @@ These methods returns whether the object is callable. Languages should return de
 
 Signatures:
 
+``` csharp
 public bool IsCallable(object obj)
-
 public bool IsCallable(ObjectHandle obj)
+```
 
 <h3 id="invoke-methods">4.6.4 Invoke Methods</h3>
 
@@ -1495,15 +1283,13 @@ If any obj arguments are null, then these throw an ArgumentNullException.
 
 Signatures:
 
+``` csharp
 public ObjectHandle Invoke(ObjectHandle obj,
-
-params ObjectHandle\[\] parameters)
-
+                           params ObjectHandle[] parameters)
 public ObjectHandle Invoke(ObjectHandle obj,
-
-params Object\[\] parameters)
-
-public Object Invoke(Object obj, params Object\[\] parameters)
+                           params Object[] parameters)
+public Object Invoke(Object obj, params Object[] parameters)
+```
 
 <h3 id="invokemember-method">4.6.5 InvokeMember Method</h3>
 
@@ -1513,9 +1299,10 @@ If the obj argument is null, then this throws an ArgumentNullException.
 
 Signatures:
 
+``` csharp
 public Object InvokeMember(Object obj, String memberName,
-
-params Object\[\] parameters)
+                           params Object[] parameters)
+```
 
 <h3 id="createinstance-methods">4.6.6 CreateInstance Methods</h3>
 
@@ -1525,17 +1312,14 @@ If any obj arguments are null, then these throw an ArgumentNullException.
 
 Signatures:
 
+``` csharp
 public ObjectHandle CreateInstance(ObjectHandle obj,
-
-params ObjectHandle\[\] parameters)
-
+                                  params ObjectHandle[] parameters)
 public ObjectHandle CreateInstance(ObjectHandle obj,
-
-params Object\[\] parameters)
-
+                                   params Object[] parameters)
 public Object CreateInstance(Object obj,
-
-params Object\[\] parameters)
+                             params Object[] parameters)
+```
 
 <h3 id="getmember-methods">4.6.7 GetMember\* Methods</h3>
 
@@ -1547,19 +1331,15 @@ If the specified member does not exist, or if it is write-only, then these throw
 
 Signatures:
 
-public T GetMember&lt;T&gt;(ObjectHandle obj, String name)
-
-public T GetMember&lt;T&gt;(Object obj, String name, Boolean ignoreCase)
-
+``` csharp
+public T GetMember<T>(ObjectHandle obj, String name)
+public T GetMember<T>(Object obj, String name, Boolean ignoreCase)
 public Object GetMember(Object obj, String name)
-
 public Object GetMember(Object obj, String name,
-
-Boolean ignoreCase)
-
+                        Boolean ignoreCase)
 public ObjectHandle GetMember(ObjectHandle obj, String name)
-
-public T GetMember&lt;T&gt;(Object obj, String name)
+public T GetMember<T>(Object obj, String name)
+```
 
 <h3 id="trygetmember-methods">4.6.8 TryGetMember Methods</h3>
 
@@ -1569,17 +1349,14 @@ If obj or name is null, then these throw an ArgumentNullException.
 
 Signatures:
 
+``` csharp
 public Boolean TryGetMember(Object obj, String name,
-
-Boolean ignoreCase, out Object value)
-
+                            Boolean ignoreCase, out Object value)
 public Boolean TryGetMember(ObjectHandle obj, String name,
-
-out ObjectHandle value)
-
+                            out ObjectHandle value)
 public Boolean TryGetMember(Object obj, String name,
-
-out Object value)
+                            out Object value)
+```
 
 <h3 id="containsmember-methods">4.6.9 ContainsMember Methods</h3>
 
@@ -1587,13 +1364,12 @@ These methods return whether the name is a member of obj.
 
 Signatures:
 
+``` csharp
 public Boolean ContainsMember(ObjectHandle obj, String name)
-
 public Boolean ContainsMember(Object obj, String name,
-
-Boolean ignoreCase)
-
+                              Boolean ignoreCase)
 public Boolean ContainsMember(Object obj, String name)
+```
 
 <h3 id="removemember-methods">4.6.10 RemoveMember Methods</h3>
 
@@ -1603,13 +1379,12 @@ If any arguments are null, then these throw an ArgumentNullException.
 
 Signatures:
 
+``` csharp
 public Boolean RemoveMember(Object obj, String name)
-
 public Boolean RemoveMember(ObjectHandle obj, String name)
-
 public Boolean RemoveMember(Object obj, String name,
-
-Boolean ignoreCase)
+                            Boolean ignoreCase)
+```
 
 <h3 id="setmember-methods">4.6.11 SetMember Methods</h3>
 
@@ -1621,23 +1396,17 @@ If any arguments are null, then these throw an ArgumentNullException.
 
 Signatures:
 
+``` csharp
 public void SetMember(Object obj, String name, Object value,
-
-Boolean ignoreCase)
-
+                      Boolean ignoreCase)
 public void SetMember(ObjectHandle obj, String name,
-
-ObjectHandle value)
-
-public void SetMember&lt;T&gt;(Object obj, String name, T value,
-
-Boolean ignoreCase)
-
-public void SetMember&lt;T&gt;(Object obj, String name, T value)
-
-public void SetMember&lt;T&gt;(ObjectHandle obj, String name, T value)
-
+                      ObjectHandle value)
+public void SetMember<T>(Object obj, String name, T value,
+                         Boolean ignoreCase)
+public void SetMember<T>(Object obj, String name, T value)
+public void SetMember<T>(ObjectHandle obj, String name, T value)
 public void SetMember(Object obj, String name, Object value)
+```
 
 <h3 id="convertto-methods">4.6.12 ConvertTo\* Methods</h3>
 
@@ -1649,13 +1418,12 @@ If these methods cannot perform the requested conversion, then they throw a NotS
 
 Signatures:
 
-public T ConvertTo&lt;T&gt;(Object obj)
-
-public ObjectHandle ConvertTo&lt;T&gt;(ObjectHandle obj)
-
+``` csharp
+public T ConvertTo<T>(Object obj)
+public ObjectHandle ConvertTo<T>(ObjectHandle obj)
 public Object ConvertTo(Object obj, Type type)
-
 public ObjectHandle ConvertTo(ObjectHandle obj, Type type)
+```
 
 <h3 id="tryconvertto-methods">4.6.13 TryConvertTo\* Methods</h3>
 
@@ -1669,79 +1437,65 @@ If obj is null, then these throw an ArgumentNullException.
 
 Signatures:
 
-public Boolean TryConvertTo&lt;T&gt;(ObjectHandle obj,
-
-out ObjectHandle result)
-
+``` csharp
+public Boolean TryConvertTo<T>(ObjectHandle obj,
+                               out ObjectHandle result)
 public Boolean TryConvertTo(Object obj, Type type,
-
-out Object result)
-
-public Boolean TryConvertTo&lt;T&gt;(Object obj, out T result)
-
+                            out Object result)
+public Boolean TryConvertTo<T>(Object obj, out T result)
 public Boolean TryConvertTo(ObjectHandle obj, Type type,
-
-out ObjectHandle result)
+                            out ObjectHandle result)
+```
 
 <h3 id="explicitconvertto-methods">4.6.14 ExplicitConvertTo\* Methods</h3>
 
 These methods convert an object to the requested type using explicit conversions, which may be lossy. Otherwise these methods are the same as the ConvertTo\* methods.
 
-public T ExplicitConvertTo&lt;T&gt;(Object obj)
-
+``` csharp
+public T ExplicitConvertTo<T>(Object obj)
 public Object ExplicitConvertTo(Object obj, Type type)
-
 public ObjectHandle ExplicitConvertTo(ObjectHandle obj, Type type)
-
-public ObjectHandle ExplicitConvertTo&lt;T&gt;(ObjectHandle obj)
+public ObjectHandle ExplicitConvertTo<T>(ObjectHandle obj)
+```
 
 <h3 id="tryexplicitconvertto-methods">4.6.15 TryExplicitConvertTo\* Methods</h3>
 
 These methods try to convert an object to the request type using explicit conversions, which may be lossy. Otherwise these methods are the same as TryConvertTo\* methods.
 
-public Boolean TryExplicitConvertTo&lt;T&gt;(Object obj, out T result)
-
-public Boolean TryExplicitConvertTo&lt;T&gt;(ObjectHandle obj,
-
-out ObjectHandle result)
-
+``` csharp
+public Boolean TryExplicitConvertTo<T>(Object obj, out T result)
+public Boolean TryExplicitConvertTo<T>(ObjectHandle obj,
+                                       out ObjectHandle result)
 public Boolean TryExplicitConvertTo(ObjectHandle obj, Type type,
-
-out ObjectHandle result)
-
+                                    out ObjectHandle result)
 public Boolean TryExplicitConvertTo(Object obj, Type type,
-
-out Object result)
+                                    out Object result)
+```
 
 <h3 id="implicitconvertto-methods">4.6.16 ImplicitConvertTo\* Methods</h3>
 
 These methods convert an object to the requested type using implicit conversions, which may be lossy. Otherwise these methods are the same as the ConvertTo\* methods.
 
-public T ImplicitConvertTo&lt;T&gt;(Object obj)
-
+``` csharp
+public T ImplicitConvertTo<T>(Object obj)
 public Object ImplicitConvertTo(Object obj, Type type)
-
 public ObjectHandle ImplicitConvertTo(ObjectHandle obj, Type type)
-
-public ObjectHandle ImplicitConvertTo&lt;T&gt;(ObjectHandle obj)
+public ObjectHandle ImplicitConvertTo<T>(ObjectHandle obj)
+```
 
 <h3 id="tryimplicitconvertto-methods">4.6.17 TryimplicitConvertTo\* Methods</h3>
 
 These methods try to convert an object to the request type using implicit conversions, which may be lossy. Otherwise these methods are the same as TryConvertTo\* methods.
 
-public Boolean TryImplicitConvertTo&lt;T&gt;(Object obj, out T result)
-
-public Boolean TryImplicitConvertTo&lt;T&gt;(ObjectHandle obj,
-
-out ObjectHandle result)
-
+``` csharp
+public Boolean TryImplicitConvertTo<T>(Object obj, out T result)
+public Boolean TryImplicitConvertTo<T>(ObjectHandle obj,
+                                       out ObjectHandle result)
 public Boolean TryImplicitConvertTo(ObjectHandle obj, Type type,
-
-out ObjectHandle result)
-
+                                    out ObjectHandle result)
 public Boolean TryImplicitConvertTo(Object obj, Type type,
-
-out Object result)
+                                    out Object result)
+```
 
 <h3 id="unwrapt-method">4.6.18 Unwrap&lt;T&gt; Method</h3>
 
@@ -1749,7 +1503,9 @@ This method unwraps the remote object reference, converting it to the specified 
 
 Signature:
 
-public T Unwrap&lt;T&gt;(ObjectHandle obj)
+``` csharp
+public T Unwrap<T>(ObjectHandle obj) 
+```
 
 <h3 id="format-methods">4.6.19 Format Methods</h3>
 
@@ -1757,9 +1513,10 @@ These methods return a string representation of obj that is parse-able by the la
 
 Signatures:
 
-public string Format(object obj)
-
-public string Format(ObjectHandle obj)
+``` csharp
+public string Format(object obj) 
+public string Format(ObjectHandle obj) 
+```
 
 <h3 id="getmembernames-methods">4.6.20 GetMemberNames Methods</h3>
 
@@ -1767,9 +1524,10 @@ These methods return an array of all the member names that obj has explicitly, d
 
 Signatures:
 
-public IList&lt;string&gt; GetMemberNames(object obj)
-
-public IList&lt;string&gt; GetMemberNames(ObjectHandle obj)
+``` csharp
+public IList<string> GetMemberNames(object obj) 
+public IList<string> GetMemberNames(ObjectHandle obj) 
+```
 
 <h3 id="getdocumentation-methods">4.6.21 GetDocumentation Methods</h3>
 
@@ -1777,9 +1535,10 @@ These methods return the documentation for obj. When obj is a static .NET object
 
 Signatures:
 
+``` csharp
 public string GetDocumentation(object obj)
-
 public string GetDocumentation(ObjectHandle obj)
+```
 
 <h3 id="getcallsignatures-methods">4.6.22 GetCallSignatures Methods</h3>
 
@@ -1787,9 +1546,10 @@ These methods return arrays of stings, each one describing a call signature that
 
 Signatures:
 
-public IList&lt;string&gt; GetCallSignatures(object obj)
-
-public IList&lt;string&gt; GetCallSignatures(ObjectHandle obj)
+``` csharp
+public IList<string> GetCallSignatures(object obj)
+public IList<string> GetCallSignatures(ObjectHandle obj)
+```
 
 <h3 id="dooperation-methods">4.6.23 DoOperation\* Methods</h3>
 
@@ -1811,245 +1571,281 @@ The Hosting APIs share the ExpressionType enum with Expression Trees and the dyn
 
 Signatures:
 
+``` csharp
 public Object DoOperation(ExpressionType operation,
-
-Object target)
-
-public TResult DoOperation&lt;TTarget, TResult&gt;
-
-(ExpressionType operation, TTarget target)
-
+                          Object target)
+public TResult DoOperation<TTarget, TResult>
+   (ExpressionType operation, TTarget target)
 public Object DoOperation
-
-(ExpressionType operation, Object target, Object other)
-
-public TResult DoOperation&lt;TTarget, TOther, TResult&gt;
-
-(ExpressionType operation, TTarget target, TOther other)
-
+   (ExpressionType operation, Object target, Object other)
+public TResult DoOperation<TTarget, TOther, TResult>
+   (ExpressionType operation, TTarget target, TOther other)
 public Object DoOperation(ExpressionType op,
-
-ObjectHandle target)
-
+                          ObjectHandle target)
 public ObjectHandle DoOperation
-
-(ExpressionType op, ObjectHandle target, ObjectHandle other)
+   (ExpressionType op, ObjectHandle target, ObjectHandle other)
+```
 
 <h3 id="add-methods">4.6.24 Add Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.Add, self, other)
+```
 
 Signatures:
 
-public object Add(object self, object other)
-
-public ObjectHandle Add(ObjectHandle self, ObjectHandle other)
+``` csharp
+public object Add(object self, object other) 
+public ObjectHandle Add(ObjectHandle self, ObjectHandle other) 
+```
 
 <h3 id="subtract-methods">4.6.25 Subtract Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.Subtract, self, other)
+```
 
 Signatures:
 
-public object Subtract(object self, object other)
-
+``` csharp
+public object Subtract(object self, object other) 
 public ObjectHandle Subtract(ObjectHandle self, ObjectHandle other)
+```
 
 <h3 id="power-methods">4.6.26 Power Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.Power, self, other)
+```
 
 Signatures:
 
-public object Power(object self, object other)
-
-public ObjectHandle Power(ObjectHandle self, ObjectHandle other)
+``` csharp
+public object Power(object self, object other) 
+public ObjectHandle Power(ObjectHandle self, ObjectHandle other) 
+```
 
 <h3 id="multiply-methods">4.6.27 Multiply Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.Multiply, self, other)
+```
 
 Signatures:
 
-public object Multiply(object self, object other)
-
+``` csharp
+public object Multiply(object self, object other) 
 public ObjectHandle Multiply(ObjectHandle self, ObjectHandle other)
+```
 
 <h3 id="divide-methods">4.6.28 Divide Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.Divide, self, other)
+```
 
 Signatures:
 
-public object Divide(object self, object other)
-
+``` csharp
+public object Divide(object self, object other) 
 public ObjectHandle Divide(ObjectHandle self, ObjectHandle other)
+```
 
 <h3 id="modulo-methods">4.6.29 Modulo Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.Modulo, self, other)
+```
 
 Signatures:
 
+``` csharp
 public ObjectHandle Modulo(ObjectHandle self, ObjectHandle other)
-
 public Object Modulo(Object self, Object other)
+```
 
 <h3 id="leftshift-methods">4.6.30 LeftShift Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.LeftShift, self, other)
+```
 
 Signatures:
 
-public object LeftShift(object self, object other)
-
+``` csharp
+public object LeftShift(object self, object other) 
 public ObjectHandle LeftShift(ObjectHandle self, ObjectHandle other)
+```
 
 <h3 id="rightshift-methods">4.6.31 RightShift Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.RightShift, self, other)
+```
 
 Signatures:
 
+``` csharp
 public object RightShift(object self, object other) {
-
-public ObjectHandle RightShift(ObjectHandle self,
-
-ObjectHandle other)
+public ObjectHandle RightShift(ObjectHandle self, 
+                               ObjectHandle other) 
+```
 
 <h3 id="bitwiseand-methods">4.6.32 BitwiseAnd Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.BitwiseAnd, self, other)
+```
 
 Signatures:
 
+``` csharp
 public object BitwiseAnd(object self, object other) {
-
-public ObjectHandle BitwiseAnd(ObjectHandle self,
-
-ObjectHandle other)
+public ObjectHandle BitwiseAnd(ObjectHandle self, 
+                               ObjectHandle other) 
+```
 
 <h3 id="bitwiseor-methods">4.6.33 BitwiseOr Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.BitwiseOr, self, other)
+```
 
 Signatures:
 
+``` csharp
 public object BitwiseOr(object self, object other)
-
-public ObjectHandle BitwiseOr(ObjectHandle self,
-
-ObjectHandle other)
+public ObjectHandle BitwiseOr(ObjectHandle self, 
+                              ObjectHandle other) 
+```
 
 <h3 id="exclusiveor-methods">4.6.34 ExclusiveOr Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.ExclusiveOr, self, other)
+```
 
 Signatures:
 
+``` csharp
 public object ExclusiveOr(object self, object other)
-
-public ObjectHandle ExclusiveOr(ObjectHandle self,
-
-ObjectHandle other)
+public ObjectHandle ExclusiveOr(ObjectHandle self, 
+                                ObjectHandle other) 
+```
 
 <h3 id="equal-methods">4.6.35 Equal Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.Equal, self, other)
+```
 
 Signatures:
 
-public bool Equal(object self, object other)
-
-public bool Equal(ObjectHandle self, ObjectHandle other)
+``` csharp
+public bool Equal(object self, object other) 
+public bool Equal(ObjectHandle self, ObjectHandle other) 
+```
 
 <h3 id="notequal-methods">4.6.36 NotEqual Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.Equal, self, other)
+```
 
 Signatures:
 
+``` csharp
 public Boolean NotEqual(Object self, Object other)
-
 public Boolean NotEqual(ObjectHandle self, ObjectHandle other)
+```
 
 <h3 id="lessthan-methods">4.6.37 LessThan Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.LessThan, self, other)
+```
 
 Signatures:
 
+``` csharp
 public bool LessThan(object self, object other)
-
-public bool LessThan(ObjectHandle self, ObjectHandle other)
+public bool LessThan(ObjectHandle self, ObjectHandle other) 
+```
 
 <h3 id="lessthanorequal-methods">4.6.38 LessThanOrEqual Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.LessThanOrEqual, self, other)
+```
 
 Signatures:
 
+``` csharp
 public Boolean LessThanOrEqual(ObjectHandle self,
-
-ObjectHandle other)
-
+                               ObjectHandle other)
 public Boolean LessThanOrEqual(Object self, Object other)
+```
 
 <h3 id="greaterthan-methods">4.6.39 GreaterThan Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.GreaterThan, self, other)
+```
 
 Signatures:
 
+``` csharp
 public bool GreaterThan(object self, object other)
-
-public bool GreaterThan(ObjectHandle self, ObjectHandle other)
+public bool GreaterThan(ObjectHandle self, ObjectHandle other) 
+```
 
 <h3 id="greaterthanorequal-methods">4.6.40 GreaterThanOrEqual Methods</h3>
 
 These methods are convenience members that are equivalent to:
 
+``` csharp
 DoOperation(ExpressionType.GreaterThanOrEqual, self, other)
+```
 
 Signatures:
 
-public bool GreaterThanOrEqual(object self, object other)
-
-public bool GreaterThanOrEqual(ObjectHandle self,
-
-ObjectHandle other)
+``` csharp
+public bool GreaterThanOrEqual(object self, object other) 
+public bool GreaterThanOrEqual(ObjectHandle self, 
+                               ObjectHandle other) 
+```
 
 <h2 id="sourcecodekind-enum">4.7 SourceCodeKind Enum</h2>
 
@@ -2057,34 +1853,55 @@ This enum identifies parsing hints to languages for ScriptSource objects. For ex
 
 <h3 id="type-summary">4.7.1 Type Summary</h3>
 
+``` csharp
 public enum SourceCodeKind {
-
-Unspecified,
-
-Expression,
-
-Statements,
-
-SingleStatement,
-
-File,
-
-InteractiveCode,
-
-AutoDetect
+    Unspecified,
+    Expression,
+    Statements,
+    SingleStatement,
+    File,
+    InteractiveCode,
+    AutoDetect
+```
 
 <h3 id="members">4.7.2 Members</h3>
 
 The Summary section shows the type as it is defined (to indicate values of members), and this section documents the intent of the members.
 
-| Unspecified     | Should not be used.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Expression      | Start parsing an expression.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| Statements      | Start parsing one or more statements if there's special syntax for multiple statements.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| SingleStatement | Start parsing a single statement, guaranteeing there's only one if that is significant to the language.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| File            | Start parsing at the beginning of a file.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| InteractiveCode | Start parsing at a legal input to a REPL. This kind also means the language should wrap the source to do language-specific output of the evaluation result.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| AutoDetect      | The language best determines how to parse the input. It may choose Interactive (supporting special syntax or variables), Expression, Statement, or File. This is the most liberal choice for the language to do whatever it determines is best. The goal of this kind is to help uses hosting with embedded code that has extraneous whitespace, several statements or expressions, etc. The language determines how to evaluate and what to return as the result in addition to shaping the extra whitespace to make sense if whitespace is significant in the language. The language may ignore initial lines with only whitespace if that would confuse the parsing or evaluation. |
+<table>
+<thead>
+<tr class="header">
+<th><div class="sourceCode" id="cb1"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Unspecified</span></code></pre></div></th>
+<th>Should not be used.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><div class="sourceCode" id="cb2"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Expression</span></code></pre></div></td>
+<td>Start parsing an expression.</td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb3"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Statements</span></code></pre></div></td>
+<td>Start parsing one or more statements if there's special syntax for multiple statements.</td>
+</tr>
+<tr class="odd">
+<td><div class="sourceCode" id="cb4"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>SingleStatement</span></code></pre></div></td>
+<td>Start parsing a single statement, guaranteeing there's only one if that is significant to the language.</td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb5"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>File</span></code></pre></div></td>
+<td>Start parsing at the beginning of a file.</td>
+</tr>
+<tr class="odd">
+<td><div class="sourceCode" id="cb6"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>InteractiveCode</span></code></pre></div></td>
+<td>Start parsing at a legal input to a REPL. This kind also means the language should wrap the source to do language-specific output of the evaluation result.</td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb7"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>AutoDetect</span></code></pre></div></td>
+<td>The language best determines how to parse the input. It may choose Interactive (supporting special syntax or variables), Expression, Statement, or File. This is the most liberal choice for the language to do whatever it determines is best. The goal of this kind is to help uses hosting with embedded code that has extraneous whitespace, several statements or expressions, etc. The language determines how to evaluate and what to return as the result in addition to shaping the extra whitespace to make sense if whitespace is significant in the language. The language may ignore initial lines with only whitespace if that would confuse the parsing or evaluation.</td>
+</tr>
+</tbody>
+</table>
 
 <h2 id="scriptcodeparseresult-enum">4.8 ScriptCodeParseResult Enum</h2>
 
@@ -2094,28 +1911,45 @@ May need to rename to ScriptCodeParseResult since .NET naming conventions only l
 
 <h3 id="type-summary-1">4.8.1 Type Summary</h3>
 
+``` csharp
 public enum ScriptCodeParseResult {
-
-Complete,
-
-Invalid,
-
-IncompleteToken,
-
-IncompleteStatement,
-
-Empty
+    Complete,
+    Invalid,
+    IncompleteToken,
+    IncompleteStatement,
+    Empty
+```
 
 <h3 id="members-1">4.8.2 Members</h3>
 
 The Summary section shows the type as it is defined (to indicate values of members), and this section documents the intent of the members.
 
-| Complete            | There is no reportable state after parsing.                       |
-|---------------------|-------------------------------------------------------------------|
-| Invalid             | The source is syntactically invalid and cannot be parsed.         |
-| IncompleteToken     | The source ended on an incomplete token that aborted parsing.     |
-| IncompleteStatement | The source ended on an incomplete statement that aborted parsing. |
-| Empty               | The source is either empty, all whitespace, or all comments.      |
+<table>
+<thead>
+<tr class="header">
+<th><div class="sourceCode" id="cb1"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Complete</span></code></pre></div></th>
+<th>There is no reportable state after parsing.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><div class="sourceCode" id="cb2"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Invalid</span></code></pre></div></td>
+<td>The source is syntactically invalid and cannot be parsed.</td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb3"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>IncompleteToken</span></code></pre></div></td>
+<td>The source ended on an incomplete token that aborted parsing.</td>
+</tr>
+<tr class="odd">
+<td><div class="sourceCode" id="cb4"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>IncompleteStatement</span></code></pre></div></td>
+<td>The source ended on an incomplete statement that aborted parsing.</td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb5"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Empty</span></code></pre></div></td>
+<td>The source is either empty, all whitespace, or all comments.</td>
+</tr>
+</tbody>
+</table>
 
 <h2 id="textcontentprovider-abstract-class">4.9 TextContentProvider Abstract Class</h2>
 
@@ -2123,11 +1957,11 @@ This class provides a means for hosts to provide TextReaders for a source that i
 
 <h3 id="class-summary-6">4.9.1 Class Summary</h3>
 
-\[Serializable\]
-
+``` csharp
+[Serializable]
 public abstract class TextContentProvider {
-
-public abstract TextReader GetReader()
+    public abstract TextReader GetReader()
+```
 
 <h3 id="getreader-method-1">4.9.2 GetReader Method</h3>
 
@@ -2135,7 +1969,9 @@ This method returns a new TextReader each time you call it. The reader is positi
 
 Signature:
 
+``` csharp
 public abstract TextReader GetReader()
+```
 
 <h2 id="streamcontentprovider-abstract-class">4.10 StreamContentProvider Abstract Class</h2>
 
@@ -2143,11 +1979,11 @@ This class provides a mean for hosts to provide multiple Streams for a source of
 
 <h3 id="class-summary-7">4.10.1 Class Summary</h3>
 
-\[Serializable\]
-
+``` csharp
+[Serializable]
 public abstract class StreamContentProvider {
-
-public abstract Stream GetStream()
+    public abstract Stream GetStream()
+```
 
 <h3 id="getstream-method">4.10.2 GetStream Method</h3>
 
@@ -2155,7 +1991,9 @@ This method returns a new Stream each time you call it. The Stream is positioned
 
 Signature:
 
+``` csharp
 public abstract Stream GetStream()
+```
 
 <h2 id="scriptcodereader-sealed-class">4.11 ScriptCodeReader Sealed Class</h2>
 
@@ -2165,25 +2003,18 @@ Other than a property that returns the ScriptSource, this class just has overrid
 
 <h3 id="class-summary-8">4.11.1 Class Summary</h3>
 
+``` csharp
 public sealed class ScriptCodeReader : TextReader {
-
-public ScriptSource ScriptSource
-
-internal ScriptCodeReader(SourceUnit sourceUnit,
-
-TextReader textReader)
-
-public override string ReadLine()
-
-public virtual bool SeekLine(int line)
-
-public override string ReadToEnd()
-
-public override int Read(char\[\] buffer, int index, int count)
-
-public override int Peek()
-
-public override int Read()
+    public ScriptSource ScriptSource 
+    internal ScriptCodeReader(SourceUnit sourceUnit, 
+                                TextReader textReader) 
+    public override string ReadLine() 
+    public virtual bool SeekLine(int line) 
+    public override string ReadToEnd() 
+    public override int Read(char[] buffer, int index, int count) 
+    public override int Peek() 
+    public override int Read() 
+```
 
 <h2 id="scriptio-class">4.12 ScriptIO Class</h2>
 
@@ -2191,49 +2022,30 @@ This class let's you control input and output by default for dynamic code runnin
 
 <h3 id="class-summary-9">4.12.1 Class Summary</h3>
 
+``` csharp
 public sealed class ScriptIO : MarshalByRefObject
-
-internal ScriptIO(...)
-
-/// Used for binary IO.
-
-public Stream InputStream { get; }
-
-public Stream OutputStream { get; }
-
-public Stream ErrorStream { get; }
-
-/// Used for pure unicode IO.
-
-public TextReader InputReader { get; }
-
-public TextWriter OutputWriter { get; }
-
-public TextWriter ErrorWriter { get; }
-
-/// What encoding are the unicode reader/writers using.
-
-public Encoding InputEncoding { get; }
-
-public Encoding OutputEncoding { get; }
-
-public Encoding ErrorEncoding { get; }
-
-public void SetOutput(Stream stream, Encoding encoding)
-
-public void SetOutput(Stream stream, TextWriter writer)
-
-public void SetErrorOutput(Stream stream, Encoding encoding)
-
-public void SetErrorOutput(Stream stream, TextWriter writer)
-
-public void SetInput(Stream stream, Encoding encoding)
-
-public void SetInput(Stream stream, TextReader reader,
-
-Encoding encoding)
-
-public void RedirectToConsole()
+    internal ScriptIO(...) 
+    /// Used for binary IO.
+    public Stream InputStream { get; }
+    public Stream OutputStream { get; }
+    public Stream ErrorStream { get; }
+    /// Used for pure unicode IO.
+    public TextReader InputReader { get; }
+    public TextWriter OutputWriter { get; }
+    public TextWriter ErrorWriter { get; }
+    /// What encoding are the unicode reader/writers using.
+    public Encoding InputEncoding { get; }
+    public Encoding OutputEncoding { get;  }
+    public Encoding ErrorEncoding { get; }
+    public void SetOutput(Stream stream, Encoding encoding) 
+    public void SetOutput(Stream stream, TextWriter writer) 
+    public void SetErrorOutput(Stream stream, Encoding encoding) 
+    public void SetErrorOutput(Stream stream, TextWriter writer) 
+    public void SetInput(Stream stream, Encoding encoding) 
+    public void SetInput(Stream stream, TextReader reader, 
+                         Encoding encoding) 
+    public void RedirectToConsole() 
+```
 
 <h3 id="outputstream-property">4.12.2 OutputStream Property</h3>
 
@@ -2241,7 +2053,9 @@ This property returns the standard output stream for the ScriptRuntime. This is 
 
 Signature:
 
+``` csharp
 public Stream OutputStream { get;}
+```
 
 <h3 id="inputstream-property">4.12.3 InputStream Property</h3>
 
@@ -2249,7 +2063,9 @@ This property returns the standard input stream for the ScriptRuntime. This is a
 
 Signature:
 
+``` csharp
 public Stream InputStream { get;}
+```
 
 <h3 id="errorstream-property">4.12.4 ErrorStream Property</h3>
 
@@ -2257,7 +2073,9 @@ This property returns the standard erroroutput stream for the ScriptRuntime. Thi
 
 Signature:
 
+``` csharp
 public Stream ErrorStream { get;}
+```
 
 <h3 id="inputreader-property">4.12.5 InputReader Property</h3>
 
@@ -2265,7 +2083,9 @@ This property returns the standard input reader for the ScriptRuntime. This is a
 
 Signature:
 
+``` csharp
 public TextReader InputReader { get; }
+```
 
 <h3 id="outputwriter-property">4.12.6 OutputWriter Property</h3>
 
@@ -2273,7 +2093,9 @@ This property returns the standard output writer for the ScriptRuntime. All code
 
 Signature:
 
+``` csharp
 public TextWriter OutputWriter { get; }
+```
 
 <h3 id="errorwriter-property">4.12.7 ErrorWriter Property</h3>
 
@@ -2281,7 +2103,9 @@ This property returns the standard error output writer for the ScriptRuntime. Al
 
 Signature:
 
+``` csharp
 public TextWriter ErrorWriter { get; }
+```
 
 <h3 id="inputencoding-property">4.12.8 InputEncoding Property</h3>
 
@@ -2289,7 +2113,9 @@ This property returns the encoding used by the TextReader returned from InputRea
 
 Signature:
 
+``` csharp
 public Encoding InputEncoding { get; }
+```
 
 <h3 id="outputencoding-property">4.12.9 OutputEncoding Property</h3>
 
@@ -2297,7 +2123,9 @@ This property returns the encoding used by the TextWriters returned from the Out
 
 Signature:
 
+``` csharp
 public Encoding OutputEncoding { get; }
+```
 
 <h3 id="errorencoding-property">4.12.10 ErrorEncoding Property</h3>
 
@@ -2305,7 +2133,9 @@ This property returns the encoding used by the TextWriters returned from the Err
 
 Signature:
 
+``` csharp
 public Encoding ErrorEncoding { get; }
+```
 
 <h3 id="setoutput-method">4.12.11 SetOutput Method</h3>
 
@@ -2313,9 +2143,10 @@ This method sets the standard output stream for the ScriptRuntime. All code and 
 
 Signatures:
 
-public void SetOutput(Stream stream, Encoding encoding)
-
-public void SetOutput(Stream stream, TextWriter writer)
+``` csharp
+public void SetOutput(Stream stream, Encoding encoding) 
+public void SetOutput(Stream stream, TextWriter writer) 
+```
 
 The first method is useful if the host just captures binary stream output. The second method is useful if the host captures unicode text and binary output. Note, if you pass just a stream and an encoding, the this method creates a default StreamWriter, which writes a BOM on first usage. To avoid this, you'll need to pass your own TextWriter.
 
@@ -2327,9 +2158,10 @@ This method sets the standard error output stream for the ScriptRuntime. All cod
 
 Signatures:
 
+``` csharp
 public void SetErrorOutput(Stream stream, Encoding encoding)
-
-public void SetErrorOutput(Stream stream, TextWriter writer)
+public void SetErrorOutput(Stream stream, TextWriter writer) 
+```
 
 The first method is useful if the host just captures binary stream output. The second method is useful if the host captures unicode text and binary output.
 
@@ -2341,11 +2173,11 @@ This method sets the standard input stream for the ScriptRuntime. All code and e
 
 Signature:
 
-public void SetInput(Stream stream, Encoding encoding)
-
-public void SetInput(Stream stream, TextReader reader,
-
-Encoding encoding)
+``` csharp
+public void SetInput(Stream stream, Encoding encoding) 
+public void SetInput(Stream stream, TextReader reader, 
+                     Encoding encoding) 
+```
 
 <h3 id="redirecttoconsole-method">4.12.14 RedirectToConsole Method</h3>
 
@@ -2353,7 +2185,9 @@ This method makes all the standard IO for the ScriptRuntime go to System.Console
 
 Signature:
 
-public void RedirectToConsole()
+``` csharp
+public void RedirectToConsole() 
+```
 
 <h2 id="scriptruntimesetup-class">4.13 ScriptRuntimeSetup Class</h2>
 
@@ -2365,27 +2199,19 @@ You can also get these objects from ScriptRuntime.Setup. These instances provide
 
 <h3 id="class-summary-10">4.13.1 Class Summary</h3>
 
+``` csharp
 public sealed class ScriptRuntimeSetup {
-
-public ScriptRuntimeSetup()
-
-public IList&lt;LanguageSetup&gt; LanguageSetups { get; }
-
-public bool DebugMode { get; set; }
-
-public bool PrivateBinding { get; set; }
-
-public Type HostType { get; set; }
-
-public Dictionary&lt;string, object&gt; Options { get; }
-
-public object\[\] HostArguments {get; set; }
-
-public static ScriptRuntimeSetup ReadConfiguration()
-
-public static ScriptRuntimeSetup
-
-ReadConfiguration(Stream configFileStream)
+    public ScriptRuntimeSetup() 
+    public IList<LanguageSetup> LanguageSetups { get;  }
+    public bool DebugMode { get; set; }
+    public bool PrivateBinding { get; set; }
+    public Type HostType { get; set; }
+    public Dictionary<string, object> Options { get; }
+    public object[] HostArguments {get; set;  }
+    public static ScriptRuntimeSetup ReadConfiguration() 
+    public static ScriptRuntimeSetup 
+                  ReadConfiguration(Stream configFileStream) 
+```
 
 <h3 id="constructor-1">4.13.2 Constructor</h3>
 
@@ -2393,7 +2219,9 @@ The constructor returns an empty ScriptRuntimeSetup object, with no languages pr
 
 Signature:
 
-public ScriptRuntimeSetup()
+``` csharp
+public ScriptRuntimeSetup() 
+```
 
 <h3 id="readconfiguration-methods">4.13.3 ReadConfiguration Methods</h3>
 
@@ -2401,65 +2229,47 @@ These methods read application configuration and return a ScriptRuntimeSetup ini
 
 Signatures:
 
-public static ScriptRuntimeSetup ReadConfiguration()
-
-public static ScriptRuntimeSetup
-
-ReadConfiguration(Stream configFileStream)
+``` csharp
+public static ScriptRuntimeSetup ReadConfiguration() 
+public static ScriptRuntimeSetup 
+              ReadConfiguration(Stream configFileStream) 
+```
 
 <h4 id="configuration-structure">4.13.3.1 Configuration Structure</h4>
 
 These lines must be included in the .config file as the first element under the &lt;configuration&gt; element for the DLR's default reader to work:
 
-> &lt;configSections&gt;
->
->   &lt;section name="microsoft.scripting"
->
-> type="Microsoft.Scripting.Hosting.Configuration.Section, Microsoft.Scripting, Version=1.0.0.5000, Culture=neutral, PublicKeyToken=31bf3856ad364e35" /&gt;
->
-> &lt;/configSections&gt;
+``` csharp
+<configSections>
+    <section name="microsoft.scripting" 
+       type="Microsoft.Scripting.Hosting.Configuration.Section, Microsoft.Scripting, Version=1.0.0.5000, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+</configSections>
+```
 
 The structure of the configuration section is the following (with some notes below):
 
-> &lt;microsoft.scripting \[debugMode="{bool}"\]?
->
-> \[privateBinding="{bool}"\]?&gt;
->
->     &lt;languages&gt;
->
->       &lt;!-- BasicMap with type attribute as key. Inherits language
->
-> nodes, overwrites previous nodes based on key --&gt;
->
->       &lt;language names="{semicolon-separated}"
->
-> extensions="{semicolon-separated, optional-dot}"
->
-> type="{assembly-qualified type name}"
->
-> \[displayName="{string}"\]? /&gt;
->
->     &lt;/languages&gt;
->
->     &lt;options&gt;
->
->       &lt;!-- AddRemoveClearMap with option as key. If language
->
-> Attribute is present, the key is option cross language.
->
-> --&gt;
->
->       &lt;set option="{string}" value="{string}"
->
-> \[language="{langauge-name}"\]? /&gt;
->
->       &lt;clear /&gt;
->
->       &lt;remove option="{string}" \[language="{langauge-name}"\]? /&gt;
->
->     &lt;/options&gt;
->
->   &lt;/microsoft.scripting&gt;
+``` csharp
+<microsoft.scripting [debugMode="{bool}"]? 
+                     [privateBinding="{bool}"]?>
+    <languages>
+      <!-- BasicMap with type attribute as key.  Inherits language 
+           nodes, overwrites previous nodes based on key -->
+      <language names="{semicolon-separated}" 
+                extensions="{semicolon-separated, optional-dot}" 
+                type="{assembly-qualified type name}" 
+                [displayName="{string}"]? />
+    </languages>
+    <options>
+      <!-- AddRemoveClearMap with option as key.  If language
+           Attribute is present, the key is option cross language.
+       -->
+      <set option="{string}" value="{string}" 
+           [language="{langauge-name}"]? />
+      <clear />
+      <remove option="{string}" [language="{langauge-name}"]? />
+    </options>
+  </microsoft.scripting>
+```
 
 Attributes enclosed in \[…\]? are optional.
 
@@ -2473,49 +2283,30 @@ Attributes enclosed in \[…\]? are optional.
 
 The default application configuration section for using the DLR languages we ship for the desktop is (of course, you need correct type names from your current version):
 
-> &lt;?xml version="1.0" encoding="utf-8" ?&gt;
->
-> &lt;configuration&gt;
->
->   &lt;configSections&gt;
->
->     &lt;section name="microsoft.scripting"
->
-> type="Microsoft.Scripting.Hosting.Configuration.Section, Microsoft.Scripting, Version=1.0.0.5000, Culture=neutral, PublicKeyToken=31bf3856ad364e35" /&gt;
->
->   &lt;/configSections&gt;
->
->   &lt;microsoft.scripting&gt;
->
->     &lt;languages&gt;
->
->       &lt;language names="IronPython;Python;py" extensions=".py"
->
-> displayName="IronPython v2.0"
->
-> type="IronPython.Runtime.PythonContext, IronPython, Version=2.0.0.5000, Culture=neutral, PublicKeyToken=31bf3856ad364e35" /&gt;
->
->       &lt;language names="IronRuby;Ruby;rb" extensions=".rb"
->
-> displayName="IronRuby v1.0"
->
-> type="IronRuby.Runtime.RubyContext, IronRuby, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
->
-> /&gt;
->
-> &lt;!-- If for experimentation you want ToyScript ... --&gt;
->
->       &lt;language names="ToyScript;ts" extensions=".ts"
->
-> type="ToyScript.ToyLanguageContext, ToyScript, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
->
-> /&gt;
->
->     &lt;/languages&gt;
->
->   &lt;/microsoft.scripting&gt;
->
-> &lt;/configuration&gt;
+``` csharp
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="microsoft.scripting" 
+       type="Microsoft.Scripting.Hosting.Configuration.Section, Microsoft.Scripting, Version=1.0.0.5000, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+  </configSections>
+  <microsoft.scripting>
+    <languages>
+      <language names="IronPython;Python;py" extensions=".py" 
+                displayName="IronPython v2.0" 
+          type="IronPython.Runtime.PythonContext, IronPython, Version=2.0.0.5000, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+      <language names="IronRuby;Ruby;rb" extensions=".rb" 
+                displayName="IronRuby v1.0" 
+                type="IronRuby.Runtime.RubyContext, IronRuby, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" 
+       />
+      <!-- If for experimentation you want ToyScript ... -->
+      <language names="ToyScript;ts" extensions=".ts" 
+                type="ToyScript.ToyLanguageContext, ToyScript, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" 
+       />
+    </languages>
+  </microsoft.scripting>
+</configuration>
+```
 
 <h3 id="languagesetups-property">4.13.4 LanguageSetups Property</h3>
 
@@ -2523,13 +2314,17 @@ This property returns a list of LanguageSetup objects, each describing one langu
 
 Signature:
 
-public IList&lt;LanguageSetup&gt; LanguageSetups { get; }
+``` csharp
+public IList<LanguageSetup> LanguageSetups { get;  }
+```
 
 <h3 id="hosttype-property">4.13.5 HostType Property</h3>
 
 This property gets and sets the ScriptHost type that the DLR should instantiate when it creates the ScriptRuntime. The DLR instantiates the host type in the app domain where it creates the ScriptRuntime object. See ScriptHost for more information.
 
+``` csharp
 public Type HostType { get; set; }
+```
 
 <h3 id="hostarguments-property">4.13.6 HostArguments Property</h3>
 
@@ -2537,23 +2332,21 @@ This property gets and sets an array of argument values that should be passed to
 
 Here's an example:
 
-> class MyHost : ScriptHost {
->
-> public MyHost(string foo, int bar)
->
-> }
->
-> setup = new ScriptRuntimeSetup()
->
-> setup.HostType = typeof(MyHost)
->
-> setup.HostArguments = new object\[\] { “some foo”, 123 }
->
-> ScriptRuntime.CreateRemote(otherAppDomain, setup)
+``` csharp
+class MyHost : ScriptHost {
+   public MyHost(string foo, int bar) 
+}
+setup = new ScriptRuntimeSetup()
+setup.HostType = typeof(MyHost)
+setup.HostArguments = new object[] { “some foo”, 123 }
+ScriptRuntime.CreateRemote(otherAppDomain, setup)
+```
 
 Signature:
 
-public object\[\] HostArguments {get; set; }
+``` csharp
+public object[] HostArguments {get; set;  }
+```
 
 <h3 id="options-property">4.13.7 Options Property</h3>
 
@@ -2563,7 +2356,9 @@ There is one specially named global option, "SearchPaths". If this value is pres
 
 Signature:
 
-public Dictionary&lt;string, object&gt; Options { get; }
+``` csharp
+public Dictionary<string, object> Options { get; }
+```
 
 <h3 id="debugmode-property">4.13.8 DebugMode Property</h3>
 
@@ -2571,13 +2366,17 @@ This property controls whether the ScriptRuntime instance and engines compiles c
 
 Signature.
 
+``` csharp
 public bool DebugMode { get; set; }
+```
 
 <h3 id="privatebinding-property">4.13.9 PrivateBinding Property</h3>
 
 This property controls whether the ScriptRuntime instance and engines will use reflection to access private members of types when binding object members in dynamic operations. Setting this to true only works in app domains running in full trust.
 
+``` csharp
 public bool PrivateBinding { get; set; }
+```
 
 <h2 id="languagesetup-class">4.14 LanguageSetup Class</h2>
 
@@ -2587,33 +2386,22 @@ You can also get these objects from ScriptRuntime.Setup and ScriptEngine.Setup. 
 
 <h3 id="class-summary-11">4.14.1 Class Summary</h3>
 
+``` csharp
 public sealed class LanguageSetup {
-
-public LanguageSetup(string typeName, string displayName)
-
-public LanguageSetup(string typeName, string displayName,
-
-IEnumerable&lt;string&gt; names,
-
-IEnumerable&lt;string&gt; fileExtensions)
-
-public string TypeName {get; set; }
-
-public string DisplayName {get; set; }
-
-public IList&lt;string&gt; Names {get; }
-
-public IList&lt;string&gt; FileExtensions {get; }
-
-public Dictionary&lt;string, object&gt; Options {get; }
-
-public bool InterpretedMode {get; set; }
-
-public bool ExceptionDetail {get; set; }
-
-public bool PerfStats {get; set; }
-
-public T GetOption&lt;T&gt;(string name, T defaultValue)
+    public LanguageSetup(string typeName, string displayName)
+    public LanguageSetup(string typeName, string displayName, 
+                         IEnumerable<string> names, 
+                         IEnumerable<string> fileExtensions) 
+    public string TypeName {get; set; }
+    public string DisplayName {get; set; }
+    public IList<string> Names {get; }
+    public IList<string> FileExtensions {get; }
+    public Dictionary<string, object> Options {get; }
+    public bool InterpretedMode {get; set; }
+    public bool ExceptionDetail {get; set; }
+    public bool PerfStats {get; set; }
+    public T GetOption<T>(string name, T defaultValue)
+```
 
 <h3 id="constructors">4.14.2 Constructors</h3>
 
@@ -2623,13 +2411,12 @@ These ensure typeName and displayName are not null or empty. The collections can
 
 Signatures:
 
+``` csharp
 public LanguageSetup(string typeName, string displayName)
-
-public LanguageSetup(string typeName, string displayName,
-
-IEnumerable&lt;string&gt; names,
-
-IEnumerable&lt;string&gt; fileExtensions)
+public LanguageSetup(string typeName, string displayName, 
+                     IEnumerable<string> names, 
+                     IEnumerable<string> fileExtensions) 
+```
 
 <h3 id="typename-property">4.14.3 TypeName Property</h3>
 
@@ -2637,7 +2424,9 @@ This property gets or sets the assembly-qualified type name of the language. Thi
 
 Signature:
 
+``` csharp
 public string TypeName {get; set; }
+```
 
 <h3 id="displayname-property">4.14.4 DisplayName Property</h3>
 
@@ -2645,7 +2434,9 @@ This property gets or sets a suitably descriptive name for displaying in UI or f
 
 Signature:
 
+``` csharp
 public string DisplayName {get; set; }
+```
 
 <h3 id="names-property">4.14.5 Names Property</h3>
 
@@ -2653,7 +2444,9 @@ This property returns a list of names for the language. These can be nicknames o
 
 Signature:
 
-public IList&lt;string&gt; Names {get; }
+``` csharp
+public IList<string> Names {get; }
+```
 
 <h3 id="fileextensions-property">4.14.6 FileExtensions Property</h3>
 
@@ -2661,7 +2454,9 @@ This property gets the list of file extensions that map to this language in the 
 
 Signature:
 
-public IList&lt;string&gt; FileExtensions {get; }
+``` csharp
+public IList<string> FileExtensions {get; }
+```
 
 <h3 id="interpretedmode-property">4.14.7 InterpretedMode Property</h3>
 
@@ -2671,7 +2466,9 @@ This method pulls the value from Options in case it is set there via application
 
 Signature:
 
+``` csharp
 public bool InterpretedMode {get; set; }
+```
 
 <h3 id="exceptiondetail-property">4.14.8 ExceptionDetail Property</h3>
 
@@ -2681,7 +2478,9 @@ This method pulls the value from Options in case it is set there via application
 
 Signature:
 
+``` csharp
 public bool ExceptionDetail {get; set; }
+```
 
 <h3 id="perfstats-property">4.14.9 PerfStats Property</h3>
 
@@ -2691,7 +2490,9 @@ This method pulls the value from Options in case it is set there via application
 
 Signature:
 
+``` csharp
 public bool PerfStats {get; set; }
+```
 
 <h3 id="options-property-1">4.14.10 Options Property</h3>
 
@@ -2699,7 +2500,9 @@ This property returns the list dictionary of options for the language. Option na
 
 Signature:
 
-public Dictionary&lt;string, object&gt; Options {get; }
+``` csharp
+public Dictionary<string, object> Options {get; }
+```
 
 <h3 id="getoption-method">4.14.11 GetOption Method</h3>
 
@@ -2707,7 +2510,9 @@ This method looks up name in the Options dictionary and returns the value associ
 
 Signature:
 
-public T GetOption&lt;T&gt;(string name, T defaultValue)
+``` csharp
+public T GetOption<T>(string name, T defaultValue)
+```
 
 <h2 id="scripthost-class">4.15 ScriptHost Class</h2>
 
@@ -2717,39 +2522,30 @@ The ScriptHost object lives in the same app domain as the ScriptRuntime in remot
 
 Derived types from ScriptHost can have arguments passed to them via ScriptRuntimeSetup's HostArguments property. For example,
 
-> class MyHost : ScriptHost {
->
-> public MyHost(string foo, int bar)
->
-> }
->
-> setup = new ScriptRuntimeSetup()
->
-> setup.HostType = typeof(MyHost)
->
-> setup.HostArguments = new object\[\] { “some foo”, 123 }
->
-> ScriptRuntime.CreateRemote(otherAppDomain, setup)
+``` csharp
+class MyHost : ScriptHost {
+   public MyHost(string foo, int bar) 
+}
+setup = new ScriptRuntimeSetup()
+setup.HostType = typeof(MyHost)
+setup.HostArguments = new object[] { “some foo”, 123 }
+ScriptRuntime.CreateRemote(otherAppDomain, setup)
+```
 
 The DLR instantiates the ScriptHost when the DLR initializes a ScriptRuntime. The host can get at the instance with ScriptRuntime.Host.
 
 <h3 id="class-summary-12">4.15.1 Class Summary</h3>
 
+``` csharp
 public class ScriptHost : MarshalByRefObject {
-
-public ScriptHost()
-
-public ScriptRuntime Runtime { get; }
-
-public virtual PlatformAdaptationLayer
-
-PlatformAdaptationLayer {get; }
-
-protected virtual void RuntimeAttached()
-
-internal protected virtual void
-
-EngineCreated(ScriptEngine engine)
+    public ScriptHost() 
+    public ScriptRuntime Runtime { get; }
+    public virtual PlatformAdaptationLayer
+                   PlatformAdaptationLayer {get; }
+    protected virtual void RuntimeAttached()
+    internal protected virtual void 
+        EngineCreated(ScriptEngine engine)
+```
 
 <h3 id="runtime-property-1">4.15.2 Runtime Property</h3>
 
@@ -2757,7 +2553,9 @@ This property returns the ScriptRuntime to which this ScriptHost is attached.
 
 Signature:
 
+``` csharp
 public ScriptRuntime Runtime { get; }
+```
 
 <h3 id="platformadaptationlayer-property">4.15.3 PlatformAdaptationLayer Property</h3>
 
@@ -2765,9 +2563,10 @@ This property returns the PlatformAdaptationLayer associated with the ScriptRunt
 
 Signature:
 
+``` csharp
 public virtual PlatformAdaptationLayer
-
-PlatformAdaptationLayer {get; }
+               PlatformAdaptationLayer {get; }
+```
 
 <h3 id="runtimeattached-method">4.15.4 RuntimeAttached Method</h3>
 
@@ -2775,7 +2574,9 @@ This method gets called when initializing a ScriptRuntime is finished. The host 
 
 Signature:
 
+``` csharp
 protected virtual void RuntimeAttached()
+```
 
 <h3 id="enginecreated-method">4.15.5 EngineCreated Method</h3>
 
@@ -2783,9 +2584,10 @@ This method is a call back from the ScriptRuntime whenever it causes a language 
 
 Signature:
 
-internal protected virtual void
-
-EngineCreated(ScriptEngine engine)
+``` csharp
+internal protected virtual void 
+       EngineCreated(ScriptEngine engine)
+```
 
 <h2 id="scriptruntimeconfig-class">4.16 ~~ScriptRuntimeConfig Class~~</h2>
 
@@ -2795,15 +2597,13 @@ EngineCreated(ScriptEngine engine)
 
 <h3 id="class-summary-13">4.16.1 ~~Class Summary~~</h3>
 
-~~public sealed class ScriptRuntimeConfig {~~
-
-~~public IList&lt;LanguageConfig&gt; Languages { get { } }~~
-
-~~public bool DebugMode { get { } }~~
-
-~~public bool PrivateBinding { get { } }~~
-
-~~public IDictionary&lt;string, object&gt; Options { get { } }~~
+``` csharp
+public sealed class ScriptRuntimeConfig {
+    public IList<LanguageConfig> Languages { get { } }
+    public bool DebugMode { get { } }
+    public bool PrivateBinding { get { } }
+    public IDictionary<string, object> Options { get { } }
+```
 
 <h2 id="languageconfig-class">4.17 ~~LanguageConfig Class~~</h2>
 
@@ -2813,15 +2613,13 @@ EngineCreated(ScriptEngine engine)
 
 <h3 id="class-summary-14">4.17.1 ~~Class Summary~~</h3>
 
-~~public sealed class LanguageConfig {~~
-
-~~public string TypeName {get { } }~~
-
-~~public string DisplayName {get { } }~~
-
-~~public IList&lt;string&gt; Names {get { } }~~
-
-~~public IList&lt;string&gt; FileExtensions {get { } }~~
+``` csharp
+public sealed class LanguageConfig {
+    public string TypeName {get { } }
+    public string DisplayName {get { } }
+    public IList<string> Names {get { } }
+    public IList<string> FileExtensions {get { } }
+```
 
 <h2 id="platformadaptationlayer-class">4.18 PlatformAdaptationLayer Class</h2>
 
@@ -2831,53 +2629,32 @@ To use a custom PAL, you derive from this type and implement the members importa
 
 <h3 id="class-summary-15">4.18.1 Class Summary</h3>
 
+``` csharp
 public class PlatformAdaptationLayer {
-
-public static readonly PlatformAdaptationLayer Default
-
-public virtual Assembly LoadAssembly(string name)
-
-public virtual Assembly LoadAssemblyFromPath(string path)
-
-public virtual void TerminateScriptExecution(int exitCode)
-
-public StringComparer PathComparer { get;}
-
-public virtual bool FileExists(string path)
-
-public virtual bool DirectoryExists(string path)
-
-public virtual Stream
-
-OpenInputFileStream(string path, FileMode mode,
-
-FileAccess access, FileShare share)
-
-public virtual Stream
-
-OpenInputFileStream(string path, FileMode mode,
-
-FileAccess access, FileShare share,
-
-int bufferSize)
-
-public virtual Stream OpenInputFileStream(string path)
-
-public virtual Stream OpenOutputFileStream(string path)
-
-public virtual string\[\] GetFiles(string path,
-
-string searchPattern)
-
-public virtual string GetFullPath(string path)
-
-public virtual string CurrentDirectory {get;}
-
-public virtual string\[\]
-
-GetDirectories(string path, string searchPattern)
-
-public virtual bool IsAbsolutePath(string path)
+    public static readonly PlatformAdaptationLayer Default
+    public virtual Assembly LoadAssembly(string name) 
+    public virtual Assembly LoadAssemblyFromPath(string path) 
+    public virtual void TerminateScriptExecution(int exitCode) 
+    public StringComparer PathComparer { get;}
+    public virtual bool FileExists(string path) 
+    public virtual bool DirectoryExists(string path) 
+    public virtual Stream 
+        OpenInputFileStream(string path, FileMode mode, 
+                            FileAccess access, FileShare share) 
+    public virtual Stream 
+        OpenInputFileStream(string path, FileMode mode, 
+                            FileAccess access, FileShare share, 
+                            int bufferSize) 
+    public virtual Stream OpenInputFileStream(string path) 
+    public virtual Stream OpenOutputFileStream(string path) 
+    public virtual string[] GetFiles(string path, 
+                                     string searchPattern) 
+    public virtual string GetFullPath(string path) 
+    public virtual string CurrentDirectory {get;}
+    public virtual string[] 
+        GetDirectories(string path, string searchPattern) 
+    public virtual bool IsAbsolutePath(string path) 
+```
 
 <h2 id="syntaxerrorexception-class">4.19 SyntaxErrorException Class</h2>
 
@@ -2891,15 +2668,13 @@ This is an abstract class that hosts can implement and supply to ScriptSource.Co
 
 <h3 id="class-summary-16">4.21.1 Class Summary</h3>
 
+``` csharp
 public abstract class ErrorListener : MarshalByRefObject
-
-protected ErrorListener()
-
-public abstract void ErrorReported
-
-(ScriptSource source, string message, SourceSpan span,
-
-int errorCode, Severity severity)
+    protected ErrorListener() 
+    public abstract void ErrorReported
+          (ScriptSource source, string message, SourceSpan span, 
+           int errorCode, Severity severity)
+```
 
 <h2 id="severity-enum">4.22 Severity Enum</h2>
 
@@ -2907,15 +2682,13 @@ This enum identifies compiler error kinds when calling ErrorListener.ErrorReport
 
 <h3 id="type-summary-2">4.22.1 Type Summary</h3>
 
+``` csharp
 public enum Severity {
-
-Ignore,
-
-Warning,
-
-Error,
-
-FatalError
+    Ignore,
+    Warning,
+    Error,
+    FatalError
+```
 
 <h2 id="sourcelocation-struct">4.23 SourceLocation Struct</h2>
 
@@ -2927,15 +2700,13 @@ This class provides language-specific utilities for working with exceptions comi
 
 <h3 id="class-summary-17">4.25.1 Class Summary</h3>
 
+``` csharp
 public sealed class ExceptionOperations : MarshalByRefObject {
-
-public string FormatException(Exception exception)
-
-public void GetExceptionMessage
-
-(Exception exception, out string message,
-
-out string errorTypeName)
+    public string FormatException(Exception exception) 
+    public void GetExceptionMessage
+                (Exception exception, out string message, 
+                 out string errorTypeName) 
+```
 
 <h2 id="documentoperations-class">4.26 DocumentOperations Class</h2>
 
@@ -3016,21 +2787,68 @@ public enum MemberKind {
 
 The Summary section shows the type as it is defined (to indicate values of members), and this section documents the intent of the members.
 
-| None       | Unsure of kind. |
-|------------|-----------------|
-| Class      |                 |
-| Delegate   |                 |
-| Enum       |                 |
-| Event      |                 |
-| Field      |                 |
-| Function   |                 |
-| Module     |                 |
-| Property   |                 |
-| Constant   |                 |
-| EnumMember |                 |
-| Instance   |                 |
-| Method     |                 |
-| Namespace  |                 |
+<table>
+<thead>
+<tr class="header">
+<th><div class="sourceCode" id="cb1"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>None</span></code></pre></div></th>
+<th>Unsure of kind.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><div class="sourceCode" id="cb2"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Class</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb3"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Delegate</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><div class="sourceCode" id="cb4"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Enum</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb5"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Event</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><div class="sourceCode" id="cb6"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Field</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb7"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Function</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><div class="sourceCode" id="cb8"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Module</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb9"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Property</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><div class="sourceCode" id="cb10"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Constant</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb11"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>EnumMember</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><div class="sourceCode" id="cb12"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Instance</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb13"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Method</span></code></pre></div></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><div class="sourceCode" id="cb14"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>Namespace</span></code></pre></div></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 <h2 id="overloaddoc-class">4.29 OverloadDoc Class</h2>
 
@@ -3129,22 +2947,35 @@ This enum identifies extra information about a parameter, such as whether it is 
 
 <h3 id="type-summary-4">4.31.1 Type Summary</h3>
 
+``` csharp
 public enum ParameterFlags {
-
-None,
-
-ParamsArray,
-
-ParamsDict
+    None,
+    ParamsArray,
+    ParamsDict
+```
 
 <h3 id="members-3">4.31.2 Members</h3>
 
 The Summary section shows the type as it is defined (to indicate values of members), and this section documents the intent of the members.
 
-| None        | Just a positional parameter.                                                                                                                                                         |
-|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ParamsArray | Indicates the parameter is a rest parameter or collection of all the arguments after any supplied positional arguments.                                                              |
-| ParamsDict  | Indicated the parameter is a parameter that maps names of parameter to their values. It is like a rest parameter, but the rest of the arguments must be supplied as named arguments. |
+<table>
+<thead>
+<tr class="header">
+<th><div class="sourceCode" id="cb1"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>None</span></code></pre></div></th>
+<th>Just a positional parameter.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><div class="sourceCode" id="cb2"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ParamsArray</span></code></pre></div></td>
+<td>Indicates the parameter is a rest parameter or collection of all the arguments after any supplied positional arguments.</td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb3"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ParamsDict</span></code></pre></div></td>
+<td>Indicated the parameter is a parameter that maps names of parameter to their values. It is like a rest parameter, but the rest of the arguments must be supplied as named arguments.</td>
+</tr>
+</tbody>
+</table>
 
 <h2 id="post-clr-4.0----tokencategorizer-abstract-class">4.32 POST CLR 4.0 -- TokenCategorizer Abstract Class</h2>
 
@@ -3152,29 +2983,20 @@ Will spec colorization support after reconsidering best API for simple tooling a
 
 <h3 id="class-summary-22">4.32.1 Class Summary</h3>
 
+``` csharp
 public abstract class TokenCategorizer: MarshalByRefObject {
-
-void Initialize(object state, ScriptCodeReader sourceReader,
-
-SourceLocation initialLocation)
-
-public abstract bool IsRestartable { get; }
-
-public abstract TokenInfo ReadToken()
-
-public abstract bool SkipToken()
-
-public abstract IEnumerable&lt;TokenInfo&gt; ReadTokens
-
-(int countOfChars)
-
-public abstract bool SkipTokens(int countOfChars)
-
-public abstract SourceLocation CurrentPosition { get; }
-
-public abstract object CurrentState { get; }
-
-public abstract ErrorListener ErrorListener { get; set; }
+    void Initialize(object state, ScriptCodeReader sourceReader, 
+                    SourceLocation initialLocation)
+    public abstract bool IsRestartable { get; }
+    public abstract TokenInfo ReadToken()
+    public abstract bool SkipToken()
+    public abstract IEnumerable<TokenInfo> ReadTokens
+                                           (int countOfChars)
+    public abstract bool SkipTokens(int countOfChars)
+    public abstract SourceLocation CurrentPosition { get; }
+    public abstract object CurrentState { get; }
+    public abstract ErrorListener ErrorListener { get; set; }
+```
 
 <h2 id="post-clr-4.0----tokencategory-enum">4.33 POST CLR 4.0 -- TokenCategory Enum</h2>
 

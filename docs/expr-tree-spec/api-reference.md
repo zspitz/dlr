@@ -50,1277 +50,648 @@ If we add annotations back in v-next+1, we need to make sure we capture that pas
 
 <h3 id="class-summary">4.3.1 Class Summary</h3>
 
+``` csharp
 public abstract class Expression {
-
-protected Expression();
-
-public virtual ExpressionType NodeType { get; }
-
-public virtual Type Type { get; }
-
-public virtual Boolean CanReduce { get; }
-
-public virtual Expression Reduce();
-
-public Expression ReduceAndCheck();
-
-public Expression ReduceExtensions();
-
-public static Type GetActionType(params Type\[\] typeArgs);
-
-public static bool TryGetActionType(Type\[\] typeArgs,
-
-out Type actionType)
-
-public static Type GetFuncType(params Type\[\] typeArgs);
-
-public static bool TryGetFuncType(Type\[\] typeArgs,
-
-out Type funcType);
-
-public static Type GetDelegateType(params Type\[\] typeArgs)
-
-protected virtual Expression VisitChildren
-
-(ExpressionVisitor visitor);
-
-protected internal virtual Expression Accept
-
-(ExpressionVisitor visitor)
-
-// These build only on Codeplex.com for debugging aids (may
-
-// be added in v-next+1). DebugView is build into CLR 4.0, but it
-
-// it is private for use with VS datatips and debugging tools only.
-
-public string DebugView {get {}}
-
-public void DumpExpression(string descr, TextWriter writer) {
-
-public static BinaryExpression Add
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Add(Expression left,
-
-Expression right);
-
-public static BinaryExpression AddAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression AddAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression AddAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression AddAssignChecked(Expression left,
-
-Expression right);
-
-public static BinaryExpression AddAssignChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression AddAssignChecked
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression AddChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression AddChecked(Expression left,
-
-Expression right);
-
-public static BinaryExpression And(Expression left,
-
-Expression right);
-
-public static BinaryExpression And
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression AndAlso(Expression left,
-
-Expression right);
-
-public static BinaryExpression AndAlso
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression AndAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression AndAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static IndexExpression ArrayAccess
-
-(Expression array, IEnumerable&lt;Expression&gt; indexes);
-
-public static IndexExpression ArrayAccess
-
-(Expression array, params Expression\[\] indexes);
-
-// The ArrayIndex factories will be obsolete in lieu of more
-
-// general IndexExpression factories above.
-
-public static BinaryExpression ArrayIndex(Expression array,
-
-Expression index);
-
-public static MethodCallExpression ArrayIndex
-
-(Expression array, params Expression\[\] indexes);
-
-public static MethodCallExpression ArrayIndex
-
-(Expression array, IEnumerable&lt;Expression&gt; indexes);
-
-public static UnaryExpression ArrayLength(Expression array);
-
-public static BinaryExpression Assign(Expression left,
-
-Expression right);
-
-public static MemberAssignment Bind(MethodInfo propertyAccessor,
-
-Expression expression);
-
-public static MemberAssignment Bind(MemberInfo member,
-
-Expression expression);
-
-public static BlockExpression Block
-
-(IEnumerable&lt;ParameterExpression&gt; variables,
-
-params Expression\[\] expressions);
-
-public static BlockExpression Block
-
-(Type type,
-
-IEnumerable&lt;ParameterExpression&gt; variables,
-
-params Expression\[\] expressions);
-
-public static BlockExpression Block
-
-(IEnumerable&lt;ParameterExpression&gt; variables,
-
-IEnumerable&lt;Expression&gt; expressions);
-
-public static BlockExpression Block
-
-(Type type,
-
-IEnumerable&lt;ParameterExpression&gt; variables,
-
-IEnumerable&lt;Expression&gt; expressions);
-
-public static BlockExpression Block
-
-(IEnumerable&lt;Expression&gt; expressions);
-
-public static BlockExpression Block
-
-(Type type, IEnumerable&lt;Expression&gt; expressions);
-
-public static BlockExpression Block
-
-(Expression arg0, Expression arg1, Expression arg2,
-
-Expression arg3, Expression arg4);
-
-public static BlockExpression Block
-
-(params Expression\[\] expressions);
-
-public static BlockExpression Block
-
-(Type type, params Expression\[\] expressions);
-
-public static BlockExpression Block(Expression arg0,
-
-Expression arg1);
-
-public static BlockExpression Block
-
-(Expression arg0, Expression arg1, Expression arg2);
-
-public static BlockExpression Block
-
-(Expression arg0, Expression arg1, Expression arg2,
-
-Expression arg3);
-
-public static GotoExpression Break(LabelTarget target,
-
-Expression value);
-
-public static GotoExpression Break(LabelTarget target);
-
-public static MethodCallExpression Call
-
-(MethodInfo method, params Expression\[\] arguments);
-
-public static MethodCallExpression Call
-
-(MethodInfo method, Expression arg0, Expression arg1,
-
-Expression arg2, Expression arg3, Expression arg4);
-
-public static MethodCallExpression Call
-
-(MethodInfo method, Expression arg0, Expression arg1);
-
-public static MethodCallExpression Call
-
-(Expression instance, MethodInfo method,
-
-params Expression\[\] arguments);
-
-public static MethodCallExpression Call
-
-(Expression instance, MethodInfo method, Expression arg0,
-
-Expression arg1, Expression arg2);
-
-public static MethodCallExpression Call
-
-(Expression instance, MethodInfo method, Expression arg0,
-
-Expression arg1);
-
-public static MethodCallExpression Call(MethodInfo method,
-
-Expression arg0);
-
-public static MethodCallExpression Call
-
-(Expression instance, String methodName, Type\[\] typeArguments,
-
-params Expression\[\] arguments);
-
-public static MethodCallExpression Call
-
-(Type type, String methodName, Type\[\] typeArguments,
-
-params Expression\[\] arguments);
-
-public static MethodCallExpression Call
-
-(Expression instance, MethodInfo method,
-
-IEnumerable&lt;Expression&gt; arguments);
-
-public static MethodCallExpression Call
-
-(MethodInfo method,
-
-IEnumerable&lt;Expression&gt; arguments);
-
-public static MethodCallExpression Call
-
-(MethodInfo method, Expression arg0, Expression arg1,
-
-Expression arg2, Expression arg3);
-
-public static MethodCallExpression Call
-
-(MethodInfo method, Expression arg0, Expression arg1,
-
-Expression arg2);
-
-public static MethodCallExpression Call(Expression instance,
-
-MethodInfo method);
-
-public static CatchBlock Catch(ParameterExpression variable,
-
-Expression body);
-
-public static CatchBlock Catch(Type type, Expression body);
-
-public static CatchBlock Catch
-
-(ParameterExpression variable, Expression body,
-
-Expression filter);
-
-public static CatchBlock Catch(Type type, Expression body,
-
-Expression filter);
-
-public static BinaryExpression Coalesce(Expression left,
-
-Expression right);
-
-public static BinaryExpression Coalesce
-
-(Expression left, Expression right,
-
-LambdaExpression conversion);
-
-public static ConditionalExpression Condition
-
-(Expression test, Expression ifTrue, Expression ifFalse);
-
-public static ConditionalExpression Condition
-
-(Expression test, Expression ifTrue, Expression ifFalse,
-
-Type type);
-
-public static ConditionalExpression IfThen
-
-(Expression test, Expression ifTrue)
-
-public static ConditionalExpression IfThenElse
-
-(Expression test, Expression ifTrue, Expression ifFalse);
-
-public static ConstantExpression Constant(Object value);
-
-public static ConstantExpression Constant(Object value,
-
-Type type);
-
-public static GotoExpression Continue(LabelTarget target);
-
-public static UnaryExpression Convert
-
-(Expression expression, Type type, MethodInfo method);
-
-public static UnaryExpression Convert(Expression expression,
-
-Type type);
-
-public static UnaryExpression ConvertChecked
-
-(Expression expression, Type type, MethodInfo method);
-
-public static UnaryExpression ConvertChecked
-
-(Expression expression, Type type);
-
-public static CatchBlock CreateCatchBlock
-
-(Type type, ParameterExpression variable, Expression body,
-
-Expression filter);
-
-public static DebugInfoExpression DebugInfo
-
-(SymbolDocumentInfo document, Int32 startLine,
-
-Int32 startColumn, Int32 endLine, Int32 endColumn);
-
-public static DebugInfoExpression ClearDebugInfo
-
-(SymbolDocumentInfo document)
-
-public static SymbolDocumentInfo SymbolDocument(String fileName,
-
-Guid language);
-
-public static SymbolDocumentInfo SymbolDocument(String fileName);
-
-public static SymbolDocumentInfo SymbolDocument
-
-(String fileName, Guid language, Guid languageVendor);
-
-public static SymbolDocumentInfo SymbolDocument
-
-(String fileName, Guid language, Guid languageVendor,
-
-Guid documentType);
-
-public static UnaryExpression Decrement(Expression expression,
-
-MethodInfo method);
-
-public static UnaryExpression Decrement(Expression expression);
-
-public static DefaultExpression Default(Type type);
-
-public static DefaultExpression Empty();
-
-public static BinaryExpression Divide(Expression left,
-
-Expression right);
-
-public static BinaryExpression Divide
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression DivideAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression DivideAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression DivideAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
+    protected Expression();
+    public virtual ExpressionType NodeType { get; }
+    public virtual Type Type { get; }
+    public virtual Boolean CanReduce { get; }
+    public virtual Expression Reduce();
+    public Expression ReduceAndCheck();
+    public Expression ReduceExtensions();
+    public static Type GetActionType(params Type[] typeArgs);
+    public static bool TryGetActionType(Type[] typeArgs,
+                                        out Type actionType)
+    public static Type GetFuncType(params Type[] typeArgs);
+    public static bool TryGetFuncType(Type[] typeArgs,
+                                      out Type funcType);
+    public static Type GetDelegateType(params Type[] typeArgs)
+    protected virtual Expression VisitChildren
+```
+
+`        (``Expression``Visitor` `visitor);`
+
+``` csharp
+    protected internal virtual Expression Accept
+       (ExpressionVisitor visitor)
+    // These build only on Codeplex.com for debugging aids (may
+    // be added in v-next+1).  DebugView is build into CLR 4.0, but it
+    // it is private for use with VS datatips and debugging tools only.
+    public string DebugView {get {}}
+    public void DumpExpression(string descr, TextWriter writer) {
+    public static BinaryExpression Add
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Add(Expression left,
+                                       Expression right);
+    public static BinaryExpression AddAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression AddAssign(Expression left,
+                                             Expression right);
+    public static BinaryExpression AddAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression AddAssignChecked(Expression left,
+                                                    Expression right);
+    public static BinaryExpression AddAssignChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression AddAssignChecked
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression AddChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression AddChecked(Expression left,
+                                              Expression right);
+    public static BinaryExpression And(Expression left,
+                                       Expression right);
+    public static BinaryExpression And
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression AndAlso(Expression left,
+                                           Expression right);
+    public static BinaryExpression AndAlso
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression AndAssign(Expression left,
+                                             Expression right);
+    public static BinaryExpression AndAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static IndexExpression ArrayAccess
+        (Expression array, IEnumerable<Expression> indexes);
+    public static IndexExpression ArrayAccess
+        (Expression array, params Expression[] indexes);
+    // The ArrayIndex factories will be obsolete in lieu of more
+    // general IndexExpression factories above.
+    public static BinaryExpression ArrayIndex(Expression array,
+                                              Expression index);
+    public static MethodCallExpression ArrayIndex
+        (Expression array, params Expression[] indexes);
+    public static MethodCallExpression ArrayIndex
+        (Expression array, IEnumerable<Expression> indexes);
+    public static UnaryExpression ArrayLength(Expression array);
+    public static BinaryExpression Assign(Expression left,
+                                          Expression right);
+    public static MemberAssignment Bind(MethodInfo propertyAccessor,
+                                        Expression expression);
+    public static MemberAssignment Bind(MemberInfo member,
+                                        Expression expression);
+    public static BlockExpression Block
+        (IEnumerable<ParameterExpression> variables,
+         params Expression[] expressions);
+    public static BlockExpression Block
+        (Type type,
+         IEnumerable<ParameterExpression> variables,
+         params Expression[] expressions);
+    public static BlockExpression Block
+        (IEnumerable<ParameterExpression> variables,
+         IEnumerable<Expression> expressions);
+    public static BlockExpression Block
+        (Type type,
+         IEnumerable<ParameterExpression> variables,
+         IEnumerable<Expression> expressions);
+    public static BlockExpression Block
+        (IEnumerable<Expression> expressions);
+    public static BlockExpression Block
+        (Type type, IEnumerable<Expression> expressions);
+    public static BlockExpression Block
+        (Expression arg0, Expression arg1, Expression arg2,
+         Expression arg3, Expression arg4);
+    public static BlockExpression Block
+        (params Expression[] expressions);
+    public static BlockExpression Block
+        (Type type, params Expression[] expressions);
+    public static BlockExpression Block(Expression arg0,
+                                        Expression arg1);
+    public static BlockExpression Block
+        (Expression arg0, Expression arg1, Expression arg2);
+    public static BlockExpression Block
+        (Expression arg0, Expression arg1, Expression arg2,
+         Expression arg3);
+    public static GotoExpression Break(LabelTarget target,
+                                       Expression value);
+    public static GotoExpression Break(LabelTarget target);
+    public static MethodCallExpression Call
+        (MethodInfo method, params Expression[] arguments);
+    public static MethodCallExpression Call
+        (MethodInfo method, Expression arg0, Expression arg1,
+         Expression arg2, Expression arg3, Expression arg4);
+    public static MethodCallExpression Call
+        (MethodInfo method, Expression arg0, Expression arg1);
+    public static MethodCallExpression Call
+        (Expression instance, MethodInfo method,
+         params Expression[] arguments);
+    public static MethodCallExpression Call
+        (Expression instance, MethodInfo method, Expression arg0,
+         Expression arg1, Expression arg2);
+    public static MethodCallExpression Call
+        (Expression instance, MethodInfo method, Expression arg0,
+         Expression arg1);
+    public static MethodCallExpression Call(MethodInfo method,
+                                            Expression arg0);
+    public static MethodCallExpression Call
+        (Expression instance, String methodName, Type[] typeArguments,
+         params Expression[] arguments);
+    public static MethodCallExpression Call
+        (Type type, String methodName, Type[] typeArguments,
+         params Expression[] arguments);
+    public static MethodCallExpression Call
+        (Expression instance, MethodInfo method,
+         IEnumerable<Expression> arguments);
+    public static MethodCallExpression Call
+        (MethodInfo method,
+         IEnumerable<Expression> arguments);
+    public static MethodCallExpression Call
+        (MethodInfo method, Expression arg0, Expression arg1,
+         Expression arg2, Expression arg3);
+    public static MethodCallExpression Call
+        (MethodInfo method, Expression arg0, Expression arg1,
+         Expression arg2);
+    public static MethodCallExpression Call(Expression instance,
+                                            MethodInfo method);
+    public static CatchBlock Catch(ParameterExpression variable,
+                                   Expression body);
+    public static CatchBlock Catch(Type type, Expression body);
+    public static CatchBlock Catch
+        (ParameterExpression variable, Expression body,
+         Expression filter);
+    public static CatchBlock Catch(Type type, Expression body,
+                                   Expression filter);
+    public static BinaryExpression Coalesce(Expression left,
+                                            Expression right);
+    public static BinaryExpression Coalesce
+        (Expression left, Expression right,
+         LambdaExpression conversion);
+    public static ConditionalExpression Condition
+        (Expression test, Expression ifTrue, Expression ifFalse);
+    public static ConditionalExpression Condition
+        (Expression test, Expression ifTrue, Expression ifFalse,
+         Type type);
+    public static ConditionalExpression IfThen
+        (Expression test, Expression ifTrue)
+    public static ConditionalExpression IfThenElse
+        (Expression test, Expression ifTrue, Expression ifFalse);
+    public static ConstantExpression Constant(Object value);
+    public static ConstantExpression Constant(Object value,
+                                              Type type);
+    public static GotoExpression Continue(LabelTarget target);
+    public static UnaryExpression Convert
+        (Expression expression, Type type, MethodInfo method);
+    public static UnaryExpression Convert(Expression expression,
+                                          Type type);
+    public static UnaryExpression ConvertChecked
+        (Expression expression, Type type, MethodInfo method);
+    public static UnaryExpression ConvertChecked
+        (Expression expression, Type type);
+    public static CatchBlock CreateCatchBlock
+        (Type type, ParameterExpression variable, Expression body,
+         Expression filter);
+    public static DebugInfoExpression DebugInfo
+        (SymbolDocumentInfo document, Int32 startLine,
+         Int32 startColumn, Int32 endLine, Int32 endColumn);
+    public static DebugInfoExpression ClearDebugInfo
+        (SymbolDocumentInfo document)
+    public static SymbolDocumentInfo SymbolDocument(String fileName,
+                                                    Guid language);
+    public static SymbolDocumentInfo SymbolDocument(String fileName);
+    public static SymbolDocumentInfo SymbolDocument
+        (String fileName, Guid language, Guid languageVendor);
+    public static SymbolDocumentInfo SymbolDocument
+        (String fileName, Guid language, Guid languageVendor,
+         Guid documentType);
+    public static UnaryExpression Decrement(Expression expression,
+                                            MethodInfo method);
+    public static UnaryExpression Decrement(Expression expression);
+    public static DefaultExpression Default(Type type);
+    public static DefaultExpression Empty();
+    public static BinaryExpression Divide(Expression left,
+                                          Expression right);
+    public static BinaryExpression Divide
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression DivideAssign(Expression left,
+                                                Expression right);
+    public static BinaryExpression DivideAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression DivideAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
 ­
-
-public static ElementInit ElementInit
-
-(MethodInfo addMethod,
-
-IEnumerable&lt;Expression&gt; arguments);
-
-public static ElementInit ElementInit
-
-(MethodInfo addMethod, params Expression\[\] arguments);
-
-public static BinaryExpression Equal(Expression left,
-
-Expression right);
-
-public static BinaryExpression Equal
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
-public static BinaryExpression ReferenceEqual(Expression left,
-
-Expression right)
-
-public static BinaryExpression NotEqual(Expression left,
-
-Expression right);
-
-public static BinaryExpression NotEqual
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
-public static BinaryExpression ReferenceNotEqual(Expression left,
-
-Expression right)
-
-public static BinaryExpression ExclusiveOr
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression ExclusiveOr(Expression left,
-
-Expression right);
-
-public static BinaryExpression ExclusiveOrAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression ExclusiveOrAssign
-
-(Expression left, Expression right);
-
-public static BinaryExpression ExclusiveOrAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static MemberExpression Field(Expression expression,
-
-String fieldName);
-
-public static MemberExpression Field
-
-(Expression expression, Type type, String fieldName);
-
-public static MemberExpression Field(Expression expression,
-
-FieldInfo field);
-
-public static GotoExpression Goto(LabelTarget target);
-
-public static GotoExpression Goto(LabelTarget target,
-
-Expression value);
-
-public static BinaryExpression GreaterThan
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
-public static BinaryExpression GreaterThan(Expression left,
-
-Expression right);
-
-public static BinaryExpression GreaterThanOrEqual
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
-public static BinaryExpression GreaterThanOrEqual
-
-(Expression left, Expression right);
-
-public static UnaryExpression Increment(Expression expression,
-
-MethodInfo method);
-
-public static UnaryExpression Increment(Expression expression);
-
-public static InvocationExpression Invoke
-
-(Expression expression, params Expression\[\] arguments);
-
-public static InvocationExpression Invoke
-
-(Expression expression, IEnumerable&lt;Expression&gt; arguments);
-
-public static UnaryExpression IsFalse(Expression expression) {
-
-public static UnaryExpression IsFalse(Expression expression,
-
-MethodInfo method) {
-
-public static UnaryExpression IsTrue(Expression expression) {
-
-public static UnaryExpression IsTrue(Expression expression,
-
-MethodInfo method) {
-
-public static LabelTarget Label(Type type, String name);
-
-public static LabelTarget Label(Type type);
-
-public static LabelTarget Label();
-
-public static LabelTarget Label(String name);
-
-public static LabelExpression Label(LabelTarget target);
-
-public static LabelExpression Label(LabelTarget target,
-
-Expression defaultValue);
-
-public static LambdaExpression Lambda
-
-(Expression body, params ParameterExpression\[\] parameters);
-
-public static LambdaExpression Lambda
-
-(Expression body,
-
-IEnumerable&lt;ParameterExpression&gt; parameters);
-
-public static Expression&lt;TDelegate&gt; Lambda&lt;TDelegate&gt;
-
-(Expression body, String name,
-
-IEnumerable&lt;ParameterExpression&gt; parameters);
-
-public static Expression&lt;TDelegate&gt; Lambda&lt;TDelegate&gt;
-
-(Expression body, params ParameterExpression\[\] parameters);
-
-public static Expression&lt;TDelegate&gt; Lambda&lt;TDelegate&gt;
-
-(Expression body,
-
-IEnumerable&lt;ParameterExpression&gt; parameters);
-
-public static LambdaExpression Lambda
-
-(Expression body, String name,
-
-IEnumerable&lt;ParameterExpression&gt; parameters);
-
-public static LambdaExpression Lambda
-
-(Type delegateType, Expression body, String name,
-
-IEnumerable&lt;ParameterExpression&gt; parameters);
-
-public static LambdaExpression Lambda
-
-(Type delegateType, Expression body,
-
-params ParameterExpression\[\] parameters);
-
-public static LambdaExpression Lambda
-
-(Type delegateType, Expression body,
-
-IEnumerable&lt;ParameterExpression&gt; parameters);
-
-public static BinaryExpression LeftShift
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression LeftShift(Expression left,
-
-Expression right);
-
-public static BinaryExpression LeftShiftAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression LeftShiftAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression LeftShiftAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression LessThan
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
-public static BinaryExpression LessThan(Expression left,
-
-Expression right);
-
-public static BinaryExpression LessThanOrEqual
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
-public static BinaryExpression LessThanOrEqual(Expression left,
-
-Expression right);
-
-public static MemberListBinding ListBind
-
-(MemberInfo member,
-
-IEnumerable&lt;ElementInit&gt;
-
-initializers);
-
-public static MemberListBinding ListBind
-
-(MemberInfo member, params ElementInit\[\] initializers);
-
-public static MemberListBinding ListBind
-
-(MethodInfo propertyAccessor,
-
-IEnumerable&lt;ElementInit&gt;
-
-initializers);
-
-public static MemberListBinding ListBind
-
-(MethodInfo propertyAccessor,
-
-params ElementInit\[\] initializers);
-
-public static ListInitExpression ListInit
-
-(NewExpression newExpression,
-
-params ElementInit\[\] initializers);
-
-public static ListInitExpression ListInit
-
-(NewExpression newExpression, MethodInfo addMethod,
-
-params Expression\[\] initializers);
-
-public static ListInitExpression ListInit
-
-(NewExpression newExpression,
-
-IEnumerable&lt;ElementInit&gt; initializers);
-
-public static ListInitExpression ListInit
-
-(NewExpression newExpression,
-
-IEnumerable&lt;Expression&gt; initializers);
-
-public static ListInitExpression ListInit
-
-(NewExpression newExpression,
-
-params Expression\[\] initializers);
-
-public static ListInitExpression ListInit
-
-(NewExpression newExpression, MethodInfo addMethod,
-
-IEnumerable&lt;Expression&gt; initializers);
-
-public static LoopExpression Loop(Expression body);
-
-public static LoopExpression Loop
-
-(Expression body, LabelTarget break, LabelTarget continue);
-
-public static LoopExpression Loop(Expression body,
-
-LabelTarget break);
-
-public static BinaryExpression MakeBinary
-
-(ExpressionType binaryType, Expression left,
-
-Expression right);
-
-public static BinaryExpression MakeBinary
-
-(ExpressionType binaryType, Expression left, Expression right,
-
-Boolean liftToNull, MethodInfo method);
-
-public static BinaryExpression MakeBinary
-
-(ExpressionType binaryType, Expression left, Expression right,
-
-Boolean liftToNull, MethodInfo method,
-
-LambdaExpression conversion);
-
-public static GotoExpression MakeGoto
-
-(GotoExpressionKind kind, LabelTarget target,
-
-Expression value);
-
-public static IndexExpression MakeIndex
-
-(Expression instance, PropertyInfo indexer,
-
-IEnumerable&lt;Expression&gt; arguments);
-
-public static MemberExpression MakeMemberAccess
-
-(Expression expression, MemberInfo member);
-
-public static UnaryExpression MakeUnary
-
-(ExpressionType unaryType, Expression operand, Type type);
-
-public static UnaryExpression MakeUnary
-
-(ExpressionType unaryType, Expression operand, Type type,
-
-MethodInfo method);
-
-public static MemberMemberBinding MemberBind
-
-(MemberInfo member,
-
-IEnumerable&lt;MemberBinding&gt; bindings);
-
-public static MemberMemberBinding MemberBind
-
-(MemberInfo member, params MemberBinding\[\] bindings);
-
-public static MemberMemberBinding MemberBind
-
-(MethodInfo propertyAccessor,
-
-IEnumerable&lt;MemberBinding&gt; bindings);
-
-public static MemberMemberBinding MemberBind
-
-(MethodInfo propertyAccessor,
-
-params MemberBinding\[\] bindings);
-
-public static MemberInitExpression MemberInit
-
-(NewExpression newExpression,
-
-params MemberBinding\[\] bindings);
-
-public static MemberInitExpression MemberInit
-
-(NewExpression newExpression,
-
-IEnumerable&lt;MemberBinding&gt; bindings);
-
-public static BinaryExpression Modulo
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Modulo(Expression left,
-
-Expression right);
-
-public static BinaryExpression ModuloAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression ModuloAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression ModuloAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression Multiply(Expression left,
-
-Expression right);
-
-public static BinaryExpression Multiply
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression MultiplyAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression MultiplyAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression MultiplyAssign
-
-(Expression left, Expression right);
-
-public static BinaryExpression MultiplyAssignChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression MultiplyAssignChecked
-
-(Expression left, Expression right);
-
-public static BinaryExpression MultiplyChecked
-
-(Expression left, Expression right);
-
-public static BinaryExpression MultiplyChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static NamedArgumentInfo NamedArg(String name);
-
-public static UnaryExpression Negate(Expression expression);
-
-public static UnaryExpression Negate(Expression expression,
-
-MethodInfo method);
-
-public static UnaryExpression NegateChecked(Expression expression,
-
-MethodInfo method);
-
-public static UnaryExpression NegateChecked
-
-(Expression expression);
-
-public static NewExpression New
-
-(ConstructorInfo constructor,
-
-IEnumerable&lt;Expression&gt; arguments,
-
-params MemberInfo\[\] members);
-
-public static NewExpression New(ConstructorInfo constructor);
-
-public static NewExpression New(Type type);
-
-public static NewExpression New(ConstructorInfo constructor,
-
-params Expression\[\] arguments);
-
-public static NewExpression New
-
-(ConstructorInfo constructor,
-
-IEnumerable&lt;Expression&gt; arguments);
-
-public static NewExpression New
-
-(ConstructorInfo constructor,
-
-IEnumerable&lt;Expression&gt; arguments,
-
-IEnumerable&lt;System.Reflection.MemberInfo&gt; members);
-
-public static NewArrayExpression NewArrayBounds
-
-(Type type,
-
-IEnumerable&lt;Expression&gt; bounds);
-
-public static NewArrayExpression NewArrayBounds
-
-(Type type, params Expression\[\] bounds);
-
-public static NewArrayExpression NewArrayInit
-
-(Type type,
-
-IEnumerable&lt;Expression&gt; initializers);
-
-public static NewArrayExpression NewArrayInit
-
-(Type type, params Expression\[\] initializers);
-
-public static UnaryExpression Not(Expression expression);
-
-public static UnaryExpression Not(Expression expression,
-
-MethodInfo method);
-
+    public static ElementInit ElementInit
+        (MethodInfo addMethod,
+         IEnumerable<Expression> arguments);
+    public static ElementInit ElementInit
+        (MethodInfo addMethod, params Expression[] arguments);
+    public static BinaryExpression Equal(Expression left,
+                                         Expression right);
+    public static BinaryExpression Equal
+        (Expression left, Expression right, Boolean liftToNull,
+         MethodInfo method);
+    public static BinaryExpression ReferenceEqual(Expression left,
+                                                  Expression right)
+    public static BinaryExpression NotEqual(Expression left,
+                                            Expression right);
+    public static BinaryExpression NotEqual
+        (Expression left, Expression right, Boolean liftToNull,
+         MethodInfo method);
+    public static BinaryExpression ReferenceNotEqual(Expression left,
+                                                     Expression right)
+    public static BinaryExpression ExclusiveOr
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression ExclusiveOr(Expression left,
+                                               Expression right);
+    public static BinaryExpression ExclusiveOrAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression ExclusiveOrAssign
+        (Expression left, Expression right);
+    public static BinaryExpression ExclusiveOrAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static MemberExpression Field(Expression expression,
+                                         String fieldName);
+    public static MemberExpression Field
+        (Expression expression, Type type, String fieldName);
+    public static MemberExpression Field(Expression expression,
+                                         FieldInfo field);
+    public static GotoExpression Goto(LabelTarget target);
+    public static GotoExpression Goto(LabelTarget target,
+                                      Expression value);
+    public static BinaryExpression GreaterThan
+        (Expression left, Expression right, Boolean liftToNull,
+         MethodInfo method);
+    public static BinaryExpression GreaterThan(Expression left,
+                                               Expression right);
+    public static BinaryExpression GreaterThanOrEqual
+        (Expression left, Expression right, Boolean liftToNull,
+         MethodInfo method);
+    public static BinaryExpression GreaterThanOrEqual
+        (Expression left, Expression right);
+    public static UnaryExpression Increment(Expression expression,
+                                            MethodInfo method);
+    public static UnaryExpression Increment(Expression expression);
+    public static InvocationExpression Invoke
+        (Expression expression, params Expression[] arguments);
+    public static InvocationExpression Invoke
+        (Expression expression, IEnumerable<Expression> arguments);
+    public static UnaryExpression IsFalse(Expression expression) {
+    public static UnaryExpression IsFalse(Expression expression,
+                                          MethodInfo method) {
+    public static UnaryExpression IsTrue(Expression expression) {
+    public static UnaryExpression IsTrue(Expression expression,
+                                         MethodInfo method) {
+    public static LabelTarget Label(Type type, String name);
+    public static LabelTarget Label(Type type);
+    public static LabelTarget Label();
+    public static LabelTarget Label(String name);
+    public static LabelExpression Label(LabelTarget target);
+    public static LabelExpression Label(LabelTarget target,
+                                        Expression defaultValue);
+    public static LambdaExpression Lambda
+        (Expression body, params ParameterExpression[] parameters);
+    public static LambdaExpression Lambda
+        (Expression body,
+         IEnumerable<ParameterExpression> parameters);
+    public static Expression<TDelegate> Lambda<TDelegate>
+        (Expression body, String name,
+         IEnumerable<ParameterExpression> parameters);
+    public static Expression<TDelegate> Lambda<TDelegate>
+        (Expression body, params ParameterExpression[] parameters);
+    public static Expression<TDelegate> Lambda<TDelegate>
+        (Expression body,
+         IEnumerable<ParameterExpression> parameters);
+    public static LambdaExpression Lambda
+        (Expression body, String name,
+         IEnumerable<ParameterExpression> parameters);
+    public static LambdaExpression Lambda
+        (Type delegateType, Expression body, String name,
+         IEnumerable<ParameterExpression> parameters);
+    public static LambdaExpression Lambda
+        (Type delegateType, Expression body,
+         params ParameterExpression[] parameters);
+    public static LambdaExpression Lambda
+        (Type delegateType, Expression body,
+         IEnumerable<ParameterExpression> parameters);
+    public static BinaryExpression LeftShift
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression LeftShift(Expression left,
+                                             Expression right);
+    public static BinaryExpression LeftShiftAssign(Expression left,
+                                                   Expression right);
+    public static BinaryExpression LeftShiftAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression LeftShiftAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression LessThan
+        (Expression left, Expression right, Boolean liftToNull,
+         MethodInfo method);
+    public static BinaryExpression LessThan(Expression left,
+                                            Expression right);
+    public static BinaryExpression LessThanOrEqual
+        (Expression left, Expression right, Boolean liftToNull,
+         MethodInfo method);
+    public static BinaryExpression LessThanOrEqual(Expression left,
+                                                   Expression right);
+    public static MemberListBinding ListBind
+        (MemberInfo member,
+         IEnumerable<ElementInit>
+         initializers);
+    public static MemberListBinding ListBind
+        (MemberInfo member, params ElementInit[] initializers);
+    public static MemberListBinding ListBind
+        (MethodInfo propertyAccessor,
+         IEnumerable<ElementInit>
+         initializers);
+    public static MemberListBinding ListBind
+        (MethodInfo propertyAccessor,
+         params ElementInit[] initializers);
+    public static ListInitExpression ListInit
+        (NewExpression newExpression,
+         params ElementInit[] initializers);
+    public static ListInitExpression ListInit
+        (NewExpression newExpression, MethodInfo addMethod,
+         params Expression[] initializers);
+    public static ListInitExpression ListInit
+        (NewExpression newExpression,
+         IEnumerable<ElementInit> initializers);
+    public static ListInitExpression ListInit
+        (NewExpression newExpression,
+         IEnumerable<Expression> initializers);
+    public static ListInitExpression ListInit
+        (NewExpression newExpression,
+         params Expression[] initializers);
+    public static ListInitExpression ListInit
+        (NewExpression newExpression, MethodInfo addMethod,
+         IEnumerable<Expression> initializers);
+    public static LoopExpression Loop(Expression body);
+    public static LoopExpression Loop
+        (Expression body, LabelTarget break, LabelTarget continue);
+    public static LoopExpression Loop(Expression body,
+                                      LabelTarget break);
+    public static BinaryExpression MakeBinary
+        (ExpressionType binaryType, Expression left,
+         Expression right);
+    public static BinaryExpression MakeBinary
+        (ExpressionType binaryType, Expression left, Expression right,
+         Boolean liftToNull, MethodInfo method);
+    public static BinaryExpression MakeBinary
+        (ExpressionType binaryType, Expression left, Expression right,
+         Boolean liftToNull, MethodInfo method,
+         LambdaExpression conversion);
+    public static GotoExpression MakeGoto
+        (GotoExpressionKind kind, LabelTarget target,
+         Expression value);
+    public static IndexExpression MakeIndex
+        (Expression instance, PropertyInfo indexer,
+         IEnumerable<Expression> arguments);
+    public static MemberExpression MakeMemberAccess
+        (Expression expression, MemberInfo member);
+    public static UnaryExpression MakeUnary
+        (ExpressionType unaryType, Expression operand, Type type);
+    public static UnaryExpression MakeUnary
+        (ExpressionType unaryType, Expression operand, Type type,
+         MethodInfo method);
+    public static MemberMemberBinding MemberBind
+        (MemberInfo member,
+         IEnumerable<MemberBinding> bindings);
+    public static MemberMemberBinding MemberBind
+        (MemberInfo member, params MemberBinding[] bindings);
+    public static MemberMemberBinding MemberBind
+        (MethodInfo propertyAccessor,
+         IEnumerable<MemberBinding> bindings);
+    public static MemberMemberBinding MemberBind
+        (MethodInfo propertyAccessor,
+         params MemberBinding[] bindings);
+    public static MemberInitExpression MemberInit
+        (NewExpression newExpression,
+         params MemberBinding[] bindings);
+    public static MemberInitExpression MemberInit
+        (NewExpression newExpression,
+         IEnumerable<MemberBinding> bindings);
+    public static BinaryExpression Modulo
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Modulo(Expression left,
+                                          Expression right);
+    public static BinaryExpression ModuloAssign(Expression left,
+                                                Expression right);
+    public static BinaryExpression ModuloAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression ModuloAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression Multiply(Expression left,
+                                            Expression right);
+    public static BinaryExpression Multiply
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression MultiplyAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression MultiplyAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression MultiplyAssign
+        (Expression left, Expression right);
+    public static BinaryExpression MultiplyAssignChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression MultiplyAssignChecked
+        (Expression left, Expression right);
+    public static BinaryExpression MultiplyChecked
+        (Expression left, Expression right);
+    public static BinaryExpression MultiplyChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static NamedArgumentInfo NamedArg(String name);
+    public static UnaryExpression Negate(Expression expression);
+    public static UnaryExpression Negate(Expression expression,
+                                         MethodInfo method);
+    public static UnaryExpression NegateChecked(Expression expression,
+                                                MethodInfo method);
+    public static UnaryExpression NegateChecked
+        (Expression expression);
+    public static NewExpression New
+        (ConstructorInfo constructor,
+         IEnumerable<Expression> arguments,
+         params MemberInfo[] members);
+    public static NewExpression New(ConstructorInfo constructor);
+    public static NewExpression New(Type type);
+    public static NewExpression New(ConstructorInfo constructor,
+                                    params Expression[] arguments);
+    public static NewExpression New
+        (ConstructorInfo constructor,
+         IEnumerable<Expression> arguments);
+    public static NewExpression New
+        (ConstructorInfo constructor,
+         IEnumerable<Expression> arguments,
+         IEnumerable<System.Reflection.MemberInfo> members);
+    public static NewArrayExpression NewArrayBounds
+        (Type type,
+         IEnumerable<Expression> bounds);
+    public static NewArrayExpression NewArrayBounds
+        (Type type, params Expression[] bounds);
+    public static NewArrayExpression NewArrayInit
+        (Type type,
+         IEnumerable<Expression> initializers);
+    public static NewArrayExpression NewArrayInit
+        (Type type, params Expression[] initializers);
+    public static UnaryExpression Not(Expression expression);
+    public static UnaryExpression Not(Expression expression,
+                                      MethodInfo method);
 ­­­­­
-
-public static UnaryExpression OnesComplement
-
-(Expression expression)
-
-public static UnaryExpression OnesComplement
-
-(Expression expression, MethodInfo method)
-
-public static BinaryExpression Or
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Or(Expression left,
-
-Expression right);
-
-public static BinaryExpression OrAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression OrAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression OrAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression OrElse(Expression left,
-
-Expression right);
-
-public static BinaryExpression OrElse
-
-(Expression left, Expression right, MethodInfo method);
-
-public static ParameterExpression Parameter
-
-(Type type, String name);
-
-public static ParameterExpression Parameter(Type type)
-
-public static ParameterExpression Variable
-
-(Type type, String name);
-
-public static ParameterExpression Variable(Type type)
-
-public static PositionalArgumentInfo PositionalArg
-
-(Int32 position);
-
-public static UnaryExpression PostDecrementAssign
-
-(Expression expression);
-
-public static UnaryExpression PostDecrementAssign
-
-(Expression expression, MethodInfo method);
-
-public static UnaryExpression PostIncrementAssign
-
-(Expression expression);
-
-public static UnaryExpression PostIncrementAssign
-
-(Expression expression, MethodInfo method);
-
-public static BinaryExpression Power
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Power(Expression left,
-
-Expression right);
-
-public static BinaryExpression PowerAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression PowerAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression PowerAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static UnaryExpression PreDecrementAssign
-
-(Expression expression);
-
-public static UnaryExpression PreDecrementAssign
-
-(Expression expression, MethodInfo method);
-
-public static UnaryExpression PreIncrementAssign
-
-(Expression expression, MethodInfo method);
-
-public static UnaryExpression PreIncrementAssign
-
-(Expression expression);
-
-public static MemberExpression Property(Expression expression,
-
-PropertyInfo property);
-
-public static MemberExpression Property
-
-(Expression expression, MethodInfo propertyAccessor);
-
-public static IndexExpression Property
-
-(Expression instance, PropertyInfo indexer,
-
-IEnumerable&lt;Expression&gt; arguments);
-
-public static IndexExpression Property
-
-(Expression instance, PropertyInfo indexer,
-
-params Expression\[\] arguments);
-
-public static IndexExpression Property
-
-(Expression instance, String propertyName,
-
-params Expression\[\] arguments);
-
-public static MemberExpression Property(Expression expression,
-
-String propertyName);
-
-public static MemberExpression Property
-
-(Expression expression, Type type, String propertyName);
-
-public static MemberExpression PropertyOrField
-
-(Expression expression, String propertyOrFieldName);
-
-public static UnaryExpression Quote(Expression expression);
-
-public static UnaryExpression Rethrow();
-
-public static UnaryExpression Rethrow(Type type);
-
-public static GotoExpression Return(LabelTarget target,
-
-Expression value);
-
-public static GotoExpression Return(LabelTarget target);
-
-public static BinaryExpression RightShift
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression RightShift(Expression left,
-
-Expression right);
-
-public static BinaryExpression RightShiftAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression RightShiftAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression RightShiftAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static RuntimeVariablesExpression RuntimeVariables
-
-(IEnumerable&lt;ParameterExpression&gt;
-
-variables);
-
-public static RuntimeVariablesExpression RuntimeVariables
-
-(params ParameterExpression\[\] variables);
-
-public static BinaryExpression Subtract
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Subtract(Expression left,
-
-Expression right);
-
-public static BinaryExpression SubtractAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression SubtractAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression SubtractAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression SubtractAssignChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression SubtractAssignChecked
-
-(Expression left, Expression right);
-
-public static BinaryExpression SubtractChecked
-
-(Expression left, Expression right);
-
-public static BinaryExpression SubtractChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static SwitchExpression Switch(Expression value,
-
-params SwitchCase\[\] cases);
-
-public static SwitchExpression Switch
-
-(Expression switchValue, Expression defaultBody,
-
-params SwitchCase\[\] cases)
-
-public static SwitchExpression Switch
-
-(Expression switchValue, Expression defaultBody,
-
-MethodInfo comparison, params SwitchCase\[\] cases)
-
-public static SwitchExpression Switch
-
-(Type type, Expression switchValue, Expression defaultBody,
-
-MethodInfo comparison, params SwitchCase\[\] cases)
-
-public static SwitchExpression Switch
-
-(Expression switchValue, Expression defaultBody,
-
-MethodInfo comparison, IEnumerable&lt;SwitchCase&gt; cases)
-
-public static SwitchExpression Switch
-
-(Type type, Expression switchValue, Expression defaultBody,
-
-MethodInfo comparison, IEnumerable&lt;SwitchCase&gt; cases)
-
-public static SwitchCase SwitchCase
-
-(Expression body, params Expression\[\] testValues)
-
-public static SwitchCase SwitchCase
-
-(Expression body, IEnumerable&lt;Expression&gt; testValues)
-
-public static UnaryExpression Throw(Expression value, Type type);
-
-public static UnaryExpression Throw(Expression value);
-
-public static TryExpression TryCatch
-
-(Expression body, params CatchBlock\[\] handlers);
-
-public static TryExpression TryCatchFinally
-
-(Expression body, Expression finally,
-
-params CatchBlock\[\] handlers);
-
-public static TryExpression TryFault(Expression body,
-
-Expression fault);
-
-public static TryExpression TryFinally(Expression body,
-
-Expression finally);
-
-public static TryExpression MakeTry
-
-(Type type, Expression body, Expression finally,
-
-Expression fault,
-
-IEnumerable&lt;CatchBlock&gt; handlers);
-
-public static UnaryExpression TypeAs(Expression expression,
-
-Type type);
-
-public static TypeBinaryExpression TypeEqual
-
-(Expression expression, Type type);
-
-public static TypeBinaryExpression TypeIs(Expression expression,
-
-Type type);
-
-public static UnaryExpression UnaryPlus(Expression expression);
-
-public static UnaryExpression UnaryPlus(Expression expression,
-
-MethodInfo method);
-
-public static UnaryExpression Unbox(Expression expression,
-
-Type type);
+    public static UnaryExpression OnesComplement
+        (Expression expression)
+    public static UnaryExpression OnesComplement
+        (Expression expression, MethodInfo method)
+    public static BinaryExpression Or
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Or(Expression left,
+                                      Expression right);
+    public static BinaryExpression OrAssign(Expression left,
+                                            Expression right);
+    public static BinaryExpression OrAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression OrAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression OrElse(Expression left,
+                                          Expression right);
+    public static BinaryExpression OrElse
+        (Expression left, Expression right, MethodInfo method);
+    public static ParameterExpression Parameter
+        (Type type, String name);
+    public static ParameterExpression Parameter(Type type)
+    public static ParameterExpression Variable
+        (Type type, String name);
+    public static ParameterExpression Variable(Type type)
+    public static PositionalArgumentInfo PositionalArg
+        (Int32 position);
+    public static UnaryExpression PostDecrementAssign
+        (Expression expression);
+    public static UnaryExpression PostDecrementAssign
+        (Expression expression, MethodInfo method);
+    public static UnaryExpression PostIncrementAssign
+        (Expression expression);
+    public static UnaryExpression PostIncrementAssign
+        (Expression expression, MethodInfo method);
+    public static BinaryExpression Power
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Power(Expression left,
+                                         Expression right);
+    public static BinaryExpression PowerAssign(Expression left,
+                                               Expression right);
+    public static BinaryExpression PowerAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression PowerAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static UnaryExpression PreDecrementAssign
+        (Expression expression);
+    public static UnaryExpression PreDecrementAssign
+        (Expression expression, MethodInfo method);
+    public static UnaryExpression PreIncrementAssign
+        (Expression expression, MethodInfo method);
+    public static UnaryExpression PreIncrementAssign
+        (Expression expression);
+    public static MemberExpression Property(Expression expression,
+                                            PropertyInfo property);
+    public static MemberExpression Property
+        (Expression expression, MethodInfo propertyAccessor);
+    public static IndexExpression Property
+        (Expression instance, PropertyInfo indexer,
+         IEnumerable<Expression> arguments);
+    public static IndexExpression Property
+        (Expression instance, PropertyInfo indexer,
+         params Expression[] arguments);
+    public static IndexExpression Property
+        (Expression instance, String propertyName,
+         params Expression[] arguments);
+    public static MemberExpression Property(Expression expression,
+                                            String propertyName);
+    public static MemberExpression Property
+        (Expression expression, Type type, String propertyName);
+    public static MemberExpression PropertyOrField
+        (Expression expression, String propertyOrFieldName);
+    public static UnaryExpression Quote(Expression expression);
+    public static UnaryExpression Rethrow();
+    public static UnaryExpression Rethrow(Type type);
+    public static GotoExpression Return(LabelTarget target,
+                                        Expression value);
+    public static GotoExpression Return(LabelTarget target);
+    public static BinaryExpression RightShift
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression RightShift(Expression left,
+                                              Expression right);
+    public static BinaryExpression RightShiftAssign(Expression left,
+                                                    Expression right);
+    public static BinaryExpression RightShiftAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression RightShiftAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static RuntimeVariablesExpression RuntimeVariables
+        (IEnumerable<ParameterExpression>
+         variables);
+    public static RuntimeVariablesExpression RuntimeVariables
+        (params ParameterExpression[] variables);
+    public static BinaryExpression Subtract
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Subtract(Expression left,
+         Expression right);
+    public static BinaryExpression SubtractAssign(Expression left,
+                                                  Expression right);
+    public static BinaryExpression SubtractAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression SubtractAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression SubtractAssignChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression SubtractAssignChecked
+        (Expression left, Expression right);
+    public static BinaryExpression SubtractChecked
+        (Expression left, Expression right);
+    public static BinaryExpression SubtractChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static SwitchExpression Switch(Expression value,
+                                          params SwitchCase[] cases);
+    public static SwitchExpression Switch
+        (Expression switchValue, Expression defaultBody,
+         params SwitchCase[] cases)
+    public static SwitchExpression Switch
+        (Expression switchValue, Expression defaultBody,
+         MethodInfo comparison, params SwitchCase[] cases)
+    public static SwitchExpression Switch
+        (Type type, Expression switchValue, Expression defaultBody,
+         MethodInfo comparison, params SwitchCase[] cases)
+    public static SwitchExpression Switch
+        (Expression switchValue, Expression defaultBody,
+         MethodInfo comparison, IEnumerable<SwitchCase> cases)
+    public static SwitchExpression Switch
+        (Type type, Expression switchValue, Expression defaultBody,
+         MethodInfo comparison, IEnumerable<SwitchCase> cases)
+    public static SwitchCase SwitchCase
+        (Expression body, params Expression[] testValues)
+    public static SwitchCase SwitchCase
+        (Expression body, IEnumerable<Expression> testValues)
+    public static UnaryExpression Throw(Expression value, Type type);
+    public static UnaryExpression Throw(Expression value);
+    public static TryExpression TryCatch
+        (Expression body, params CatchBlock[] handlers);
+    public static TryExpression TryCatchFinally
+        (Expression body, Expression finally,
+         params CatchBlock[] handlers);
+    public static TryExpression TryFault(Expression body,
+                                         Expression fault);
+    public static TryExpression TryFinally(Expression body,
+                                           Expression finally);
+    public static TryExpression MakeTry
+        (Type type, Expression body, Expression finally,
+         Expression fault,
+         IEnumerable<CatchBlock> handlers);
+    public static UnaryExpression TypeAs(Expression expression,
+                                         Type type);
+    public static TypeBinaryExpression TypeEqual
+        (Expression expression, Type type);
+    public static TypeBinaryExpression TypeIs(Expression expression,
+                                              Type type);
+    public static UnaryExpression UnaryPlus(Expression expression);
+    public static UnaryExpression UnaryPlus(Expression expression,
+                                            MethodInfo method);
+    public static UnaryExpression Unbox(Expression expression,
+                                        Type type);
+```
 
 <h3 id="nodetype-property">4.3.2 NodeType Property</h3>
 
@@ -1332,7 +703,9 @@ The value returned by this property should never change for a given object.
 
 Signature:
 
+``` csharp
 Public virtual ExpressionType NodeType { get; }
+```
 
 <h3 id="type-property">4.3.3 Type Property</h3>
 
@@ -1346,7 +719,9 @@ The value returned by this property should never change for a given object.
 
 Signature:
 
+``` csharp
 public Type Type { get; }
+```
 
 <h3 id="canreduce-property">4.3.4 CanReduce Property</h3>
 
@@ -1358,7 +733,9 @@ The value returned by this property should never change for a given object.
 
 Signature:
 
+``` csharp
 public virtual Boolean CanReduce { get; }
+```
 
 <h3 id="reduce-method">4.3.5 Reduce Method</h3>
 
@@ -1368,7 +745,9 @@ Typically the result comprises only common ET types, ET nodes suitable for passi
 
 Signature:
 
+``` csharp
 public virtual Expression Reduce();
+```
 
 <h3 id="reduceandcheck-method">4.3.6 ReduceAndCheck Method</h3>
 
@@ -1376,7 +755,9 @@ This method returns a semantically equivalent ET representing the same expressio
 
 Signature:
 
+``` csharp
 public virtual Expression ReduceAndCheck();
+```
 
 <h3 id="reduceextensions-method">4.3.7 ReduceExtensions Method</h3>
 
@@ -1386,7 +767,9 @@ This is the standard way for compilers like the expression compiler to reduce no
 
 Signature:
 
+``` csharp
 public virtual Expression ReduceExtensions();
+```
 
 <h3 id="debugview-property">4.3.8 DebugView Property</h3>
 
@@ -1396,7 +779,9 @@ This property walks the expression tree and renders "pretty printing" of the tre
 
 Signatures:
 
+``` csharp
 private string DebugView {get {}}
+```
 
 <h3 id="dumpexpression-method-codeplex-only">4.3.9 DumpExpression Method (Codeplex only)</h3>
 
@@ -1406,7 +791,9 @@ This method walks the expression tree and renders "pretty printing" of the tree 
 
 Signatures:
 
+``` csharp
 public void DumpExpression(string descr, TextWriter writer) {
+```
 
 <h3 id="getfunctype-method">4.3.10 GetFuncType Method</h3>
 
@@ -1414,7 +801,9 @@ This helper method creates Type objects for delegate types with non-void return 
 
 Signature:
 
-public static Type GetFuncType(params Type\[\] typeArgs);
+``` csharp
+public static Type GetFuncType(params Type[] typeArgs);
+```
 
 TypeArgs must contain at least one argument and at most 17 elements. If the elements of typeArgs represent the types T1…Tn, the resulting Type object represents the constructed delegate type System.Linq.Func&lt;T1,…,Tn&gt;. The last argument must be the return type.
 
@@ -1424,9 +813,10 @@ This helper method is just like GetFuncType, but it does not throw if given more
 
 Signature:
 
-public static bool TryGetFuncType(Type\[\] typeArgs,
-
-out Type funcType);
+``` csharp
+public static bool TryGetFuncType(Type[] typeArgs,
+                                  out Type funcType);
+```
 
 <h3 id="getactiontype-method">4.3.12 GetActionType Method</h3>
 
@@ -1434,7 +824,9 @@ This helper method creates Type objects for delegate types with void return type
 
 Signature:
 
-public static Type GetActionType(params Type\[\] typeArgs);
+``` csharp
+public static Type GetActionType(params Type[] typeArgs);
+```
 
 TypeArgs must contain at least one argument and at most 16 elements. If the elements of typeArgs represent the types T1…Tn, the resulting Type object represents the constructed delegate type System.Linq.Action&lt;T1,…,Tn&gt;.
 
@@ -1444,9 +836,10 @@ This helper method is just like GetActionType, but it does not throw if given mo
 
 Signature:
 
-public static bool TryGetActionType(Type\[\] typeArgs,
-
-out Type actionType)
+``` csharp
+public static bool TryGetActionType(Type[] typeArgs,
+                                    out Type actionType)
+```
 
 <h3 id="getdelegatetype-method">4.3.14 GetDelegateType Method</h3>
 
@@ -1458,7 +851,9 @@ This method is useful when calling the Lambda factories, and it is what the Lamb
 
 Signature:
 
-public static Type GetDelegateType(params Type\[\] typeArgs)
+``` csharp
+public static Type GetDelegateType(params Type[] typeArgs)
+```
 
 <h3 id="visitchildren-method">4.3.15 VisitChildren Method</h3>
 
@@ -1466,9 +861,11 @@ This virtual method is for sub classes of Expression that are not common node ki
 
 Signature:
 
+``` csharp
 protected virtual Expression VisitChildren
+```
 
-(ExpressionVisitor visitor);
+`        (Expression``Visitor` `visitor);`
 
 <h3 id="accept-method">4.3.16 Accept Method</h3>
 
@@ -1478,9 +875,10 @@ It is rare to need to override this method, and it is available for subclasses o
 
 Signature:
 
+``` csharp
 protected internal virtual Expression Accept
-
-(ExpressionVisitor visitor)
+   (ExpressionVisitor visitor)
+```
 
 <h2 id="expressiontype-enum">4.4 ExpressionType Enum</h2>
 
@@ -1490,177 +888,94 @@ The following sub sections' text that describes the static node semantics for th
 
 <h3 id="type-summary">4.4.1 Type Summary</h3>
 
+``` csharp
 public enum ExpressionType {
-
-Add,
-
-AddChecked,
-
-And,
-
-AndAlso,
-
-ArrayLength,
-
-ArrayIndex,
-
-Call,
-
-Coalesce,
-
-Conditional,
-
-Constant,
-
-Convert,
-
-ConvertChecked,
-
-Divide,
-
-Equal,
-
-ExclusiveOr,
-
-GreaterThan,
-
-GreaterThanOrEqual,
-
-Invoke,
-
-Lambda,
-
-LeftShift,
-
-LessThan,
-
-LessThanOrEqual,
-
-ListInit,
-
-MemberAccess,
-
-MemberInit,
-
-Modulo,
-
-Multiply,
-
-MultiplyChecked,
-
-Negate,
-
-UnaryPlus,
-
-NegateChecked,
-
-New,
-
-NewArrayInit,
-
-NewArrayBounds,
-
-Not,
-
-NotEqual,
-
-Or,
-
-OrElse,
-
-Parameter,
-
-Power,
-
-Quote,
-
-RightShift,
-
-Subtract,
-
-SubtractChecked,
-
-TypeAs,
-
-TypeIs,
-
-Assign,
-
-Block,
-
-DebugInfo,
-
-Decrement,
-
-Dynamic,
-
-Default,
-
-Extension,
-
-Goto,
-
-Increment,
-
-Index,
-
-Label,
-
-RuntimeVariables,
-
-Loop,
-
-Switch,
-
-Throw,
-
-Try,
-
-Unbox,
-
-AddAssign,
-
-AndAssign,
-
-DivideAssign,
-
-ExclusiveOrAssign,
-
-LeftShiftAssign,
-
-ModuloAssign,
-
-MultiplyAssign,
-
-OrAssign,
-
-PowerAssign,
-
-RightShiftAssign,
-
-SubtractAssign,
-
-AddAssignChecked,
-
-MultiplyAssignChecked,
-
-SubtractAssignChecked,
-
-PreIncrementAssign,
-
-PreDecrementAssign,
-
-PostIncrementAssign,
-
-PostDecrementAssign,
-
-TypeEqual,
-
-OnesComplement,
-
-IsTrue,
-
-IsFalse
+    Add, 
+    AddChecked, 
+    And, 
+    AndAlso, 
+    ArrayLength, 
+    ArrayIndex, 
+    Call, 
+    Coalesce, 
+    Conditional, 
+    Constant, 
+    Convert, 
+    ConvertChecked, 
+    Divide, 
+    Equal, 
+    ExclusiveOr, 
+    GreaterThan, 
+    GreaterThanOrEqual, 
+    Invoke, 
+    Lambda, 
+    LeftShift, 
+    LessThan, 
+    LessThanOrEqual, 
+    ListInit, 
+    MemberAccess, 
+    MemberInit, 
+    Modulo, 
+    Multiply, 
+    MultiplyChecked, 
+    Negate, 
+    UnaryPlus, 
+    NegateChecked, 
+    New, 
+    NewArrayInit, 
+    NewArrayBounds, 
+    Not, 
+    NotEqual, 
+    Or, 
+    OrElse, 
+    Parameter, 
+    Power, 
+    Quote, 
+    RightShift, 
+    Subtract, 
+    SubtractChecked, 
+    TypeAs, 
+    TypeIs, 
+    Assign, 
+    Block, 
+    DebugInfo, 
+    Decrement, 
+    Dynamic, 
+    Default, 
+    Extension, 
+    Goto, 
+    Increment, 
+    Index, 
+    Label, 
+    RuntimeVariables, 
+    Loop, 
+    Switch, 
+    Throw, 
+    Try, 
+    Unbox, 
+    AddAssign, 
+    AndAssign, 
+    DivideAssign, 
+    ExclusiveOrAssign, 
+    LeftShiftAssign, 
+    ModuloAssign, 
+    MultiplyAssign, 
+    OrAssign, 
+    PowerAssign, 
+    RightShiftAssign, 
+    SubtractAssign, 
+    AddAssignChecked, 
+    MultiplyAssignChecked, 
+    SubtractAssignChecked, 
+    PreIncrementAssign, 
+    PreDecrementAssign, 
+    PostIncrementAssign, 
+    PostDecrementAssign, 
+    TypeEqual,
+    OnesComplement,
+    IsTrue,
+    IsFalse
+```
 
 <h3 id="add">4.4.2 Add</h3>
 
@@ -2256,23 +1571,22 @@ This node maps to the IL unbox and unbox.any instructions.
 
 We will need this in v-next+1 if we look toward IL coverage in the ET model, but we added Unbox in .NET 4.0 to support DLR languages, such as IronPython. These languages want to present a programming model as exemplified here (without the commented out line):
 
-> r = Rect()
->
-> \#\# s = StrongBox\[Rect\](r)
->
-> r.Intersect(r2)
+``` csharp
+r = Rect()
+## s = StrongBox[Rect](r)
+r.Intersect(r2)
+```
 
 The problem is that a dynamic language like IronPython has to box r to have actual pointers to objects. When the Intersect call happens, the CLR box gets unpacked, and the destructive Intersect call modifies a copy of r’s contents. If IronPython programmers explicitly StrongBox the rect, as in the commented out line, then the IronPython programmer gets the expected behavior of modifying r’s contents. This is not how dynamic language programmers want to think about using values like rects, and for the language to manage this boxing and unboxing correctly everywhere would be a lot of work to get right.
 
 Note, the C\# code does the right thing:
 
-> Rect r = new Rect()
->
-> //Expr.Call(Expr.Convert(r, typeof(Rect)),
->
-> // “Intersect”, new\[\] {r2})
->
-> Expr&lt;Funct&lt;&gt;&gt; e = () =&gt; ((Rect) r).Intersect(r2)
+``` csharp
+Rect r = new Rect()
+//Expr.Call(Expr.Convert(r, typeof(Rect)), 
+//                       “Intersect”, new[] {r2})
+Expr<Funct<>> e = () => ((Rect) r).Intersect(r2)
+```
 
 C\# emits IL to pass the address to the r value in the CLR box object, so it works as expected. We've simply enabled dynamic languages using the DLR to do the same implementation.
 
@@ -2505,15 +1819,18 @@ These are useful for filling in required expressions that simply complete other 
 
 <h3 id="class-summary-1">4.5.1 Class Summary</h3>
 
+``` csharp
 public sealed class DefaultExpression : Expression {}
+```
 
 <h3 id="factory-methods">4.5.2 Factory Methods</h3>
 
 Expression has the following factory methods for DefaultExpressions:
 
+``` csharp
 public static DefaultExpression Default(Type type);
-
 public static DefaultExpression Empty();
+```
 
 If type is void, Default returns the same node that calling Empty returns.
 
@@ -2529,23 +1846,17 @@ These nodes have many node kinds for the various operations they can support. Se
 
 <h3 id="class-summary-2">4.6.1 Class Summary</h3>
 
+``` csharp
 public class BinaryExpression : Expression {
-
-public LambdaExpression Conversion { get; }
-
-public Boolean IsLifted { get; }
-
-public Boolean IsLiftedToNull { get; }
-
-public Expression Left { get; }
-
-public MethodInfo Method { get; }
-
-public Expression Right { get; }
-
-public BinaryExpression Update
-
-(Expression left, LambdaExpression conversion, Expression right)
+    public LambdaExpression Conversion { get; }
+    public Boolean IsLifted { get; }
+    public Boolean IsLiftedToNull { get; }
+    public Expression Left { get; }
+    public MethodInfo Method { get; }
+    public Expression Right { get; }
+    public BinaryExpression Update
+       (Expression left, LambdaExpression conversion, Expression right)
+```
 
 <h3 id="conversion-property">4.6.2 Conversion Property</h3>
 
@@ -2553,7 +1864,9 @@ This property returns the expression that models the type conversion function us
 
 Signature:
 
+``` csharp
 public LambdaExpression Conversion { get; }
+```
 
 <h3 id="islifted-property">4.6.3 IsLifted Property</h3>
 
@@ -2561,7 +1874,9 @@ This property returns true if the node represents an operator call that takes no
 
 Signature:
 
+``` csharp
 public Boolean IsLifted { get; }
+```
 
 <h3 id="isliftedtonull-property">4.6.4 IsLiftedToNull Property</h3>
 
@@ -2569,7 +1884,9 @@ This property returns true if the node represents a call to an operator that ret
 
 Signature:
 
+``` csharp
 public Boolean IsLiftedToNull { get; }
+```
 
 <h3 id="method-property">4.6.5 Method Property</h3>
 
@@ -2577,7 +1894,9 @@ This property returns the MethodInfo associated the operation to further specify
 
 Signature:
 
+``` csharp
 public MethodInfo Method { get; }
+```
 
 <h3 id="left-property">4.6.6 Left Property</h3>
 
@@ -2585,7 +1904,9 @@ This property returns the expression for the first argument to the operation.
 
 Signature:
 
+``` csharp
 public Expression Left { get; }
+```
 
 <h3 id="right-property">4.6.7 Right Property</h3>
 
@@ -2593,7 +1914,9 @@ This property returns the expression for the second argument to the operation.
 
 Signature:
 
+``` csharp
 public Expression Right { get; }
+```
 
 <h3 id="update-method">4.6.8 Update Method</h3>
 
@@ -2601,305 +1924,163 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public BinaryExpression Update
-
-(Expression left, LambdaExpression conversion, Expression right)
+   (Expression left, LambdaExpression conversion, Expression right)
+```
 
 <h3 id="arithmetic-shift-and-bit-operations-factory-methods">4.6.9 Arithmetic, Shift, and Bit Operations Factory Methods</h3>
 
 Expression has the following factory methods for BinaryExpressions representing arithemetic, shift, and bit operations:
 
-public static BinaryExpression Add
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Add(Expression left,
-
-Expression right);
-
-public static BinaryExpression AddAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression AddAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression AddAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression AddAssignChecked(Expression left,
-
-Expression right);
-
-public static BinaryExpression AddAssignChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression AddAssignChecked
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression AddChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression AddChecked(Expression left,
-
-Expression right);
-
-public static BinaryExpression And(Expression left,
-
-Expression right);
-
-public static BinaryExpression And
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression AndAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression AndAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Divide(Expression left,
-
-Expression right);
-
-public static BinaryExpression Divide
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression DivideAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression DivideAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression DivideAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
+``` csharp
+    public static BinaryExpression Add
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Add(Expression left,
+                                       Expression right);
+    public static BinaryExpression AddAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression AddAssign(Expression left,
+                                             Expression right);
+    public static BinaryExpression AddAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression AddAssignChecked(Expression left,
+                                                    Expression right);
+    public static BinaryExpression AddAssignChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression AddAssignChecked
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression AddChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression AddChecked(Expression left,
+                                              Expression right);
+    public static BinaryExpression And(Expression left,
+                                       Expression right);
+    public static BinaryExpression And
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression AndAssign(Expression left,
+                                             Expression right);
+    public static BinaryExpression AndAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Divide(Expression left,
+                                          Expression right);
+    public static BinaryExpression Divide
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression DivideAssign(Expression left,
+                                                Expression right);
+    public static BinaryExpression DivideAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression DivideAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
 ­
-
-public static BinaryExpression ExclusiveOr
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression ExclusiveOr(Expression left,
-
-Expression right);
-
-public static BinaryExpression ExclusiveOrAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression ExclusiveOrAssign
-
-(Expression left, Expression right);
-
-public static BinaryExpression ExclusiveOrAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression LeftShift
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression LeftShift(Expression left,
-
-Expression right);
-
-public static BinaryExpression LeftShiftAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression LeftShiftAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression LeftShiftAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression Modulo
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Modulo(Expression left,
-
-Expression right);
-
-public static BinaryExpression ModuloAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression ModuloAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression ModuloAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression Multiply(Expression left,
-
-Expression right);
-
-public static BinaryExpression Multiply
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression MultiplyAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression MultiplyAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression MultiplyAssign
-
-(Expression left, Expression right);
-
-public static BinaryExpression MultiplyAssignChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression MultiplyAssignChecked
-
-(Expression left, Expression right);
-
-public static BinaryExpression MultiplyChecked
-
-(Expression left, Expression right);
-
-public static BinaryExpression MultiplyChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Or
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Or(Expression left,
-
-Expression right);
-
-public static BinaryExpression OrAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression OrAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression OrAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression Power
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Power(Expression left,
-
-Expression right);
-
-public static BinaryExpression \`ign(Expression left,
-
-Expression right);
-
-public static BinaryExpression PowerAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression PowerAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression RightShift
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression RightShift(Expression left,
-
-Expression right);
-
-public static BinaryExpression RightShiftAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression RightShiftAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression RightShiftAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression Subtract
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression Subtract(Expression left,
-
-Expression right);
-
-public static BinaryExpression SubtractAssign(Expression left,
-
-Expression right);
-
-public static BinaryExpression SubtractAssign
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression SubtractAssign
-
-(Expression left, Expression right, MethodInfo method,
-
-LambdaExpression conversion)
-
-public static BinaryExpression SubtractAssignChecked
-
-(Expression left, Expression right, MethodInfo method);
-
-public static BinaryExpression SubtractAssignChecked
-
-(Expression left, Expression right);
-
-public static BinaryExpression SubtractChecked
-
-(Expression left, Expression right);
-
-public static BinaryExpression SubtractChecked
-
-(Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression ExclusiveOr
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression ExclusiveOr(Expression left,
+                                               Expression right);
+    public static BinaryExpression ExclusiveOrAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression ExclusiveOrAssign
+        (Expression left, Expression right);
+    public static BinaryExpression ExclusiveOrAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression LeftShift
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression LeftShift(Expression left,
+                                             Expression right);
+    public static BinaryExpression LeftShiftAssign(Expression left,
+                                                   Expression right);
+    public static BinaryExpression LeftShiftAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression LeftShiftAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression Modulo
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Modulo(Expression left,
+                                          Expression right);
+    public static BinaryExpression ModuloAssign(Expression left,
+                                                Expression right);
+    public static BinaryExpression ModuloAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression ModuloAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression Multiply(Expression left,
+                                            Expression right);
+    public static BinaryExpression Multiply
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression MultiplyAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression MultiplyAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression MultiplyAssign
+        (Expression left, Expression right);
+    public static BinaryExpression MultiplyAssignChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression MultiplyAssignChecked
+        (Expression left, Expression right);
+    public static BinaryExpression MultiplyChecked
+        (Expression left, Expression right);
+    public static BinaryExpression MultiplyChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Or
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Or(Expression left,
+                                      Expression right);
+    public static BinaryExpression OrAssign(Expression left,
+                                            Expression right);
+    public static BinaryExpression OrAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression OrAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression Power
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Power(Expression left,
+                                         Expression right);
+    public static BinaryExpression `ign(Expression left,
+                                               Expression right);
+    public static BinaryExpression PowerAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression PowerAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression RightShift
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression RightShift(Expression left,
+                                              Expression right);
+    public static BinaryExpression RightShiftAssign(Expression left,
+                                                    Expression right);
+    public static BinaryExpression RightShiftAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression RightShiftAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression Subtract
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression Subtract(Expression left,
+         Expression right);
+    public static BinaryExpression SubtractAssign(Expression left,
+                                                  Expression right);
+    public static BinaryExpression SubtractAssign
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression SubtractAssign
+        (Expression left, Expression right, MethodInfo method,
+         LambdaExpression conversion)
+    public static BinaryExpression SubtractAssignChecked
+        (Expression left, Expression right, MethodInfo method);
+    public static BinaryExpression SubtractAssignChecked
+        (Expression left, Expression right);
+    public static BinaryExpression SubtractChecked
+        (Expression left, Expression right);
+    public static BinaryExpression SubtractChecked
+        (Expression left, Expression right, MethodInfo method);
+```
 
 The following is from the v1 spec ... except liftToNull semantics which now describes the code that shipped ... and comments regarding ...Assign factory methods
 
@@ -2955,9 +2136,10 @@ The ArrayIndex factories will be obsolete in lieu of the more general IndexExpre
 
 Expression has the following factory methods for BinaryExpressions representing single-dimension array element fetching:
 
+``` csharp
 public static BinaryExpression ArrayIndex(Expression array,
-
-Expression index);
+                                           Expression index);
+```
 
 The following is derived from the v1 spec ...
 
@@ -2977,9 +2159,10 @@ Array and index must be non-null. array.Type must represent an array type with r
 
 Expression has the following factory methods for BinaryExpressions representing assignment operations:
 
+``` csharp
 public static BinaryExpression Assign(Expression left,
-
-Expression right);
+                                      Expression right);
+```
 
 Left must be one of the node types ParameterExpression, MemberExpression, or IndexExpression. Right.Type must be reference assignable to Left.Type. The resulting node has node kind Assign. If the left type represents a property or indexed property, it must have a setter.
 
@@ -2987,15 +2170,13 @@ Left must be one of the node types ParameterExpression, MemberExpression, or Ind
 
 Expression has the following factory methods for BinaryExpressions representing coalesce operations (that is, what 'or' returns in a dynamic language):
 
+``` csharp
 public static BinaryExpression Coalesce(Expression left,
-
-Expression right);
-
+                                        Expression right);
 public static BinaryExpression Coalesce
-
-(Expression left, Expression right,
-
-LambdaExpression conversion);
+    (Expression left, Expression right,
+     LambdaExpression conversion);
+```
 
 The following is from the v1 spec ...
 
@@ -3009,21 +2190,16 @@ The resulting BinaryExpression has Left and Right properties equal to left and r
 
 Expression has the following factory methods for BinaryExpressions representing conditional 'and' and 'or' operations (referred to sometimes as "short-circuiting"):
 
+``` csharp
 public static BinaryExpression AndAlso(Expression left,
-
-Expression right);
-
+                                       Expression right);
 public static BinaryExpression AndAlso
-
-(Expression left, Expression right, MethodInfo method);
-
+    (Expression left, Expression right, MethodInfo method);
 public static BinaryExpression OrElse(Expression left,
-
-Expression right);
-
+                                      Expression right);
 public static BinaryExpression OrElse
-
-(Expression left, Expression right, MethodInfo method);
+    (Expression left, Expression right, MethodInfo method);
+```
 
 The following is from the v1 spec ... except liftToNull semantics which now describes the code that shipped ...
 
@@ -3063,73 +2239,42 @@ The resulting BinaryExpression has Left and Right properties equal to left and r
 
 Expression has the following factory methods for BinaryExpressions representing comparison operations:
 
+``` csharp
 public static BinaryExpression Equal(Expression left,
-
-Expression right);
-
+                                     Expression right);
 public static BinaryExpression Equal
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
+    (Expression left, Expression right, Boolean liftToNull,
+     MethodInfo method);
 public static BinaryExpression ReferenceEqual(Expression left,
-
-Expression right)
-
+                                              Expression right)
 public static BinaryExpression NotEqual(Expression left,
-
-Expression right);
-
+                                        Expression right);
 public static BinaryExpression NotEqual
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
+    (Expression left, Expression right, Boolean liftToNull,
+     MethodInfo method);
 public static BinaryExpression ReferenceNotEqual(Expression left,
-
-Expression right)
-
+                                                 Expression right)
 public static BinaryExpression GreaterThan
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
+    (Expression left, Expression right, Boolean liftToNull,
+     MethodInfo method);
 public static BinaryExpression GreaterThan(Expression left,
-
-Expression right);
-
+                                           Expression right);
 public static BinaryExpression GreaterThanOrEqual
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
+    (Expression left, Expression right, Boolean liftToNull,
+     MethodInfo method);
 public static BinaryExpression GreaterThanOrEqual(Expression left,
-
-Expression right);
-
+                                                  Expression right);
 public static BinaryExpression LessThan
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
+    (Expression left, Expression right, Boolean liftToNull,
+     MethodInfo method);
 public static BinaryExpression LessThan(Expression left,
-
-Expression right);
-
+                                        Expression right);
 public static BinaryExpression LessThanOrEqual
-
-(Expression left, Expression right, Boolean liftToNull,
-
-MethodInfo method);
-
+    (Expression left, Expression right, Boolean liftToNull,
+     MethodInfo method);
 public static BinaryExpression LessThanOrEqual(Expression left,
-
-Expression right);
+                                               Expression right);
+```
 
 The following is from the v1 spec ... except liftToNull semantics which now describes the code that shipped ...
 
@@ -3173,23 +2318,17 @@ The resulting BinaryExpression has:
 
 Expression has the following general factory methods for BinaryExpressions:
 
+``` csharp
 public static BinaryExpression MakeBinary
-
-(ExpressionType binaryType, Expression left, Expression right);
-
+    (ExpressionType binaryType, Expression left, Expression right);
 public static BinaryExpression MakeBinary
-
-(ExpressionType binaryType, Expression left, Expression right,
-
-Boolean liftToNull, MethodInfo method);
-
+    (ExpressionType binaryType, Expression left, Expression right,
+     Boolean liftToNull, MethodInfo method);
 public static BinaryExpression MakeBinary
-
-(ExpressionType binaryType, Expression left, Expression right,
-
-Boolean liftToNull, MethodInfo method,
-
-LambdaExpression conversion);
+    (ExpressionType binaryType, Expression left, Expression right,
+     Boolean liftToNull, MethodInfo method,
+     LambdaExpression conversion);
+```
 
 The following is from the v1 spec ...
 
@@ -3203,53 +2342,37 @@ This class represents type tests. It can have node kinds TypeIs or TypeEqual. Th
 
 Example distinction between TypeIs node kind and C\#'s 'is' operator:
 
-> using System;
->
-> using System.Linq;
->
-> using System.Linq.Expressions;
->
-> class Test {
->
-> public static void Main() {
->
-> Func&lt;bool&gt; func1
->
-> // C\# compiles the 'is' here directly instead of using
->
-> // an ET and Expression.Compile().
->
-> = () =&gt; new\[\] { DayOfWeek.Friday } is int\[\];
->
-> Expression&lt;Func&lt;bool&gt;&gt; expr1
->
-> // C\# emits a TypeIs node for 'is' here, which is a bug
->
-> // in 2008.
->
-> = () =&gt; new\[\] { DayOfWeek.Friday } is int\[\];
->
-> Console.WriteLine(func1());
->
-> Console.WriteLine(expr1.Compile()());
->
-> // When the above code is compiled and run:
->
-> // Expected: prints False and False
->
-> // Actual: prints False and True
+``` csharp
+using System;
+using System.Linq;
+using System.Linq.Expressions;
+class Test {
+  public static void Main() {
+      Func<bool> func1
+          // C# compiles the 'is' here directly instead of using
+          // an ET and Expression.Compile().
+          = () => new[] { DayOfWeek.Friday } is int[];
+      Expression<Func<bool>> expr1 
+          // C# emits a TypeIs node for 'is' here, which is a bug
+          // in 2008.
+          = () => new[] { DayOfWeek.Friday } is int[];
+      Console.WriteLine(func1());
+      Console.WriteLine(expr1.Compile()());
+// When the above code is compiled and run:
+//    Expected: prints False and False
+//    Actual: prints False and True
+```
 
 The issue is that C\# appropriate regards enums and integers as mutually type-distinct, though there are explicit conversions between them. However, the CLR compares an array with elements of the same underlying type as type equal, and arrays of enums in the CLR are just arrays of ints (in this case).
 
 <h3 id="class-summary-3">4.7.1 Class Summary</h3>
 
+``` csharp
 public sealed class TypeBinaryExpression : Expression {
-
-public Expression Expression { get; }
-
-public Type TypeOperand { get; }
-
-public TypeBinaryExpression Update(Expression expression)
+    public Expression Expression { get; }
+    public Type TypeOperand { get; }
+    public TypeBinaryExpression Update(Expression expression)
+```
 
 <h3 id="expression-property">4.7.2 Expression Property</h3>
 
@@ -3257,7 +2380,9 @@ This property returns the expression that produces a value for checking if its t
 
 Signature:
 
+``` csharp
 public Expression Expression { get; }
+```
 
 <h3 id="typeoperand-property">4.7.3 TypeOperand Property</h3>
 
@@ -3265,7 +2390,9 @@ This property returns the type to test whether Expression results in a value of 
 
 Signature:
 
+``` csharp
 public Type TypeOperand { get; }
+```
 
 <h3 id="update-method-1">4.7.4 Update Method</h3>
 
@@ -3273,19 +2400,20 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public TypeBinaryExpression Update(Expression expression)
+```
 
 <h3 id="factory-methods-1">4.7.5 Factory Methods</h3>
 
 Expression has the following factory methods for TypeBinaryExpressions:
 
+``` csharp
 public static TypeBinaryExpression TypeEqual
-
-(Expression expression, Type type);
-
+    (Expression expression, Type type);
 public static TypeBinaryExpression TypeIs(Expression expression,
-
-Type type);
+                                          Type type);
+```
 
 The following is from the v1 spec ...
 
@@ -3305,17 +2433,14 @@ These nodes have many node kinds for the various operations they can support. Se
 
 <h3 id="class-summary-4">4.8.1 Class Summary</h3>
 
+``` csharp
 public sealed class UnaryExpression : Expression {
-
-public Boolean IsLifted { get; }
-
-public Boolean IsLiftedToNull { get; }
-
-public MethodInfo Method { get; }
-
-public Expression Operand { get; }
-
-public UnaryExpression Update(Expression operand)
+    public Boolean IsLifted { get; }
+    public Boolean IsLiftedToNull { get; }
+    public MethodInfo Method { get; }
+    public Expression Operand { get; }
+    public UnaryExpression Update(Expression operand)
+```
 
 <h3 id="islifted-property-1">4.8.2 IsLifted Property</h3>
 
@@ -3323,7 +2448,9 @@ This property returns true if the node represents an operator call that takes no
 
 Signature:
 
+``` csharp
 public Boolean IsLifted { get; }
+```
 
 <h3 id="isliftedtonull-property-1">4.8.3 IsLiftedToNull Property</h3>
 
@@ -3331,7 +2458,9 @@ This property returns true if the node represents a call to an operator that ret
 
 Signature:
 
+``` csharp
 public Boolean IsLiftedToNull { get; }
+```
 
 <h3 id="method-property-1">4.8.4 Method Property</h3>
 
@@ -3339,7 +2468,9 @@ This property returns the MethodInfo associated the operation to further specify
 
 Signature:
 
+``` csharp
 public MethodInfo Method { get; }
+```
 
 <h3 id="operand-property">4.8.5 Operand Property</h3>
 
@@ -3349,7 +2480,9 @@ V1 guaranteed this was never null, but we allow null for the Throw node kind (at
 
 Signature:
 
+``` csharp
 public Expression Operand { get; }
+```
 
 TypeAs and Convert node kinds use the Expression.Type property as the implicit operand for those operations.
 
@@ -3359,11 +2492,15 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public UnaryExpression Update(Expression operand)
+```
 
 <h3 id="arraylength-factory-method">4.8.7 ArrayLength Factory Method</h3>
 
+``` csharp
 public static UnaryExpression ArrayLength(Expression array);
+```
 
 The following is derived from the v1 spec ...
 
@@ -3385,21 +2522,16 @@ The resulting UnaryExpression has
 
 Expression has the following factory methods for UnaryExpressions representing conversion operations:
 
+``` csharp
 public static UnaryExpression Convert
-
-(Expression expression, Type type, MethodInfo method);
-
+    (Expression expression, Type type, MethodInfo method);
 public static UnaryExpression Convert(Expression expression,
-
-Type type);
-
+                                      Type type);
 public static UnaryExpression ConvertChecked
-
-(Expression expression, Type type, MethodInfo method);
-
+    (Expression expression, Type type, MethodInfo method);
 public static UnaryExpression ConvertChecked(Expression expression,
-
-Type type);
+                                             Type type);
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -3441,17 +2573,14 @@ The resulting UnaryExpression has NodeType Convert or ConvertChecked, respective
 
 Expression has the following factory methods for UnaryExpressions representing functional increment and decrement operations:
 
+``` csharp
 public static UnaryExpression Decrement(Expression expression,
-
-MethodInfo method);
-
+                                        MethodInfo method);
 public static UnaryExpression Decrement(Expression expression);
-
 public static UnaryExpression Increment(Expression expression,
-
-MethodInfo method);
-
+                                        MethodInfo method);
 public static UnaryExpression Increment(Expression expression);
+```
 
 If method is null, and the expression's Type property represents a numeric type, then the node uses .NET primitives for adding or subtracting one. If the expression's Type is not numeric, then the factory searches for a user defined op\_Decrement or op\_Increment implementation on the type.
 
@@ -3459,37 +2588,24 @@ If method is null, and the expression's Type property represents a numeric type,
 
 Expression has the following factory methods for UnaryExpressions representing side-effecting pre- and post- increment and decrement operations:
 
+``` csharp
 public static UnaryExpression PostDecrementAssign
-
-(Expression expression);
-
+    (Expression expression);
 public static UnaryExpression PostDecrementAssign
-
-(Expression expression, MethodInfo method);
-
+    (Expression expression, MethodInfo method);
 public static UnaryExpression PostIncrementAssign
-
-(Expression expression);
-
+    (Expression expression);
 public static UnaryExpression PostIncrementAssign
-
-(Expression expression, MethodInfo method);
-
+    (Expression expression, MethodInfo method);
 public static UnaryExpression PreDecrementAssign
-
-(Expression expression);
-
+    (Expression expression);
 public static UnaryExpression PreDecrementAssign
-
-(Expression expression, MethodInfo method);
-
+    (Expression expression, MethodInfo method);
 public static UnaryExpression PreIncrementAssign
-
-(Expression expression, MethodInfo method);
-
+    (Expression expression, MethodInfo method);
 public static UnaryExpression PreIncrementAssign
-
-(Expression expression);
+    (Expression expression);
+```
 
 See section for more information.
 
@@ -3497,25 +2613,18 @@ See section for more information.
 
 Expression has the following factory methods for UnaryExpressions representing numeric negation and "plus" (CLR op\_UnaryPlus methods) operations:
 
+``` csharp
 public static UnaryExpression Negate(Expression expression);
-
 public static UnaryExpression Negate(Expression expression,
-
-MethodInfo method);
-
+                                     MethodInfo method);
 public static UnaryExpression NegateChecked(Expression expression,
-
-MethodInfo method);
-
+                                            MethodInfo method);
 public static UnaryExpression NegateChecked
-
-(Expression expression);
-
+    (Expression expression);
 public static UnaryExpression UnaryPlus(Expression expression);
-
 public static UnaryExpression UnaryPlus(Expression expression,
-
-MethodInfo method);
+                                        MethodInfo method);
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -3561,19 +2670,15 @@ If the node is lifted as described above, IsLifted and IsLiftedToNull are true; 
 
 Expression has the following factory methods for UnaryExpressions representing logical and bit negation operations:
 
+``` csharp
 public static UnaryExpression Not(Expression expression);
-
 public static UnaryExpression Not(Expression expression,
-
-MethodInfo method);
-
+                                  MethodInfo method);
 public static UnaryExpression OnesComplement
-
-(Expression expression)
-
+   (Expression expression)
 public static UnaryExpression OnesComplement
-
-(Expression expression, MethodInfo method)
+    (Expression expression, MethodInfo method)
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -3621,17 +2726,14 @@ If the node is lifted as described above, IsLifted and IsLiftedToNull are true; 
 
 Expression has the following factory methods for UnaryExpressions representing testing if a value is a true value or a false value:
 
+``` csharp
 public static UnaryExpression IsFalse(Expression expression) {
-
 public static UnaryExpression IsFalse(Expression expression,
-
-MethodInfo method) {
-
+                                      MethodInfo method) {
 public static UnaryExpression IsTrue(Expression expression) {
-
 public static UnaryExpression IsTrue(Expression expression,
-
-MethodInfo method) {
+                                     MethodInfo method) {
+```
 
 Expression must be non-null. If a non-null method is supplied, that becomes the implementing method for this node. The method must represent a non-void static method with one argument, or an exception occurs.
 
@@ -3671,7 +2773,9 @@ If the node is lifted as described above, IsLifted and IsLiftedToNull are true; 
 
 Expression has the following factory methods for UnaryExpressions representing a specialized quoting operation for LINQ expressions:
 
+``` csharp
 public static UnaryExpression Quote(Expression expression);
+```
 
 The following is derived from the v1 spec ... with a correction to the constraint on the expression parameter and usage.
 
@@ -3695,13 +2799,12 @@ The resulting UnaryExpression has:
 
 Expression has the following factory methods for UnaryExpressions representing dynamic flow control:
 
+``` csharp
 public static UnaryExpression Rethrow();
-
 public static UnaryExpression Rethrow(Type type);
-
 public static UnaryExpression Throw(Expression value, Type type);
-
 public static UnaryExpression Throw(Expression value);
+```
 
 Passing null for the value is equivalent to calling the Rethrow factory. This is for convenience.
 
@@ -3715,9 +2818,10 @@ These factories result in nodes with node kind Throw.
 
 Expression has the following factory methods for UnaryExpressions representing reference conversion operations:
 
+``` csharp
 public static UnaryExpression TypeAs(Expression expression,
-
-Type type);
+                                     Type type);
+```
 
 Expression and type must be non-null, and type must represent a reference type or nullable type.
 
@@ -3737,9 +2841,10 @@ The resulting UnaryExpression has:
 
 Expression has the following factory methods for UnaryExpressions representing unboxing (to an interior pointer) operations:
 
+``` csharp
 public static UnaryExpression Unbox(Expression expression,
-
-Type type);
+                                    Type type);
+```
 
 The resulting interior pointer from this node has a the type represented by the type argument, which becomes the Unbox node's Type property. The type argument must represent the boxed value's value type. The operand expression's Type property must represent an interface type or type Object; a value type would not be boxed for any reason other than to be passed or assigned to an interface type or type Object. If the operand's Type property does not represent the type Object, then the Unbox node's Type property must represent a type that implements the operand's interface type.
 
@@ -3759,15 +2864,13 @@ The resulting node has:
 
 Expression has the following general factory methods for UnaryExpressions:
 
+``` csharp
 public static UnaryExpression MakeUnary
-
-(ExpressionType unaryType, Expression operand, Type type);
-
+    (ExpressionType unaryType, Expression operand, Type type);
 public static UnaryExpression MakeUnary
-
-(ExpressionType unaryType, Expression operand, Type type,
-
-MethodInfo method);
+    (ExpressionType unaryType, Expression operand, Type type,
+     MethodInfo method);
+```
 
 The following is derived from the v1 spec ...
 
@@ -3781,41 +2884,34 @@ Cut from .NET 4.0, planned for v-next+1.
 
 We plan to add support for creating delegate values in v-next+1. For example, if you want to represent this expression:
 
-> new MyDelegate(obj.MyMethod);
+``` csharp
+new MyDelegate(obj.MyMethod);
+```
 
 You would need to generate a call to Delegate.CreateDelegate:
 
-    Expression.Convert
-
-(Expression.Call
-
-(typeof(Delegate)
-
-.GetMethod("CreateDelegate",
-
-new\[\] { typeof(Type), typeof(object),
-
-typeof(MethodInfo) }),
-
+``` csharp
+       Expression.Convert
+           (Expression.Call
+               (typeof(Delegate)
+                    .GetMethod("CreateDelegate", 
+                               new[] { typeof(Type), typeof(object),
+                                       typeof(MethodInfo) }),
                   Expression.Constant(typeof(MyDelegate)),
-
                   Expression.Constant(myObj, typeof(object)),
-
                   Expression.Constant(myObj.GetType()
-
-.GetMethod("MyMethod"))),
-
+                                           .GetMethod("MyMethod"))),
             typeof(MyDelegate))
+```
 
 Creating an ET like the following would be much easier:
 
+``` csharp
        Expression.NewDelegate
-
-(typeof(MyDelegate),
-
-           Expression.Constant(myObj, typeof(object)),
-
+           (typeof(MyDelegate),
+            Expression.Constant(myObj, typeof(object)),
             myObj.GetType().GetMethod("MyMethod"))
+```
 
 Compilation would need to finesse the MethodInfo pointer to an IntPtr for the delegate type's constructor methods (using the efficient ldftn IL instruction).
 
@@ -3835,21 +2931,16 @@ See section for more details on the semantics of BlockExpressions, especially fo
 
 <h3 id="class-summary-5">4.9.1 Class Summary</h3>
 
+``` csharp
 public sealed class BlockExpression : Expression {
-
-public ReadOnlyCollection&lt;Expression&gt;
-
-Expressions { get; }
-
-public Expression Result { get; }
-
-public ReadOnlyCollection&lt;ParameterExpression&gt; Variables { get; }
-
-public BlockExpression Update
-
-(IEnumerable&lt;ParameterExpression&gt; variables,
-
-IEnumerable&lt;Expression&gt; expressions)
+    public ReadOnlyCollection<Expression>
+           Expressions { get; }
+    public Expression Result { get; }
+    public ReadOnlyCollection<ParameterExpression> Variables { get; }
+    public BlockExpression Update
+        (IEnumerable<ParameterExpression> variables, 
+         IEnumerable<Expression> expressions)
+```
 
 <h3 id="expressions-property">4.9.2 Expressions Property</h3>
 
@@ -3857,9 +2948,10 @@ This property returns the collection of expressions that form the body of the bl
 
 Signature:
 
-public ReadOnlyCollection&lt;Expression&gt;
-
-Expressions { get; }
+``` csharp
+public ReadOnlyCollection<Expression>
+       Expressions { get; }
+```
 
 <h3 id="result-property">4.9.3 Result Property</h3>
 
@@ -3867,7 +2959,9 @@ This property is a convenience for accessing the last expression in this block's
 
 Signature:
 
+``` csharp
 public Expression Result { get; }
+```
 
 <h3 id="variables-property">4.9.4 Variables Property</h3>
 
@@ -3875,7 +2969,9 @@ This property returns the collection of variables scoped to this BlockExpression
 
 Signature:
 
-public ReadOnlyCollection&lt;ParameterExpression&gt;Variables { get; }
+``` csharp
+public ReadOnlyCollection<ParameterExpression>Variables { get; }
+```
 
 <h3 id="update-method-3">4.9.5 Update Method</h3>
 
@@ -3883,81 +2979,51 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public BlockExpression Update
-
-(IEnumerable&lt;ParameterExpression&gt; variables,
-
-IEnumerable&lt;Expression&gt; expressions)
+    (IEnumerable<ParameterExpression> variables, 
+     IEnumerable<Expression> expressions)
+```
 
 <h3 id="factory-methods-2">4.9.6 Factory Methods</h3>
 
 The Expression class has the following factory methods for BlockExpression:
 
+``` csharp
 public static BlockExpression Block
-
-(IEnumerable&lt;ParameterExpression&gt; variables,
-
-params Expression\[\] expressions);
-
+    (IEnumerable<ParameterExpression> variables,
+     params Expression[] expressions);
 public static BlockExpression Block
-
-(Type type,
-
-IEnumerable&lt;ParameterExpression&gt; variables,
-
-params Expression\[\] expressions);
-
+    (Type type,
+     IEnumerable<ParameterExpression> variables,
+     params Expression[] expressions);
 public static BlockExpression Block
-
-(IEnumerable&lt;ParameterExpression&gt; variables,
-
-IEnumerable&lt;Expression&gt; expressions);
-
+    (IEnumerable<ParameterExpression> variables,
+     IEnumerable<Expression> expressions);
 public static BlockExpression Block
-
-(Type type,
-
-IEnumerable&lt;ParameterExpression&gt; variables,
-
-IEnumerable&lt;Expression&gt; expressions);
-
+    (Type type,
+     IEnumerable<ParameterExpression> variables,
+     IEnumerable<Expression> expressions);
 public static BlockExpression Block
-
-(IEnumerable&lt;Expression&gt; expressions);
-
+    (IEnumerable<Expression> expressions);
 public static BlockExpression Block
-
-(Type type,
-
-IEnumerable&lt;Expression&gt; expressions);
-
+    (Type type,
+     IEnumerable<Expression> expressions);
 public static BlockExpression Block
-
-(Expression arg0, Expression arg1, Expression arg2,
-
-Expression arg3, Expression arg4);
-
+    (Expression arg0, Expression arg1, Expression arg2,
+     Expression arg3, Expression arg4);
 public static BlockExpression Block
-
-(params Expression\[\] expressions);
-
+    (params Expression[] expressions);
 public static BlockExpression Block
-
-(Type type, params Expression\[\] expressions);
-
+    (Type type, params Expression[] expressions);
 public static BlockExpression Block(Expression arg0,
-
-Expression arg1);
-
+                                    Expression arg1);
 public static BlockExpression Block
-
-(Expression arg0, Expression arg1, Expression arg2);
-
+    (Expression arg0, Expression arg1, Expression arg2);
 public static BlockExpression Block
-
-(Expression arg0, Expression arg1, Expression arg2,
-
-Expression arg3);
+    (Expression arg0, Expression arg1, Expression arg2,
+     Expression arg3);
+```
 
 When type is supplied, if it is void, then the last expression's result in the block does not have to be assignable to type, and the result is automatically "converted to void" or squelched. If type is supplied as non-void, then the last expression's Type must represent a type that is reference-assignable to the block's type. When type is not supplied, the block's Type property is set to the last expression's Type property.
 
@@ -3973,9 +3039,10 @@ Note, when using this node, if the Value is not serializable (more specifically,
 
 <h3 id="class-summary-6">4.10.1 Class Summary</h3>
 
+``` csharp
 public class ConstantExpression : Expression {
-
-public Object Value { get; }
+    public Object Value { get; }
+```
 
 <h3 id="value-property">4.10.2 Value Property</h3>
 
@@ -3985,9 +3052,10 @@ This property returns the expression that models the value of the constant expre
 
 Expression has the following factory methods for ConstantExpressions:
 
+``` csharp
 public static ConstantExpression Constant(Object value);
-
 public static ConstantExpression Constant(Object value, Type type);
+```
 
 If type is supplied, it must be non-null. If value is not null, type must be assignable from the actual run-time type of value.
 
@@ -4005,17 +3073,14 @@ This class represents an if-then-else for value. The node kind is Conditional. S
 
 <h3 id="class-summary-7">4.11.1 Class Summary</h3>
 
+``` csharp
 public sealed class ConditionalExpression : Expression {
-
-public Expression IfFalse { get; }
-
-public Expression IfTrue { get; }
-
-public Expression Test { get; }
-
-public ConditionalExpression Update
-
-(Expression test, Expression ifTrue, Expression ifFalse)
+    public Expression IfFalse { get; }
+    public Expression IfTrue { get; }
+    public Expression Test { get; }
+    public ConditionalExpression Update
+        (Expression test, Expression ifTrue, Expression ifFalse)
+```
 
 <h3 id="iffalse-property">4.11.2 IfFalse Property</h3>
 
@@ -4023,7 +3088,9 @@ This property returns the expression to evaluate if the Test expression results 
 
 Signature:
 
+``` csharp
 public Expression IfFalse { get; }
+```
 
 <h3 id="iftrue-property">4.11.3 IfTrue Property</h3>
 
@@ -4031,7 +3098,9 @@ This property returns the expression to evaluate if the Test expression results 
 
 Signature:
 
+``` csharp
 public Expression IfTrue { get; }
+```
 
 <h3 id="test-property">4.11.4 Test Property</h3>
 
@@ -4039,7 +3108,9 @@ This property returns the expression to evaluate as the Test of the condition, d
 
 Signature:
 
+``` csharp
 public Expression Test { get; }
+```
 
 <h3 id="update-method-4">4.11.5 Update Method</h3>
 
@@ -4047,31 +3118,26 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public ConditionalExpression Update
-
-(Expression test, Expression ifTrue, Expression ifFalse)
+    (Expression test, Expression ifTrue, Expression ifFalse)
+```
 
 <h3 id="factory-methods-4">4.11.6 Factory Methods</h3>
 
 Expression has the following factory methods for ConditionalExpressions:
 
+``` csharp
 public static ConditionalExpression Condition
-
-(Expression test, Expression ifTrue, Expression ifFalse);
-
+    (Expression test, Expression ifTrue, Expression ifFalse);
 public static ConditionalExpression Condition
-
-(Expression test, Expression ifTrue, Expression ifFalse,
-
-Type type);
-
+    (Expression test, Expression ifTrue, Expression ifFalse,
+     Type type);
 public static ConditionalExpression IfThen
-
-(Expression test, Expression ifTrue)
-
+    (Expression test, Expression ifTrue)
 public static ConditionalExpression IfThenElse
-
-(Expression test, Expression ifTrue, Expression ifFalse);
+    (Expression test, Expression ifTrue, Expression ifFalse);
+```
 
 Test, ifTrue, and ifFalse must all be non-null. Test.Type must represent the bool type. If you do not supply the type argument, then IfTrue.Type and IfFalse.Type must represent the same type. If you do supply type, and it is not void, then IfTrue.Type and IfFalse.Type must both be reference-assignable to the supplied type. If type is void, then the sub expression types do not have to match, and any resulting value is "converted to void" or squelched.
 
@@ -4093,17 +3159,14 @@ To enable ET consumers to meta-program with ETs, languages should provide and do
 
 <h3 id="class-summary-8">4.12.1 Class Summary</h3>
 
+``` csharp
 public class DynamicExpression : Expression {
-
-public ReadOnlyCollection&lt;Expression&gt;
-
-Arguments { get; }
-
-public CallSiteBinder Binder { get; }
-
-public Type DelegateType { get; }
-
-public DynamicExpression Update(IEnumerable&lt;Expression&gt; arguments)
+    public ReadOnlyCollection<Expression>
+           Arguments { get; }
+    public CallSiteBinder Binder { get; }
+    public Type DelegateType { get; }
+    public DynamicExpression Update(IEnumerable<Expression> arguments)
+```
 
 <h3 id="arguments-property">4.12.2 Arguments Property</h3>
 
@@ -4111,9 +3174,10 @@ This property returns the argument expressions that are the operands to the oper
 
 Signature:
 
-public ReadOnlyCollection&lt;Expression&gt;
-
-Arguments { get; }
+``` csharp
+public ReadOnlyCollection<Expression>
+       Arguments { get; }
+```
 
 <h3 id="binder-property">4.12.3 Binder Property</h3>
 
@@ -4121,7 +3185,9 @@ This property returns the binder that the DLR calls at runtime to compute an imp
 
 Signature:
 
+``` csharp
 public CallSiteBinder Binder { get; }
+```
 
 <h3 id="delegatetype">4.12.4 DelegateType</h3>
 
@@ -4129,7 +3195,9 @@ This property returns the delegate used to construct the CallSite&lt;T&gt; that 
 
 Signature:
 
+``` csharp
 public Type DelegateType { get; }
+```
 
 <h3 id="update-method-5">4.12.5 Update Method</h3>
 
@@ -4137,79 +3205,50 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
-public DynamicExpression Update(IEnumerable&lt;Expression&gt; arguments)
+``` csharp
+public DynamicExpression Update(IEnumerable<Expression> arguments)
+```
 
 <h3 id="factories">4.12.6 Factories</h3>
 
 The Expression class has the following factories for creating DynamicExpressions:
 
+``` csharp
 public static DynamicExpression Dynamic
-
-(CallSiteBinder binder, Type returnType, Expression arg0,
-
-Expression arg1);
-
+    (CallSiteBinder binder, Type returnType, Expression arg0,
+     Expression arg1);
 public static DynamicExpression Dynamic
-
-(CallSiteBinder binder, Type returnType, Expression arg0,
-
-Expression arg1, Expression arg2);
-
+    (CallSiteBinder binder, Type returnType, Expression arg0,
+     Expression arg1, Expression arg2);
 public static DynamicExpression Dynamic
-
-(CallSiteBinder binder, Type returnType, Expression arg0,
-
-Expression arg1, Expression arg2, Expression arg3);
-
+    (CallSiteBinder binder, Type returnType, Expression arg0,
+     Expression arg1, Expression arg2, Expression arg3);
 public static DynamicExpression Dynamic
-
-(CallSiteBinder binder, Type returnType,
-
-IEnumerable&lt;Expression&gt; arguments);
-
+    (CallSiteBinder binder, Type returnType,
+     IEnumerable<Expression> arguments);
 public static DynamicExpression Dynamic
-
-(CallSiteBinder binder, Type returnType,
-
-params Expression\[\] arguments);
-
+    (CallSiteBinder binder, Type returnType,
+     params Expression[] arguments);
 public static DynamicExpression Dynamic
-
-(CallSiteBinder binder, Type returnType, Expression arg0);
-
+    (CallSiteBinder binder, Type returnType, Expression arg0);
 public static DynamicExpression MakeDynamic
-
-(Type delegateType, CallSiteBinder binder,
-
-IEnumerable&lt;Expression&gt; arguments);
-
+    (Type delegateType, CallSiteBinder binder,
+     IEnumerable<Expression> arguments);
 public static DynamicExpression MakeDynamic
-
-(Type delegateType, CallSiteBinder binder,
-
-params Expression\[\] arguments);
-
+    (Type delegateType, CallSiteBinder binder,
+     params Expression[] arguments);
 public static DynamicExpression MakeDynamic
-
-(Type delegateType, CallSiteBinder binder, Expression arg0)
-
+    (Type delegateType, CallSiteBinder binder, Expression arg0)
 public static DynamicExpression MakeDynamic
-
-(Type delegateType, CallSiteBinder binder, Expression arg0,
-
-Expression arg1)
-
+    (Type delegateType, CallSiteBinder binder, Expression arg0,
+     Expression arg1)
 public static DynamicExpression MakeDynamic
-
-(Type delegateType, CallSiteBinder binder, Expression arg0,
-
-Expression arg1, Expression arg2)
-
+    (Type delegateType, CallSiteBinder binder, Expression arg0,
+     Expression arg1, Expression arg2)
 public static DynamicExpression MakeDynamic
-
-(Type delegateType, CallSiteBinder binder, Expression arg0,
-
-Expression arg1, Expression arg2, Expression arg3)
+    (Type delegateType, CallSiteBinder binder, Expression arg0,
+     Expression arg1, Expression arg2, Expression arg3)
+```
 
 If delegateType is supplied, the first argument to the delegate's Invoke method must be of type CallSite, and the parameter count must equal the number of arguments expressions supplied plus one.
 
@@ -4221,11 +3260,11 @@ This class is in the System.Dynamic namespace since it is only used in DynamicEx
 
 <h3 id="class-summary-9">4.13.1 Class Summary</h3>
 
+``` csharp
 public sealed class CallInfo {
-
-public int ArgumentCount { get; }
-
-public ReadOnlyCollection&lt;string&gt; ArgumentNames {get; }
+    public int ArgumentCount { get; }
+    public ReadOnlyCollection<string> ArgumentNames {get; }
+```
 
 <h3 id="argumentcount-property">4.13.2 ArgumentCount Property</h3>
 
@@ -4233,7 +3272,9 @@ This property returns the total number of argument expressions. For example "foo
 
 Signature:
 
+``` csharp
 public int ArgumentCount { get; }
+```
 
 <h3 id="argumentnames-property">4.13.3 ArgumentNames Property</h3>
 
@@ -4241,19 +3282,20 @@ This property return the names used for any named arguments. If there are N name
 
 Signature:
 
-public ReadOnlyCollection&lt;string&gt; ArgumentNames {get; }
+``` csharp
+public ReadOnlyCollection<string> ArgumentNames {get; }
+```
 
 <h3 id="factory-methods-5">4.13.4 Factory Methods</h3>
 
 The Expression class has the following factory methods for creating CallInfos:
 
+``` csharp
 public static CallInfo CallInfo(int argCount,
-
-params string\[\] argNames)
-
+                                params string[] argNames)
 public static CallInfo CallInfo(int argCount,
-
-IEnumerable&lt;string&gt; argNames)
+                                IEnumerable<string> argNames)
+```
 
 <h2 id="debuginfoexpression-class">4.14 DebugInfoExpression Class</h2>
 
@@ -4261,19 +3303,15 @@ This class represents a point in an ET where there is debugging information (a l
 
 <h3 id="class-summary-10">4.14.1 Class Summary</h3>
 
+``` csharp
 public sealed class DebugInfoExpression : Expression {
-
-public SymbolDocumentInfo Document { get; }
-
-public virtual Int32 EndColumn { get; }
-
-public virtual Int32 EndLine { get; }
-
-public virtual Int32 StartColumn { get; }
-
-public virtual Int32 StartLine { get; }
-
-public virtual bool IsClear { get; }
+    public SymbolDocumentInfo Document { get; }
+    public virtual Int32 EndColumn { get; }
+    public virtual Int32 EndLine { get; }
+    public virtual Int32 StartColumn { get; }
+    public virtual Int32 StartLine { get; }
+    public virtual bool IsClear { get; }
+```
 
 <h3 id="document-property">4.14.2 Document Property</h3>
 
@@ -4303,21 +3341,21 @@ This property returns False if the node sets debugging sequence point informatio
 
 Signature:
 
+``` csharp
 public bool IsClear { get; }
+```
 
 <h3 id="factory-methods-6">4.14.8 Factory Methods</h3>
 
 The Expression class has the following factory methods for creating DebugInfoExpressions:
 
+``` csharp
 public static DebugInfoExpression DebugInfo
-
-(SymbolDocumentInfo document, Int32 startLine,
-
-Int32 startColumn, Int32 endLine, Int32 endColumn);
-
+    (SymbolDocumentInfo document, Int32 startLine,
+     Int32 startColumn, Int32 endLine, Int32 endColumn);
 public static DebugInfoExpression ClearDebugInfo
-
-(SymbolDocumentInfo document)
+    (SymbolDocumentInfo document)
+```
 
 <h2 id="symboldocumentinfo-class">4.15 SymbolDocumentInfo Class</h2>
 
@@ -4325,15 +3363,13 @@ This class represents document information for debugging sequence point data. Se
 
 <h3 id="class-summary-11">4.15.1 Class Summary</h3>
 
+``` csharp
 public class SymbolDocumentInfo {
-
-public Guid DocumentType { get; }
-
-public String FileName { get; }
-
-public Guid Language { get; }
-
-public Guid LanguageVendor { get; }
+    public Guid DocumentType { get; }
+    public String FileName { get; }
+    public Guid Language { get; }
+    public Guid LanguageVendor { get; }
+```
 
 <h3 id="documenttype-property">4.15.2 DocumentType Property</h3>
 
@@ -4341,7 +3377,9 @@ This property returns the documents unique type identifier. It defaults to the g
 
 Signature:
 
+``` csharp
 public Guid DocumentType { get; }
+```
 
 <h3 id="filename-property">4.15.3 FileName Property</h3>
 
@@ -4349,7 +3387,9 @@ This property returns the source file name.
 
 Signature:
 
+``` csharp
 public String FileName { get; }
+```
 
 <h3 id="language-property">4.15.4 Language Property</h3>
 
@@ -4357,7 +3397,9 @@ This property returns the language's unique identifier, if any.
 
 Signature:
 
+``` csharp
 public Guid Language { get; }
+```
 
 <h3 id="languagevendor-property">4.15.5 LanguageVendor Property</h3>
 
@@ -4365,27 +3407,24 @@ This property returns the language vendor's unique identifier, if any.
 
 Signature:
 
+``` csharp
 public Guid LanguageVendor { get; }
+```
 
 <h3 id="factory-methods-7">4.15.6 Factory Methods</h3>
 
 The Expression class has the following factory methods for creating SymbolDocumentInfos:
 
+``` csharp
 public static SymbolDocumentInfo SymbolDocument(String fileName,
-
-Guid language);
-
+                                                Guid language);
 public static SymbolDocumentInfo SymbolDocument(String fileName);
-
 public static SymbolDocumentInfo SymbolDocument
-
-(String fileName, Guid language, Guid languageVendor);
-
+    (String fileName, Guid language, Guid languageVendor);
 public static SymbolDocumentInfo SymbolDocument
-
-(String fileName, Guid language, Guid languageVendor,
-
-Guid documentType);
+    (String fileName, Guid language, Guid languageVendor,
+     Guid documentType);
+```
 
 If documentType is not supplied, it defaults to the guid indicating text. If language or languageVendor are not supplied, they default to Guid.Empty.
 
@@ -4403,23 +3442,17 @@ If Fault is non-null, then Finally is null, and Handlers is empty. The Fault exp
 
 <h3 id="class-summary-12">4.16.1 Class Summary</h3>
 
+``` csharp
 public sealed class TryExpression : Expression {
-
-public Expression Body { get; }
-
-public Expression Fault { get; }
-
-public Expression Finally { get; }
-
-public ReadOnlyCollection&lt;CatchBlock&gt;
-
-Handlers { get; }
-
-public TryExpression Update(Expression body,
-
-IEnumerable&lt;CatchBlock&gt; handlers,
-
-Expression @finally, Expression fault)
+    public Expression Body { get; }
+    public Expression Fault { get; }
+    public Expression Finally { get; }
+    public ReadOnlyCollection<CatchBlock>
+           Handlers { get; }
+    public TryExpression Update(Expression body,
+                                IEnumerable<CatchBlock> handlers, 
+                                Expression @finally, Expression fault)
+```
 
 <h3 id="body-property">4.16.2 Body Property</h3>
 
@@ -4427,7 +3460,9 @@ This property returns the expression to execute upon entering the TryExpression.
 
 Signature:
 
+``` csharp
 public Expression Body { get; }
+```
 
 <h3 id="fault-property">4.16.3 Fault Property</h3>
 
@@ -4435,7 +3470,9 @@ This property returns the Expresson that executes if an object is thrown from th
 
 Signature:
 
+``` csharp
 public Expression Fault { get; }
+```
 
 <h3 id="finally-property">4.16.4 Finally Property</h3>
 
@@ -4443,7 +3480,9 @@ This property returns the Expression that executes either when the body complete
 
 Signature:
 
+``` csharp
 public Expression Finally { get; }
+```
 
 <h3 id="handlers-property">4.16.5 Handlers Property</h3>
 
@@ -4451,9 +3490,10 @@ This property returns the collection of CatchBlocks to consider executing if an 
 
 Signature:
 
-public ReadOnlyCollection&lt;CatchBlock&gt;
-
-Handlers { get; }
+``` csharp
+public ReadOnlyCollection<CatchBlock>
+       Handlers { get; }
+```
 
 <h3 id="update-method-6">4.16.6 Update Method</h3>
 
@@ -4461,11 +3501,11 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public TryExpression Update(Expression body,
-
-IEnumerable&lt;CatchBlock&gt; handlers,
-
-Expression @finally, Expression fault)
+                            IEnumerable<CatchBlock> handlers, 
+                            Expression @finally, Expression fault)
+```
 
 <h3 id="factory-methods-8">4.16.7 Factory Methods</h3>
 
@@ -4473,29 +3513,20 @@ These methods create expressions that represent try-catch control flow construct
 
 Signatures:
 
+``` csharp
 public static TryExpression TryCatch
-
-(Expression body, params CatchBlock\[\] handlers);
-
+    (Expression body, params CatchBlock[] handlers);
 public static TryExpression TryCatchFinally
-
-(Expression body, Expression finally,
-
-params CatchBlock\[\] handlers);
-
+    (Expression body, Expression finally,
+     params CatchBlock[] handlers);
 public static TryExpression TryFault(Expression body,
-
-Expression fault);
-
+                                     Expression fault);
 public static TryExpression TryFinally(Expression body,
-
-Expression finally);
-
+                                       Expression finally);
 public static TryExpression MakeTry
-
-(Type type, Expression body, Expression finally,
-
-Expression fault, IEnumerable&lt;CatchBlock&gt; handlers);
+    (Type type, Expression body, Expression finally,
+     Expression fault, IEnumerable<CatchBlock> handlers);
+```
 
 Body represents the instructions to execute under the try Expression.
 
@@ -4517,19 +3548,15 @@ Note, the Variable effectively creates a lexical scope for the catch block, so r
 
 <h3 id="class-summary-13">4.17.1 Class Summary</h3>
 
+``` csharp
 public sealed class CatchBlock {
-
-public Expression Body { get; }
-
-public Expression Filter { get; }
-
-public Type Test { get; }
-
-public ParameterExpression Variable { get; }
-
-public CatchBlock Update(ParameterExpression variable,
-
-Expression filter, Expression body)
+    public Expression Body { get; }
+    public Expression Filter { get; }
+    public Type Test { get; }
+    public ParameterExpression Variable { get; }
+    public CatchBlock Update(ParameterExpression variable,
+                             Expression filter, Expression body)
+```
 
 <h3 id="body-property-1">4.17.2 Body Property</h3>
 
@@ -4537,7 +3564,9 @@ The property returns the expression to execute if exeution transfers to this Cat
 
 Signature:
 
+``` csharp
 public Expression Body { get; }
+```
 
 <h3 id="filter-property">4.17.3 Filter Property</h3>
 
@@ -4545,7 +3574,9 @@ This property returns the Filter expression that (if non-null) must evaluate to 
 
 Signature:
 
+``` csharp
 public Expression Filter { get; }
+```
 
 <h3 id="test-property-1">4.17.4 Test Property</h3>
 
@@ -4553,7 +3584,9 @@ This property returns the type of thrown object this CatchBlock handles.
 
 Signature:
 
+``` csharp
 public Type Test { get; }
+```
 
 <h3 id="variable-property">4.17.5 Variable Property</h3>
 
@@ -4561,7 +3594,9 @@ This property returns the ParameterExpression that represents the variable that 
 
 Signature:
 
+``` csharp
 public ParameterExpression Variable { get; }
+```
 
 <h3 id="update-method-7">4.17.6 Update Method</h3>
 
@@ -4569,35 +3604,28 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public CatchBlock Update(ParameterExpression variable,
-
-Expression filter, Expression body)
+                         Expression filter, Expression body)
+```
 
 <h3 id="factories-1">4.17.7 Factories</h3>
 
 The Expression class has the following factories for creating CatchBlocks:
 
+``` csharp
 public static CatchBlock Catch(ParameterExpression variable,
-
-Expression body);
-
+                               Expression body);
 public static CatchBlock Catch(Type type, Expression body);
-
 public static CatchBlock Catch
-
-(ParameterExpression variable, Expression body,
-
-Expression filter);
-
+    (ParameterExpression variable, Expression body,
+     Expression filter);
 public static CatchBlock Catch(Type type, Expression body,
-
-Expression filter);
-
+                               Expression filter);
 public static CatchBlock MakeCatchBlock
-
-(Type type, ParameterExpression variable, Expression body,
-
-Expression filter)
+    (Type type, ParameterExpression variable, Expression body,
+     Expression filter)
+```
 
 Then type is not supplied, the CatchBlock handles objects thrown of type represented by variable.Type.
 
@@ -4617,19 +3645,15 @@ See section for more details on the semantics of the Call node kind.
 
 <h3 id="class-summary-14">4.18.1 Class Summary</h3>
 
+``` csharp
 public class MethodCallExpression : Expression {
-
-public ReadOnlyCollection&lt;Expression&gt;
-
-Arguments { get; }
-
-public MethodInfo Method { get; }
-
-public Expression Object { get; }
-
-public MethodCallExpression Update(Expression @object,
-
-IEnumerable&lt;Expression&gt; arguments)
+    public ReadOnlyCollection<Expression>
+           Arguments { get; }
+    public MethodInfo Method { get; }
+    public Expression Object { get; }
+    public MethodCallExpression Update(Expression @object, 
+                                      IEnumerable<Expression> arguments)
+```
 
 <h3 id="arguments-property-1">4.18.2 Arguments Property</h3>
 
@@ -4637,9 +3661,10 @@ This property returns the read-only collection of argument expressions. If there
 
 Signature:
 
-public ReadOnlyCollection&lt;Expression&gt;
-
-Arguments { get; }
+``` csharp
+public ReadOnlyCollection<Expression>
+       Arguments { get; }
+```
 
 <h3 id="method-property-2">4.18.3 Method Property</h3>
 
@@ -4651,7 +3676,9 @@ To be obsolete in a future version, if the node represents fetching an element f
 
 Signature:
 
+``` csharp
 public MethodInfo Method { get; }
+```
 
 <h3 id="object-property">4.18.4 Object Property</h3>
 
@@ -4661,7 +3688,9 @@ To be obsolete in a future version, if the node represents fetching an element f
 
 Signature:
 
+``` csharp
 public Expression Object { get; }
+```
 
 <h3 id="update-method-8">4.18.5 Update Method</h3>
 
@@ -4669,89 +3698,55 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
-public MethodCallExpression Update(Expression @object,
-
-IEnumerable&lt;Expression&gt; arguments)
+``` csharp
+public MethodCallExpression Update(Expression @object, 
+                                  IEnumerable<Expression> arguments)
+```
 
 <h3 id="general-call-factories">4.18.6 General Call Factories</h3>
 
 Expression has the following general call factory methods for MethodCallExpressions:
 
+``` csharp
 public static MethodCallExpression Call
-
-(MethodInfo method, params Expression\[\] arguments);
-
+    (MethodInfo method, params Expression[] arguments);
 public static MethodCallExpression Call
-
-(MethodInfo method, Expression arg0, Expression arg1,
-
-Expression arg2, Expression arg3, Expression arg4);
-
+    (MethodInfo method, Expression arg0, Expression arg1,
+     Expression arg2, Expression arg3, Expression arg4);
 public static MethodCallExpression Call
-
-(MethodInfo method, Expression arg0, Expression arg1);
-
+    (MethodInfo method, Expression arg0, Expression arg1);
 public static MethodCallExpression Call
-
-(Expression instance, MethodInfo method,
-
-params Expression\[\] arguments);
-
+    (Expression instance, MethodInfo method,
+     params Expression[] arguments);
 public static MethodCallExpression Call
-
-(Expression instance, MethodInfo method, Expression arg0,
-
-Expression arg1, Expression arg2);
-
+    (Expression instance, MethodInfo method, Expression arg0,
+     Expression arg1, Expression arg2);
 public static MethodCallExpression Call
-
-(Expression instance, MethodInfo method, Expression arg0,
-
-Expression arg1);
-
+    (Expression instance, MethodInfo method, Expression arg0,
+     Expression arg1);
 public static MethodCallExpression Call(MethodInfo method,
-
-Expression arg0);
-
+                                        Expression arg0);
 public static MethodCallExpression Call
-
-(Expression instance, String methodName, Type\[\] typeArguments,
-
-params Expression\[\] arguments);
-
+    (Expression instance, String methodName, Type[] typeArguments,
+     params Expression[] arguments);
 public static MethodCallExpression Call
-
-(Type type, String methodName, Type\[\] typeArguments,
-
-params Expression\[\] arguments);
-
+    (Type type, String methodName, Type[] typeArguments,
+     params Expression[] arguments);
 public static MethodCallExpression Call
-
-(Expression instance, MethodInfo method,
-
-IEnumerable&lt;Expression&gt; arguments);
-
+    (Expression instance, MethodInfo method,
+     IEnumerable<Expression> arguments);
 public static MethodCallExpression Call
-
-(MethodInfo method,
-
-IEnumerable&lt;Expression&gt; arguments);
-
+    (MethodInfo method,
+     IEnumerable<Expression> arguments);
 public static MethodCallExpression Call
-
-(MethodInfo method, Expression arg0, Expression arg1,
-
-Expression arg2, Expression arg3);
-
+    (MethodInfo method, Expression arg0, Expression arg1,
+     Expression arg2, Expression arg3);
 public static MethodCallExpression Call
-
-(MethodInfo method, Expression arg0, Expression arg1,
-
-Expression arg2);
-
+    (MethodInfo method, Expression arg0, Expression arg1,
+     Expression arg2);
 public static MethodCallExpression Call(Expression instance,
-
-MethodInfo method);
+                                        MethodInfo method);
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -4767,15 +3762,13 @@ The resulting MethodCallExpression has the Object and Method properties equal to
 
 The ArrayIndex factories will be obsolete in lieu of the more general IndexExpression factory methods.
 
+``` csharp
 public static MethodCallExpression ArrayIndex
-
-(Expression array, params Expression\[\] indexes);
-
+    (Expression array, params Expression[] indexes);
 public static MethodCallExpression ArrayIndex
-
-(Expression array,
-
-IEnumerable&lt;Expression&gt; indexes);
+    (Expression array,
+     IEnumerable<Expression> indexes);
+```
 
 A MethodCallExpression can represent fetching an array element from an array with rank greater than one. The value of the Method property must be a MethodInfo describing the public instance method named Get on a multi-dimensional array type.
 
@@ -4793,15 +3786,13 @@ See section 2.10 for more info.
 
 <h3 id="class-summary-15">4.19.1 Class Summary</h3>
 
+``` csharp
 public sealed class ComplexMethodCallExpression : MethodCallExpression {
-
-public ReadOnlyCollection&lt;Expression&gt;
-
-Arguments { get; }
-
-public Expression\[\] ArgumentEvaluationOrder { get; }
-
-public ArgumentDescription\[\] ArgumentDescriptions { get; }
+    public ReadOnlyCollection<Expression>
+           Arguments { get; }
+    public Expression[] ArgumentEvaluationOrder { get; }
+    public ArgumentDescription[] ArgumentDescriptions { get; }
+```
 
 <h2 id="invocationexpression-class">4.20 InvocationExpression Class</h2>
 
@@ -4809,17 +3800,14 @@ This class represents invoking callable objects. These nodes use the Invoke node
 
 <h3 id="class-summary-16">4.20.1 Class Summary</h3>
 
+``` csharp
 public sealed class InvocationExpression : Expression {
-
-public ReadOnlyCollection&lt;Expression&gt;
-
-Arguments { get; }
-
-public Expression Expression { get; }
-
-public InvocationExpression Update
-
-(Expression expression, IEnumerable&lt;Expression&gt; arguments)
+    public ReadOnlyCollection<Expression>
+           Arguments { get; }
+    public Expression Expression { get; }
+    public InvocationExpression Update
+        (Expression expression, IEnumerable<Expression> arguments)
+```
 
 <h3 id="arguments-property-2">4.20.2 Arguments Property</h3>
 
@@ -4827,9 +3815,10 @@ This property returns the read-only collection of argument expressions that prod
 
 Signature:
 
-public ReadOnlyCollection&lt;Expression&gt;
-
-Arguments { get; }
+``` csharp
+public ReadOnlyCollection<Expression>
+       Arguments { get; }
+```
 
 <h3 id="expression-property-1">4.20.3 Expression Property</h3>
 
@@ -4837,7 +3826,9 @@ This property returns the expression that models the callable object that is inv
 
 Signature:
 
+``` csharp
 public Expression Expression { get; }
+```
 
 <h3 id="update-method-9">4.20.4 Update Method</h3>
 
@@ -4845,23 +3836,22 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public InvocationExpression Update
-
-(Expression expression, IEnumerable&lt;Expression&gt; arguments)
+    (Expression expression, IEnumerable<Expression> arguments)
+```
 
 <h3 id="factory-methods-9">4.20.5 Factory Methods</h3>
 
 Expression has the following factory methods for InvocationExpressions:
 
+``` csharp
 public static InvocationExpression Invoke
-
-(Expression expression, params Expression\[\] arguments);
-
+    (Expression expression, params Expression[] arguments);
 public static InvocationExpression Invoke
-
-(Expression expression,
-
-IEnumerable&lt;Expression&gt; arguments);
+    (Expression expression,
+     IEnumerable<Expression> arguments);
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -4879,35 +3869,38 @@ There is redundant modeling for accessing arrays (not assignment) due to ETs v1 
 
 <h3 id="class-summary-17">4.21.1 Class Summary</h3>
 
+``` csharp
 public class IndexExpression : Expression {
-
-public ReadOnlyCollection&lt;Expression&gt; Arguments { get; }
-
-public PropertyInfo Indexer { get; }
-
-public Expression Object { get; }
-
-public IndexExpression Update(Expression @object,
-
-IEnumerable&lt;Expression&gt; arguments)
+    public ReadOnlyCollection<Expression> Arguments { get; }
+    public PropertyInfo Indexer { get; }
+    public Expression Object { get; }
+    public IndexExpression Update(Expression @object, 
+                                  IEnumerable<Expression> arguments)
+```
 
 <h3 id="arguments-property-3">4.21.2 Arguments Property</h3>
 
 Signature:
 
-public ReadOnlyCollection&lt;Expression&gt; Arguments { get; }
+``` csharp
+public ReadOnlyCollection<Expression> Arguments { get; }
+```
 
 <h3 id="indexer-property">4.21.3 Indexer Property</h3>
 
 Signature:
 
+``` csharp
 public PropertyInfo Indexer { get; }
+```
 
 <h3 id="object-property-1">4.21.4 Object Property</h3>
 
 Signature:
 
+``` csharp
 public Expression Object { get; }
+```
 
 <h3 id="update-method-10">4.21.5 Update Method</h3>
 
@@ -4915,45 +3908,33 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
-public IndexExpression Update(Expression @object,
-
-IEnumerable&lt;Expression&gt; arguments)
+``` csharp
+public IndexExpression Update(Expression @object, 
+                              IEnumerable<Expression> arguments)
+```
 
 <h3 id="factory-methods-10">4.21.6 Factory Methods</h3>
 
 The Expressions class has the following factory methods for creating IndexExpressions:
 
+``` csharp
 public static IndexExpression Property
-
-(Expression instance, PropertyInfo indexer,
-
-IEnumerable&lt;Expression&gt; arguments);
-
+    (Expression instance, PropertyInfo indexer,
+     IEnumerable<Expression> arguments);
 public static IndexExpression Property
-
-(Expression instance, PropertyInfo indexer,
-
-params Expression\[\] arguments);
-
+    (Expression instance, PropertyInfo indexer,
+     params Expression[] arguments);
 public static IndexExpression Property
-
-(Expression instance, String propertyName,
-
-params Expression\[\] arguments);
-
+    (Expression instance, String propertyName,
+     params Expression[] arguments);
 public static IndexExpression ArrayAccess
-
-(Expression array, IEnumerable&lt;Expression&gt; indexes);
-
+    (Expression array, IEnumerable<Expression> indexes);
 public static IndexExpression ArrayAccess
-
-(Expression array, params Expression\[\] indexes);
-
+    (Expression array, params Expression[] indexes);
 public static IndexExpression MakeIndex
-
-(Expression instance, PropertyInfo indexer,
-
-IEnumerable&lt;Expression&gt; arguments);
+    (Expression instance, PropertyInfo indexer,
+     IEnumerable<Expression> arguments);
+```
 
 Array must be an expression with a Type property representing an array (array.Type.IsArray is true). Indexes must all have a Type property that represents int32.
 
@@ -5130,7 +4111,6 @@ private static Expression MakeLoop(){
         str
         );
 }
-
 private static Expression MakeLoop2() {
     LabelTarget start = Expression.Label("Start");
     ParameterExpression i = Expression.Parameter(typeof(int), "i");
@@ -5224,19 +4204,15 @@ Console.WriteLine(Expression.Lambda<Func<string>>(MakeLoop3())
 
 <h3 id="class-summary-18">4.22.2 Class Summary</h3>
 
+``` csharp
 public sealed class LoopExpression : Expression {
-
-public Expression Body { get; }
-
-public LabelTarget BreakLabel { get; }
-
-public LabelTarget ContinueLabel { get; }
-
-public LoopExpression Update(LabelTarget breakLabel,
-
-LabelTarget continueLabel,
-
-Expression body)
+    public Expression Body { get; }
+    public LabelTarget BreakLabel { get; }
+    public LabelTarget ContinueLabel { get; }
+    public LoopExpression Update(LabelTarget breakLabel,
+                                 LabelTarget continueLabel,
+                                 Expression body)
+```
 
 <h3 id="update-method-11">4.22.3 Update Method</h3>
 
@@ -5244,11 +4220,11 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public LoopExpression Update(LabelTarget breakLabel,
-
-LabelTarget continueLabel,
-
-Expression body)
+                             LabelTarget continueLabel,
+                             Expression body)
+```
 
 <h3 id="factory-methods-11">4.22.4 Factory Methods</h3>
 
@@ -5256,15 +4232,13 @@ These methods create LoopExpressions. The semantics of a LoopExpression is to lo
 
 Signatures:
 
+``` csharp
 public static LoopExpression Loop(Expression body);
-
 public static LoopExpression Loop
-
-(Expression body, LabelTarget break, LabelTarget continue);
-
+    (Expression body, LabelTarget break, LabelTarget continue);
 public static LoopExpression Loop(Expression body,
-
-LabelTarget break);
+                                  LabelTarget break);
+```
 
 Body is the expression to repeatedly execute.
 
@@ -5278,17 +4252,14 @@ Expression.Type is Expression.Break.Type if Break is non-null; otherwise, it is 
 
 <h3 id="class-summary-19">4.23.1 Class Summary</h3>
 
+``` csharp
 public sealed class ForExpression : Expression {
-
-public Expression Body { get; }
-
-public Expression Increment { get; }
-
-public LabelTarget BreakLabel { get; }
-
-public LabelTarget ContinueLabel { get; }
-
-public Expression Test { get; }
+    public Expression Body { get; }
+    public Expression Increment { get; }
+    public LabelTarget BreakLabel { get; }
+    public LabelTarget ContinueLabel { get; }
+    public Expression Test { get; }
+```
 
 <h2 id="post-clr-4.0----foreachexpression-class">4.24 POST CLR 4.0 -- ForEachExpression Class</h2>
 
@@ -5333,15 +4304,13 @@ public static Expression ForEach
 
 <h3 id="class-summary-20">4.24.1 Class Summary</h3>
 
+``` csharp
 public sealed class ForEachExpression : Expression {
-
-public Expression Body { get; }
-
-public Expression Iterable { get; }
-
-public LabelTarget BreakLabel { get; }
-
-public LabelTarget ContinueLabel { get; }
+    public Expression Body { get; }
+    public Expression Iterable { get; }
+    public LabelTarget BreakLabel { get; }
+    public LabelTarget ContinueLabel { get; }
+```
 
 <h2 id="post-clr-4.0----whileexpression-class">4.25 POST CLR 4.0 -- WhileExpression Class</h2>
 
@@ -5355,29 +4324,25 @@ While (&lt;cond&gt; ? true : Block { &lt;elsebody&gt;; false }) &lt;whilebody&gt
 
 <h3 id="class-summary-21">4.25.1 Class Summary</h3>
 
+``` csharp
 public sealed class WhileExpression : Expression {
-
-public Expression Body { get; }
-
-public LabelTarget BreakLabel { get; }
-
-public LabelTarget ContinueLabel { get; }
-
-public Expression Test { get; }
+    public Expression Body { get; }
+    public LabelTarget BreakLabel { get; }
+    public LabelTarget ContinueLabel { get; }
+    public Expression Test { get; }
+```
 
 <h2 id="post-clr-4.0----repeatuntilexpression-class">4.26 POST CLR 4.0 -- RepeatUntilExpression Class</h2>
 
 <h3 id="class-summary-22">4.26.1 Class Summary</h3>
 
+``` csharp
 public sealed class RepeatUntilExpression : Expression {
-
-public Expression Body { get; }
-
-public LabelTarget BreakLabel { get; }
-
-public LabelTarget ContinueLabel { get; }
-
-public Expression Test { get; }
+    public Expression Body { get; }
+    public LabelTarget BreakLabel { get; }
+    public LabelTarget ContinueLabel { get; }
+    public Expression Test { get; }
+```
 
 <h2 id="gotoexpression-class">4.27 GotoExpression Class</h2>
 
@@ -5393,15 +4358,13 @@ See section for more details on the semantics of GotoExpression, as well as the 
 
 <h3 id="class-summary-23">4.27.1 Class Summary</h3>
 
+``` csharp
 public sealed class GotoExpression : Expression {
-
-public GotoExpressionKind Kind { get; }
-
-public LabelTarget Target { get; }
-
-public Expression Value { get; }
-
-public GotoExpression Update(LabelTarget target, Expression value)
+    public GotoExpressionKind Kind { get; }
+    public LabelTarget Target { get; }
+    public Expression Value { get; }
+    public GotoExpression Update(LabelTarget target, Expression value)
+```
 
 <h3 id="kind-property">4.27.2 Kind Property</h3>
 
@@ -5409,7 +4372,9 @@ This property returns the kind of Goto node this is. This property has no semant
 
 Signature:
 
+``` csharp
 public GotoExpressionKind Kind { get; }
+```
 
 <h3 id="target-property">4.27.3 Target Property</h3>
 
@@ -5417,7 +4382,9 @@ This property returns the LabelTarget to which some LabelExpression within the s
 
 Signature:
 
+``` csharp
 public LabelTarget Target { get; }
+```
 
 <h3 id="value-property-1">4.27.4 Value Property</h3>
 
@@ -5425,7 +4392,9 @@ This property returns the Expression that provides the value to carry to the tar
 
 Signature:
 
+``` csharp
 public Expression Value { get; }
+```
 
 <h3 id="update-method-12">4.27.5 Update Method</h3>
 
@@ -5433,65 +4402,43 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public GotoExpression Update(LabelTarget target, Expression value)
+```
 
 <h3 id="factory-methods-12">4.27.6 Factory Methods</h3>
 
 Expression has the following factory methods for GotoExpression:
 
+``` csharp
 public static GotoExpression Break(LabelTarget target);
-
 public static GotoExpression Break(LabelTarget target,
-
-Expression value);
-
+                                   Expression value);
 public static GotoExpression Break(LabelTarget target,
-
-Type type);
-
+                                   Type type);
 public static GotoExpression Break(LabelTarget target,
-
-Expression value, Type type);
-
+                                   Expression value, Type type);
 public static GotoExpression Continue(LabelTarget target);
-
 public static GotoExpression Continue(LabelTarget target,
-
-Type type);
-
+                                      Type type);
 public static GotoExpression Goto(LabelTarget target);
-
 public static GotoExpression Goto(LabelTarget target,
-
-Expression value);
-
+                                  Expression value);
 public static GotoExpression Goto(LabelTarget target,
-
-Type type);
-
+                                  Type type);
 public static GotoExpression Goto(LabelTarget target,
-
-Expression value, Type type);
-
+                                  Expression value, Type type);
 public static GotoExpression MakeGoto
-
-(GotoExpressionKind kind, LabelTarget target,
-
-Expression value);
-
+    (GotoExpressionKind kind, LabelTarget target,
+     Expression value);
 public static GotoExpression Return(LabelTarget target,
-
-Expression value);
-
+                                    Expression value);
 public static GotoExpression Return(LabelTarget target);
-
 public static GotoExpression Return(LabelTarget target,
-
-Type type);
-
+                                    Type type);
 public static GotoExpression Return(LabelTarget target,
-
-Expression value, Type type);
+                                    Expression value, Type type);
+```
 
 Target must be the target of some LabelExpression lexically within the same LambdaExpression.Body that contains the resulting GotoExpression. The factory does not confirm this, so if this is not true, you'll get a compile-time error.
 
@@ -5505,25 +4452,40 @@ This enum represents the kinds of GotoExpressions the DLR supports. These values
 
 <h3 id="type-summary-1">4.28.1 Type Summary</h3>
 
+``` csharp
 public enum GotoExpressionKind {
-
-Goto,
-
-Return,
-
-Break,
-
-Continue
+    Goto, 
+    Return, 
+    Break, 
+    Continue
+```
 
 <h3 id="members">4.28.2 Members</h3>
 
 The Summary section shows the type as it is defined (to indicate values of members), and this section documents the intent of the members.
 
-| Goto     | The node is a basic goto targeting a label. The Value is a void DefaultExpression.                                                                                                                     |
-|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Return   | The node represents a 'return' or exit from a lambda. The Value may be a void DefaultExpression or any expression.                                                                                     |
-| Break    | The node represents a goto within a loop to the exit target of the loop. The Value may be void or any expression.                                                                                      |
-| Continue | The node represents a goto the beginning of a loop to abort the current iteration and continue with the next iteration and bindings of the iteration variables. The Value is a void DefaultExpression. |
+<table>
+<thead>
+<tr class="header">
+<th><div class="sourceCode" id="cb1"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Goto</span></code></pre></div></th>
+<th>The node is a basic goto targeting a label. The Value is a void DefaultExpression.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><div class="sourceCode" id="cb2"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Return</span></code></pre></div></td>
+<td>The node represents a 'return' or exit from a lambda. The Value may be a void DefaultExpression or any expression.</td>
+</tr>
+<tr class="even">
+<td><div class="sourceCode" id="cb3"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Break</span></code></pre></div></td>
+<td>The node represents a goto within a loop to the exit target of the loop. The Value may be void or any expression.</td>
+</tr>
+<tr class="odd">
+<td><div class="sourceCode" id="cb4"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Continue</span></code></pre></div></td>
+<td>The node represents a goto the beginning of a loop to abort the current iteration and continue with the next iteration and bindings of the iteration variables. The Value is a void DefaultExpression.</td>
+</tr>
+</tbody>
+</table>
 
 <h2 id="labelexpression-class">4.29 LabelExpression Class</h2>
 
@@ -5566,15 +4528,13 @@ This shows how to use a label to exit a lambda and using the label's default exp
 
 <h3 id="class-summary-24">4.29.2 Class Summary</h3>
 
+``` csharp
 public sealed class LabelExpression : Expression {
-
-public Expression DefaultValue { get; }
-
-public LabelTarget Target { get; }
-
-public LabelExpression Update(LabelTarget target,
-
-Expression defaultValue)
+    public Expression DefaultValue { get; }
+    public LabelTarget Target { get; }
+    public LabelExpression Update(LabelTarget target,
+                                  Expression defaultValue)
+```
 
 <h3 id="defaultvalue-property">4.29.3 DefaultValue Property</h3>
 
@@ -5582,7 +4542,9 @@ This property returns the default expression that provides the result of the Lab
 
 Signature:
 
+``` csharp
 public Expression DefaultValue { get; }
+```
 
 <h3 id="target-property-1">4.29.4 Target Property</h3>
 
@@ -5590,7 +4552,9 @@ This property returns the target identity for the LabelExpression. GotoExpressio
 
 Signature:
 
+``` csharp
 public LabelTarget Target { get; }
+```
 
 <h3 id="update-method-13">4.29.5 Update Method</h3>
 
@@ -5598,19 +4562,20 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public LabelExpression Update(LabelTarget target,
-
-Expression defaultValue)
+                              Expression defaultValue)
+```
 
 <h3 id="factory-methods-13">4.29.6 Factory Methods</h3>
 
 The Expression class has the following factory methods for creating LabelExpressions:
 
+``` csharp
 public static LabelExpression Label(LabelTarget target);
-
 public static LabelExpression Label(LabelTarget target,
-
-Expression defaultValue);
+                                    Expression defaultValue);
+```
 
 Target identifies the LabelExpression so that a GotoExpressions can refer to the same target object to designate that it jumps to this LabelExpression location in the ET.
 
@@ -5626,11 +4591,11 @@ The target has a Type property because Goto's can transfer control to a location
 
 <h3 id="class-summary-25">4.30.1 Class Summary</h3>
 
+``` csharp
 public sealed class LabelTarget {
-
-public String Name { get; }
-
-public Type Type { get; }
+    public String Name { get; }
+    public Type Type { get; }
+```
 
 <h3 id="name-property">4.30.2 Name Property</h3>
 
@@ -5638,7 +4603,9 @@ This property returns the name of the label. This is useful purely for debugging
 
 Signature:
 
+``` csharp
 public String Name { get; }
+```
 
 <h3 id="type-property-1">4.30.3 Type Property</h3>
 
@@ -5646,19 +4613,20 @@ This property returns the type expected of any value delivered to the label's lo
 
 Signature:
 
+``` csharp
 public Type Type { get; }
+```
 
 <h3 id="factory-methods-14">4.30.4 Factory Methods</h3>
 
 The Expression class has the following factory methods for creating LabelTargets:
 
+``` csharp
 public static LabelTarget Label(Type type, String name);
-
 public static LabelTarget Label(Type type);
-
 public static LabelTarget Label();
-
 public static LabelTarget Label(String name);
+```
 
 <h2 id="memberexpression-class">4.31 MemberExpression Class</h2>
 
@@ -5666,13 +4634,12 @@ This class represents accessing an instance member, property or field, of an obj
 
 <h3 id="class-summary-26">4.31.1 Class Summary</h3>
 
+``` csharp
 public sealed class MemberExpression : Expression {
-
-public Expression Expression { get; }
-
-public MemberInfo Member { get; }
-
-public MemberExpression Update(Expression expression)
+    public Expression Expression { get; }
+    public MemberInfo Member { get; }
+    public MemberExpression Update(Expression expression)
+```
 
 <h3 id="expression-property-2">4.31.2 Expression Property</h3>
 
@@ -5680,7 +4647,9 @@ This property returns the Expression representing the object or type on which to
 
 Signature:
 
+``` csharp
 public Expression Expression { get; }
+```
 
 <h3 id="member-property">4.31.3 Member Property</h3>
 
@@ -5688,7 +4657,9 @@ This property return the Expression representing the member to access on Express
 
 Signature:
 
+``` csharp
 public MemberInfo Member { get; }
+```
 
 <h3 id="update-method-14">4.31.4 Update Method</h3>
 
@@ -5696,47 +4667,34 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public MemberExpression Update(Expression expression)
+```
 
 <h3 id="factory-methods-15">4.31.5 Factory Methods</h3>
 
 Expression has the following factory methods for MemberExpressions:
 
+``` csharp
 public static MemberExpression Field(Expression expression,
-
-String fieldName);
-
+                                     String fieldName);
 public static MemberExpression Field
-
-(Expression expression, Type type, String fieldName);
-
+    (Expression expression, Type type, String fieldName);
 public static MemberExpression Field(Expression expression,
-
-FieldInfo field);
-
+                                     FieldInfo field);
 public static MemberExpression MakeMemberAccess
-
-(Expression expression, MemberInfo member);
-
+    (Expression expression, MemberInfo member);
 public static MemberExpression Property(Expression expression,
-
-PropertyInfo property);
-
+                                        PropertyInfo property);
 public static MemberExpression Property
-
-(Expression expression, MethodInfo propertyAccessor);
-
+    (Expression expression, MethodInfo propertyAccessor);
 public static MemberExpression Property(Expression expression,
-
-String propertyName);
-
+                                        String propertyName);
 public static MemberExpression Property
-
-(Expression expression, Type type, String propertyName);
-
+    (Expression expression, Type type, String propertyName);
 public static MemberExpression PropertyOrField
-
-(Expression expression, String propertyOrFieldName);
+    (Expression expression, String propertyOrFieldName);
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -5774,19 +4732,15 @@ This node uses sub types of MemberBinding as helper model classes for individual
 
 <h3 id="class-summary-27">4.32.1 Class Summary</h3>
 
+``` csharp
 public sealed class MemberInitExpression : Expression {
-
-public ReadOnlyCollection&lt;MemberBinding&gt;
-
-Bindings { get; }
-
-public NewExpression NewExpression { get; }
-
-public MemberInitExpression Update
-
-(NewExpression newExpression,
-
-IEnumerable&lt;MemberBinding&gt; bindings)
+    public ReadOnlyCollection<MemberBinding>
+           Bindings { get; }
+    public NewExpression NewExpression { get; }
+    public MemberInitExpression Update
+        (NewExpression newExpression,
+        IEnumerable<MemberBinding> bindings)
+```
 
 <h3 id="bindings-property">4.32.2 Bindings Property</h3>
 
@@ -5794,9 +4748,10 @@ This property returns the collection of MemberBindings that represent how to fil
 
 Signature:
 
-public ReadOnlyCollection&lt;MemberBinding&gt;
-
-Bindings { get; }
+``` csharp
+public ReadOnlyCollection<MemberBinding>
+       Bindings { get; }
+```
 
 <h3 id="newexpression-property">4.32.3 NewExpression Property</h3>
 
@@ -5804,7 +4759,9 @@ This property returns a NewExpression whose semantics is to create an instance o
 
 Signature:
 
+``` csharp
 public NewExpression NewExpression { get; }
+```
 
 <h3 id="update-method-15">4.32.4 Update Method</h3>
 
@@ -5812,25 +4769,23 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public MemberInitExpression Update
-
-(NewExpression newExpression,
-
-IEnumerable&lt;MemberBinding&gt; bindings)
+    (NewExpression newExpression,
+    IEnumerable<MemberBinding> bindings)
+```
 
 <h3 id="factory-methods-16">4.32.5 Factory Methods</h3>
 
 Expression has the following factory methods for MemberInitExpressions:
 
+``` csharp
 public static MemberInitExpression MemberInit
-
-(NewExpression newExpression, params MemberBinding\[\] bindings);
-
+    (NewExpression newExpression, params MemberBinding[] bindings);
 public static MemberInitExpression MemberInit
-
-(NewExpression newExpression,
-
-IEnumerable&lt;MemberBinding&gt; bindings);
+    (NewExpression newExpression,
+     IEnumerable<MemberBinding> bindings);
+```
 
 The following is derived from the v1 spec ...
 
@@ -5846,17 +4801,14 @@ No one should derive from this class, and the constructor will be made obsolete 
 
 <h3 id="class-summary-28">4.33.1 Class Summary</h3>
 
+``` csharp
 public abstract class MemberBinding {
-
-// This constructor is now obsolete in spec. It will be obsolete in
-
-// code in v-next+1, then removed in v-next+2.
-
-protected MemberBinding(MemberBindingType type, MemberInfo member);
-
-public MemberBindingType BindingType { get; }
-
-public MemberInfo Member { get; }
+    // This constructor is now obsolete in spec.  It will be obsolete in
+    // code in v-next+1, then removed in v-next+2.
+    protected MemberBinding(MemberBindingType type, MemberInfo member);
+    public MemberBindingType BindingType { get; }
+    public MemberInfo Member { get; }
+```
 
 <h3 id="memberbinding-constructor">4.33.2 MemberBinding Constructor</h3>
 
@@ -5868,7 +4820,9 @@ v-next+1, then removed in v-next+2.
 
 This property returns the kind of binding this object represents, which is one to one with the concrete sub type.
 
+``` csharp
 public MemberBindingType BindingType { get; }
+```
 
 <h3 id="member-property-1">4.33.4 Member Property</h3>
 
@@ -5876,7 +4830,9 @@ This property returns the method that sets the member. It is never null.
 
 Signature:
 
+``` csharp
 public MemberInfo Member { get; }
+```
 
 <h2 id="memberbindingtype-enum">4.34 MemberBindingType Enum</h2>
 
@@ -5884,13 +4840,12 @@ This enum provides member for tagging MemberBinding sub types. Each MemberBindin
 
 <h3 id="type-summary-2">4.34.1 Type Summary</h3>
 
+``` csharp
 public enum MemberBindingType {
-
-Assignment,
-
-MemberBinding,
-
-ListBinding
+    Assignment, 
+    MemberBinding, 
+    ListBinding
+```
 
 <h3 id="type-members">4.34.2 Type Members</h3>
 
@@ -5899,19 +4854,19 @@ The Summary section shows the type as it is defined (to indicate values of membe
 <table>
 <thead>
 <tr class="header">
-<th>Assignment</th>
+<th><div class="sourceCode" id="cb1"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Assignment</span></code></pre></div></th>
 <th><p>The MemberBinding is an instance of MemberAssignment. This models setting a member to a scalar value, for example, the setting of Foo in:</p>
 <p>new Blah {Foo = 5, ...}</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>MemberBinding</td>
+<td><div class="sourceCode" id="cb2"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>MemberBinding</span></code></pre></div></td>
 <td><p>The MemberBinding is an instance of MemberMemberBinding. This models setting a member to a new instance of a type with the supplied member values, for example, the setting of Foo in:</p>
 <p>new Blah {Foo = {Bar = ..., Baz = ...}, ...}</p></td>
 </tr>
 <tr class="even">
-<td>ListBinding</td>
+<td><div class="sourceCode" id="cb3"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ListBinding</span></code></pre></div></td>
 <td><p>The MemberBinding is an instance of MemberListBinding. This models setting a member to a list of values, for example, the setting of Foo in:</p>
 <p>new Blah {Foo = {1, 2, 3, ...}, ...}</p></td>
 </tr>
@@ -5922,19 +4877,19 @@ The Summary section shows the type as it is defined (to indicate values of membe
 
 This class represents the setting of an instance member to a list of elements. This is a supporting type used in MemberInitExpressions. For example:
 
+``` csharp
 New Foo { bar = {1, 2, 3}}
+```
 
 <h3 id="class-summary-29">4.35.1 Class Summary</h3>
 
+``` csharp
 public sealed class MemberListBinding : MemberBinding {
-
-public ReadOnlyCollection&lt;ElementInit&gt;
-
-Initializers { get; }
-
-public MemberListBinding Update
-
-(IEnumerable&lt;ElementInit&gt; initializers)
+    public ReadOnlyCollection<ElementInit>
+           Initializers { get; }
+    public MemberListBinding Update
+        (IEnumerable<ElementInit> initializers)
+```
 
 <h3 id="initializers-property">4.35.2 Initializers Property</h3>
 
@@ -5942,9 +4897,10 @@ This property returns the collection of ElementInit model objects for what value
 
 Signature:
 
-public ReadOnlyCollection&lt;ElementInit&gt;
-
-Initializers { get; }
+``` csharp
+public ReadOnlyCollection<ElementInit>
+       Initializers { get; }
+```
 
 <h3 id="update-method-16">4.35.3 Update Method</h3>
 
@@ -5952,35 +4908,28 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public MemberListBinding Update
-
-(IEnumerable&lt;ElementInit&gt; initializers)
+    (IEnumerable<ElementInit> initializers)
+```
 
 <h3 id="factory-methods-17">4.35.4 Factory Methods</h3>
 
 Expression has the following factory methods for MemberMemberBindings:
 
+``` csharp
 public static MemberListBinding ListBind
-
-(MemberInfo member,
-
-IEnumerable&lt;ElementInit&gt; initializers);
-
+    (MemberInfo member,
+     IEnumerable<ElementInit> initializers);
 public static MemberListBinding ListBind
-
-(MemberInfo member, params ElementInit\[\] initializers);
-
+    (MemberInfo member, params ElementInit[] initializers);
 public static MemberListBinding ListBind
-
-(MethodInfo propertyAccessor,
-
-IEnumerable&lt;ElementInit&gt; initializers);
-
+    (MethodInfo propertyAccessor,
+     IEnumerable<ElementInit> initializers);
 public static MemberListBinding ListBind
-
-(MethodInfo propertyAccessor,
-
-params ElementInit\[\] initializers);
+    (MethodInfo propertyAccessor,
+     params ElementInit[] initializers);
+```
 
 The following is derived from the v1 spec ...
 
@@ -5990,19 +4939,19 @@ Member must be non-null, and must represent a field or property. Let T represent
 
 This class represents the recursive initializing of one object's member with the creation of another object and setting the second object's members. This is a supporting type used in MemberInitExpressions. For example, the setting of Foo in:
 
-new Blah {Foo = {Bar = ..., Baz = ...}, ...}
+``` csharp
+new Blah {Foo = {Bar  = ..., Baz = ...}, ...}
+```
 
 <h3 id="class-summary-30">4.36.1 Class Summary</h3>
 
+``` csharp
 public sealed class MemberMemberBinding : MemberBinding {
-
-public ReadOnlyCollection&lt;MemberBinding&gt;
-
-Bindings { get; }
-
-public MemberMemberBinding Update
-
-(IEnumerable&lt;MemberBinding&gt; bindings)
+    public ReadOnlyCollection<MemberBinding>
+           Bindings { get; }
+    public MemberMemberBinding Update
+        (IEnumerable<MemberBinding> bindings)
+```
 
 <h3 id="bindings-property-1">4.36.2 Bindings Property</h3>
 
@@ -6014,33 +4963,27 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public MemberMemberBinding Update
-
-(IEnumerable&lt;MemberBinding&gt; bindings)
+    (IEnumerable<MemberBinding> bindings)
+```
 
 <h3 id="factory-methods-18">4.36.4 Factory Methods</h3>
 
 Expression has the following factory methods for MemberMemberBindings:
 
+``` csharp
 public static MemberMemberBinding MemberBind
-
-(MemberInfo member,
-
-IEnumerable&lt;MemberBinding&gt; bindings);
-
+    (MemberInfo member,
+     IEnumerable<MemberBinding> bindings);
 public static MemberMemberBinding MemberBind
-
-(MemberInfo member, params MemberBinding\[\] bindings);
-
+    (MemberInfo member, params MemberBinding[] bindings);
 public static MemberMemberBinding MemberBind
-
-(MethodInfo propertyAccessor,
-
-IEnumerable&lt;MemberBinding&gt; bindings);
-
+    (MethodInfo propertyAccessor,
+     IEnumerable<MemberBinding> bindings);
 public static MemberMemberBinding MemberBind
-
-(MethodInfo propertyAccessor, params MemberBinding\[\] bindings);
+    (MethodInfo propertyAccessor, params MemberBinding[] bindings);
+```
 
 The following is derived from the v1 spec ...
 
@@ -6050,15 +4993,17 @@ Member must be non-null, and must represent a field or property. Let T be the Fi
 
 This class models assigning a scalar value to a MemberInitExpression's member, for example, the setting of Foo in:
 
+``` csharp
 new Blah {Foo = 5, ...}
+```
 
 <h3 id="class-summary-31">4.37.1 Class Summary</h3>
 
+``` csharp
 public sealed class MemberAssignment : MemberBinding {
-
-public Expression Expression { get; }
-
-public MemberAssignment Update(Expression expression)
+    public Expression Expression { get; }
+    public MemberAssignment Update(Expression expression)
+```
 
 <h3 id="expression-property-3">4.37.2 Expression Property</h3>
 
@@ -6066,7 +5011,9 @@ This property returns the Expression that models the value to assign to the Memb
 
 Signature:
 
+``` csharp
 public Expression Expression { get; }
+```
 
 <h3 id="update-method-18">4.37.3 Update Method</h3>
 
@@ -6074,19 +5021,20 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public MemberAssignment Update(Expression expression)
+```
 
 <h3 id="factory-methods-19">4.37.4 Factory Methods</h3>
 
 Expression has the following factory methods for MemberAssignments:
 
+``` csharp
 public static MemberAssignment Bind(MethodInfo propertyAccessor,
-
-Expression expression);
-
+                                    Expression expression);
 public static MemberAssignment Bind(MemberInfo member,
-
-Expression expression);
+                                    Expression expression);
+```
 
 The following is derived from the v1 spec ... with additions on binding to generic properties.
 
@@ -6098,11 +5046,9 @@ You cannot simply bind to generic base type properties. For example, the followi
 public class OrderBase<T> {
     public T OrderName { get; set; }
 }
-
 public class Order : OrderBase<string> {
     public string OrderID { get; set; }
 }
-
 class Program {
     static void Main(string[] args) {
         // Get handles for the setter method and the Order classs
@@ -6111,7 +5057,6 @@ class Program {
         PropertyInfo nameProp = orderType.GetProperty("OrderName");
         MethodInfo nameMethod = nameProp.GetSetMethod();
         RuntimeMethodHandle nameHandle = nameMethod.MethodHandle;
-
         // Now get a MethodInfo for the setter method
         MethodInfo nameMethodFromHandle = 
                       (MethodInfo)MethodBase
@@ -6137,7 +5082,6 @@ MemberBinding binding =
                                          edmProperty
                                          .PropertyDeclaringType)),
                     valueReader);
-
 private static PropertyInfo GetProperty(MethodInfo setterMethod,
                                         Type declaringType) {
     BindingFlags bindingAttr = BindingFlags.NonPublic |
@@ -6171,19 +5115,15 @@ This node uses ElementInit as a helper model class for individual element values
 
 <h3 id="class-summary-32">4.38.1 Class Summary</h3>
 
+``` csharp
 public sealed class ListInitExpression : Expression {
-
-public ReadOnlyCollection&lt;ElementInit&gt;
-
-Initializers { get; }
-
-public NewExpression NewExpression { get; }
-
-public ListInitExpression Update
-
-(NewExpression newExpression,
-
-IEnumerable&lt;ElementInit&gt; initializers)
+    public ReadOnlyCollection<ElementInit>
+           Initializers { get; }
+    public NewExpression NewExpression { get; }
+    public ListInitExpression Update
+        (NewExpression newExpression,
+         IEnumerable<ElementInit> initializers)
+```
 
 <h3 id="initializers-property-1">4.38.2 Initializers Property</h3>
 
@@ -6191,9 +5131,10 @@ This property returns a read-only collection of ElementInit objects describing e
 
 Signature:
 
-public ReadOnlyCollection&lt;ElementInit&gt;
-
-Initializers { get; }
+``` csharp
+public ReadOnlyCollection<ElementInit>
+       Initializers { get; }
+```
 
 <h3 id="newexpression-property-1">4.38.3 NewExpression Property</h3>
 
@@ -6201,7 +5142,9 @@ This property returns the NewExpression that creates an instance of this node's 
 
 Signature:
 
+``` csharp
 public NewExpression NewExpression { get; }
+```
 
 <h3 id="update-method-19">4.38.4 Update Method</h3>
 
@@ -6209,51 +5152,36 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public ListInitExpression Update
-
-(NewExpression newExpression,
-
-IEnumerable&lt;ElementInit&gt; initializers)
+    (NewExpression newExpression,
+     IEnumerable<ElementInit> initializers)
+```
 
 <h3 id="factory-methods-20">4.38.5 Factory Methods</h3>
 
 Expression has the following factory methods for ListInitExpressions:
 
+``` csharp
 public static ListInitExpression ListInit
-
-(NewExpression newExpression,
-
-params ElementInit\[\] initializers);
-
+    (NewExpression newExpression,
+     params ElementInit[] initializers);
 public static ListInitExpression ListInit
-
-(NewExpression newExpression, MethodInfo addMethod,
-
-params Expression\[\] initializers);
-
+    (NewExpression newExpression, MethodInfo addMethod,
+     params Expression[] initializers);
 public static ListInitExpression ListInit
-
-(NewExpression newExpression,
-
-IEnumerable&lt;ElementInit&gt; initializers);
-
+    (NewExpression newExpression,
+     IEnumerable<ElementInit> initializers);
 public static ListInitExpression ListInit
-
-(NewExpression newExpression,
-
-IEnumerable&lt;Expression&gt; initializers);
-
+    (NewExpression newExpression,
+     IEnumerable<Expression> initializers);
 public static ListInitExpression ListInit
-
-(NewExpression newExpression,
-
-params Expression\[\] initializers);
-
+    (NewExpression newExpression, 
+     params Expression[] initializers);
 public static ListInitExpression ListInit
-
-(NewExpression newExpression, MethodInfo addMethod,
-
-IEnumerable&lt;Expression&gt; initializers);
+    (NewExpression newExpression, MethodInfo addMethod,
+     IEnumerable<Expression> initializers);
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -6279,13 +5207,12 @@ This class represents elements to be added to a new instance of a type in the Li
 
 <h3 id="class-summary-33">4.39.1 Class Summary</h3>
 
+``` csharp
 public sealed class ElementInit {
-
-public MethodInfo AddMethod { get; }
-
-public ReadOnlyCollection&lt;Expression&gt; Arguments { get; }
-
-public ElementInit Update(IEnumerable&lt;Expression&gt; arguments)
+    public MethodInfo AddMethod { get; }
+    public ReadOnlyCollection<Expression> Arguments { get; }
+    public ElementInit Update(IEnumerable<Expression> arguments)
+```
 
 <h3 id="addmethod-property">4.39.2 AddMethod Property</h3>
 
@@ -6293,7 +5220,9 @@ This property returns the method that will be used to add an element to an objec
 
 Signature:
 
+``` csharp
 public MethodInfo AddMethod { get; }
+```
 
 <h3 id="arguments-property-4">4.39.3 Arguments Property</h3>
 
@@ -6301,7 +5230,9 @@ This property returns the collection of argument expressions for this object's A
 
 Signature:
 
-public ReadOnlyCollection&lt;Expression&gt; Arguments { get; }
+``` csharp
+public ReadOnlyCollection<Expression> Arguments { get; }
+```
 
 <h3 id="update-method-20">4.39.4 Update Method</h3>
 
@@ -6309,21 +5240,21 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
-public ElementInit Update(IEnumerable&lt;Expression&gt; arguments)
+``` csharp
+public ElementInit Update(IEnumerable<Expression> arguments)
+```
 
 <h3 id="factory-methods-21">4.39.5 Factory Methods</h3>
 
 Expression has the following factories for ElementInit objects:
 
+``` csharp
 public static ElementInit ElementInit
-
-(MethodInfo addMethod,
-
-IEnumerable&lt;Expression&gt; arguments);
-
+    (MethodInfo addMethod,
+     IEnumerable<Expression> arguments);
 public static ElementInit ElementInit
-
-(MethodInfo addMethod, params Expression\[\] arguments);
+    (MethodInfo addMethod, params Expression[] arguments);
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -6339,19 +5270,15 @@ The NewExpression uses the New node kind. It represents calling a constructor to
 
 <h3 id="class-summary-34">4.40.1 Class Summary</h3>
 
+``` csharp
 public class NewExpression : Expression {
-
-public ReadOnlyCollection&lt;Expression&gt;
-
-Arguments { get; }
-
-public ConstructorInfo Constructor { get; }
-
-public ReadOnlyCollection&lt;System.Reflection.MemberInfo&gt;
-
-Members { get; }
-
-public NewExpression Update(IEnumerable&lt;Expression&gt; arguments)
+    public ReadOnlyCollection<Expression>
+           Arguments { get; }
+    public ConstructorInfo Constructor { get; }
+    public ReadOnlyCollection<System.Reflection.MemberInfo>
+           Members { get; }
+    public NewExpression Update(IEnumerable<Expression> arguments)
+```
 
 <h3 id="arguments-property-5">4.40.2 Arguments Property</h3>
 
@@ -6359,9 +5286,10 @@ This returns the arguments to the constructor invocation. This never returns nul
 
 Signature:
 
-public ReadOnlyCollection&lt;Expression&gt;
-
-Arguments { get; }
+``` csharp
+public ReadOnlyCollection<Expression>
+       Arguments { get; }
+```
 
 <h3 id="constructor-property">4.40.3 Constructor Property</h3>
 
@@ -6369,7 +5297,9 @@ This returns the ConstructorInfo for the constructor. This never returns null.
 
 Signature:
 
+``` csharp
 public ConstructorInfo Constructor { get; }
+```
 
 <h3 id="members-property">4.40.4 Members Property</h3>
 
@@ -6379,9 +5309,10 @@ This never returns null, returning an empty collection for non-anonymous types.
 
 Signature:
 
-public ReadOnlyCollection&lt;MemberInfo&gt;
-
-Members { get; }
+``` csharp
+public ReadOnlyCollection<MemberInfo>
+       Members { get; }
+```
 
 <h3 id="update-method-21">4.40.5 Update Method</h3>
 
@@ -6389,41 +5320,31 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
-public NewExpression Update(IEnumerable&lt;Expression&gt; arguments)
+``` csharp
+public NewExpression Update(IEnumerable<Expression> arguments)
+```
 
 <h3 id="factory-methods-22">4.40.6 Factory Methods</h3>
 
 Expression has the following factory methods for creating NewExpressions:
 
+``` csharp
 public static NewExpression New
-
-(ConstructorInfo constructor,
-
-IEnumerable&lt;Expression&gt; arguments,
-
-params MemberInfo\[\] members);
-
+    (ConstructorInfo constructor,
+     IEnumerable<Expression> arguments,
+     params MemberInfo[] members);
 public static NewExpression New(ConstructorInfo constructor);
-
 public static NewExpression New(Type type);
-
 public static NewExpression New(ConstructorInfo constructor,
-
-params Expression\[\] arguments);
-
+                                params Expression[] arguments);
 public static NewExpression New
-
-(ConstructorInfo constructor,
-
-IEnumerable&lt;Expression&gt; arguments);
-
+    (ConstructorInfo constructor,
+     IEnumerable<Expression> arguments);
 public static NewExpression New
-
-(ConstructorInfo constructor,
-
-IEnumerable&lt;Expression&gt; arguments,
-
-IEnumerable&lt;MemberInfo&gt; members);
+    (ConstructorInfo constructor,
+     IEnumerable<Expression> arguments,
+     IEnumerable<MemberInfo> members);
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -6453,15 +5374,13 @@ This class represents creating a new array. It uses the NewArrayInit and NewArra
 
 <h3 id="class-summary-35">4.41.1 Class Summary</h3>
 
+``` csharp
 public class NewArrayExpression : Expression {
-
-public ReadOnlyCollection&lt;Expression&gt;
-
-Expressions { get; }
-
-public NewArrayExpression Update
-
-(IEnumerable&lt;Expression&gt; expressions)
+    public ReadOnlyCollection<Expression>
+           Expressions { get; }
+    public NewArrayExpression Update
+        (IEnumerable<Expression> expressions)
+```
 
 <h3 id="expressions-property-1">4.41.2 Expressions Property</h3>
 
@@ -6469,9 +5388,10 @@ This property returns the collection of Expressions that provide values for init
 
 Signature:
 
-public ReadOnlyCollection&lt;Expression&gt;
-
-Expressions { get; }
+``` csharp
+public ReadOnlyCollection<Expression>
+       Expressions { get; }
+```
 
 <h3 id="update-method-22">4.41.3 Update Method</h3>
 
@@ -6479,33 +5399,27 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public NewArrayExpression Update
-
-(IEnumerable&lt;Expression&gt; expressions)
+    (IEnumerable<Expression> expressions)
+```
 
 <h3 id="factory-methods-23">4.41.4 Factory Methods</h3>
 
 Expression has the following factory methods for NewArrayExpression nodes:
 
+``` csharp
 public static NewArrayExpression NewArrayBounds
-
-(Type type,
-
-IEnumerable&lt;Expression&gt; bounds);
-
+    (Type type,
+     IEnumerable<Expression> bounds);
 public static NewArrayExpression NewArrayBounds
-
-(Type type, params Expression\[\] bounds);
-
+    (Type type, params Expression[] bounds);
 public static NewArrayExpression NewArrayInit
-
-(Type type,
-
-IEnumerable&lt;Expression&gt; initializers);
-
+    (Type type,
+     IEnumerable<Expression> initializers);
 public static NewArrayExpression NewArrayInit
-
-(Type type, params Expression\[\] initializers);
+    (Type type, params Expression[] initializers);
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -6553,7 +5467,6 @@ Recursive Fact with StrongBox to refer to function recursively:
 using System;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-
 namespace LambdaRecursion
 {
     class Program
@@ -6577,7 +5490,6 @@ namespace LambdaRecursion
                             Expression.Subtract
                                (x, Expression.Constant(1))))),
                 x);
-
             factorial.Value = lambda.Compile();
             Console.WriteLine(factorial.Value(5));
 ```
@@ -6609,35 +5521,23 @@ Expression.Lambda(block).Compile()();
 
 <h3 id="class-summary-36">4.42.2 Class Summary</h3>
 
+``` csharp
 public abstract class LambdaExpression : Expression {
-
-public Expression Body { get; }
-
-public String Name { get; }
-
-public ReadOnlyCollection
-
-&lt;ParameterExpression&gt;
-
-Parameters { get; }
-
-public Type ReturnType { get; }
-
-public void TailCall { get; }
-
-public Delegate Compile();
-
-public Delegate Compile(DebugInfoGenerator debugInfoGenerator)
-
-public void CompileToMethod(MethodBuilder method);
-
-public void CompileToMethod(MethodBuilder method,
-
-DebugInfoGenerator debugInfoGenerator);
-
-public Expression&lt;TDelegate&gt; Update
-
-(Expression body, IEnumerable&lt;ParameterExpression&gt; parameters)
+    public Expression Body { get; }
+    public String Name { get; }
+    public ReadOnlyCollection
+               <ParameterExpression>
+           Parameters { get; }
+    public Type ReturnType { get; }
+    public void TailCall { get; }
+    public Delegate Compile();
+    public Delegate Compile(DebugInfoGenerator debugInfoGenerator)
+    public void CompileToMethod(MethodBuilder method);
+    public void CompileToMethod(MethodBuilder method,
+                                DebugInfoGenerator debugInfoGenerator);
+    public Expression<TDelegate> Update
+       (Expression body, IEnumerable<ParameterExpression> parameters)
+```
 
 <h3 id="body-property-2">4.42.3 Body Property</h3>
 
@@ -6645,23 +5545,22 @@ This property returns the body expression of the lambda. It is never null.
 
 This node's Body.Type is reference assignable to ReturnType with one exception. ReturnType may be void when Body.Type is not, for example:
 
+``` csharp
 static int NonVoidMethod() {
-
-return 123;
-
+    return 123;
 }
-
-static void Main(string\[\] args) {
-
-Expression&lt;Action&gt; e = () =&gt; NonVoidMethod();
-
+static void Main(string[] args) {
+    Expression<Action> e = () => NonVoidMethod(); 
 }
+```
 
 For convenience in this case, the types do not have to match, and the lambda will automatically convert the result to void or squelch it.
 
 Signature:
 
+``` csharp
 public Expression Body { get; }
+```
 
 <h3 id="name-property-1">4.42.4 Name Property</h3>
 
@@ -6669,7 +5568,9 @@ This property returns the name of the lambda, which is used for debugging or pre
 
 Signature:
 
+``` csharp
 public String Name { get; }
+```
 
 <h3 id="parameters-property">4.42.5 Parameters Property</h3>
 
@@ -6677,27 +5578,24 @@ This property returns the collection of ParameterExpressions that declare parame
 
 Signature:
 
+``` csharp
 public ReadOnlyCollection
-
-&lt;ParameterExpression&gt;
-
-Parameters { get; }
+           <ParameterExpression>
+       Parameters { get; }
+```
 
 <h3 id="returntype-property">4.42.6 ReturnType Property</h3>
 
 This property returns the type that is the return type of the delegate type in this node's Type property. This node's Body.Type is reference assignable to ReturnType with one exception. ReturnType may be void when Body.Type is not, for example:
 
+``` csharp
 static int NonVoidMethod() {
-
-return 123;
-
+    return 123;
 }
-
-static void Main(string\[\] args) {
-
-Expression&lt;Action&gt; e = () =&gt; NonVoidMethod();
-
+static void Main(string[] args) {
+    Expression<Action> e = () => NonVoidMethod(); 
 }
+```
 
 For convenience in this case, the types do not have to match, and the lambda will automatically convert the result to void or squelch it.
 
@@ -6707,7 +5605,9 @@ This property returns whether compiling this LambdaExpression should attempt to 
 
 Signature:
 
+``` csharp
 public void TailCall { get; }
+```
 
 <h3 id="compile-methods">4.42.8 Compile\* Methods</h3>
 
@@ -6721,15 +5621,13 @@ CompileToMethod is useful for hosted languages that want to provide some pre-com
 
 Signatures:
 
+``` csharp
 public Delegate Compile();
-
 public Delegate Compile(DebugInfoGenerator debugInfoGenerator)
-
 public void CompileToMethod(MethodBuilder method);
-
 public void CompileToMethod(MethodBuilder method,
-
-DebugInfoGenerator debugInfoGenerator);
+                            DebugInfoGenerator debugInfoGenerator);
+```
 
 <h3 id="update-method-23">4.42.9 Update Method</h3>
 
@@ -6737,147 +5635,84 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
-public Expression&lt;TDelegate&gt; Update
-
-(Expression body, IEnumerable&lt;ParameterExpression&gt; parameters)
+``` csharp
+public Expression<TDelegate> Update
+   (Expression body, IEnumerable<ParameterExpression> parameters)
+```
 
 <h3 id="factory-methods-24">4.42.10 Factory Methods</h3>
 
 Expression has the following factory methods for LambdaExpressions:
 
+``` csharp
 public static LambdaExpression Lambda
-
-(Expression body, params ParameterExpression\[\] parameters);
-
+    (Expression body, params ParameterExpression[] parameters);
 public static LambdaExpression Lambda
-
-(Expression body, bool tailcall,
-
-params ParameterExpression\[\] parameters);
-
+    (Expression body, bool tailcall,
+     params ParameterExpression[] parameters);
 public static LambdaExpression Lambda
-
-(Expression body,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
-
+    (Expression body,
+     IEnumerable<ParameterExpression>
+     parameters);
 public static LambdaExpression Lambda
-
-(Expression body, bool tailcall,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
-
+    (Expression body, bool tailcall,
+     IEnumerable<ParameterExpression>
+     parameters);
 public static LambdaExpression Lambda
-
-(Expression body, String name,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
-
+    (Expression body, String name,
+     IEnumerable<ParameterExpression>
+     parameters);
 public static LambdaExpression Lambda
-
-(Expression body, String name, bool tailcall,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
-
-public static Expression&lt;TDelegate&gt; Lambda&lt;TDelegate&gt;
-
-(Expression body, String name,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
-
-public static Expression&lt;TDelegate&gt; Lambda&lt;TDelegate&gt;
-
-(Expression body, String name, bool tailcall,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
-
-public static Expression&lt;TDelegate&gt; Lambda&lt;TDelegate&gt;
-
-(Expression body, params ParameterExpression\[\] parameters);
-
-public static Expression&lt;TDelegate&gt; Lambda&lt;TDelegate&gt;
-
-(Expression body, bool tailcall,
-
-params ParameterExpression\[\] parameters);
-
-public static Expression&lt;TDelegate&gt; Lambda&lt;TDelegate&gt;
-
-(Expression body,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
-
-public static Expression&lt;TDelegate&gt; Lambda&lt;TDelegate&gt;
-
-(Expression body, bool tailcall,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
-
+    (Expression body, String name, bool tailcall,
+     IEnumerable<ParameterExpression>
+     parameters);
+public static Expression<TDelegate> Lambda<TDelegate>
+    (Expression body, String name,
+     IEnumerable<ParameterExpression>
+     parameters);
+public static Expression<TDelegate> Lambda<TDelegate>
+    (Expression body, String name, bool tailcall,
+     IEnumerable<ParameterExpression>
+     parameters);
+public static Expression<TDelegate> Lambda<TDelegate>
+    (Expression body, params ParameterExpression[] parameters);
+public static Expression<TDelegate> Lambda<TDelegate>
+    (Expression body, bool tailcall,
+     params ParameterExpression[] parameters);
+public static Expression<TDelegate> Lambda<TDelegate>
+    (Expression body,
+     IEnumerable<ParameterExpression>
+     parameters);
+public static Expression<TDelegate> Lambda<TDelegate>
+    (Expression body, bool tailcall,
+     IEnumerable<ParameterExpression>
+     parameters);
 public static LambdaExpression Lambda
-
-(Type delegateType, Expression body, String name,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
-
+    (Type delegateType, Expression body, String name,
+     IEnumerable<ParameterExpression>
+     parameters);
 public static LambdaExpression Lambda
-
-(Type delegateType, Expression body, String name,
-
-bool tailcall,
-
-IEnumerable&lt;ParameterExpression&gt; parameters);
-
+    (Type delegateType, Expression body, String name,
+     bool tailcall,
+     IEnumerable<ParameterExpression> parameters);
 public static LambdaExpression Lambda
-
-(Type delegateType, Expression body,
-
-params ParameterExpression\[\] parameters);
-
+    (Type delegateType, Expression body,
+     params ParameterExpression[] parameters);
 public static LambdaExpression Lambda
-
-(Type delegateType, Expression body, bool tailcall,
-
-params ParameterExpression\[\] parameters);
-
+    (Type delegateType, Expression body, bool tailcall,
+     params ParameterExpression[] parameters);
 public static LambdaExpression Lambda
-
-(Type delegateType, Expression body, bool tailcall,
-
-params ParameterExpression\[\] parameters);
-
+    (Type delegateType, Expression body, bool tailcall,
+     params ParameterExpression[] parameters);
 public static LambdaExpression Lambda
-
-(Type delegateType, Expression body,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
-
+    (Type delegateType, Expression body,
+     IEnumerable<ParameterExpression>
+     parameters);
 public static LambdaExpression Lambda
-
-(Type delegateType, Expression body, bool tailcall,
-
-IEnumerable&lt;ParameterExpression&gt;
-
-parameters);
+    (Type delegateType, Expression body, bool tailcall,
+     IEnumerable<ParameterExpression>
+     parameters);
+```
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
@@ -6905,11 +5740,11 @@ This class is the concrete type instantiated for LambdaExpressions. See that typ
 
 <h3 id="class-summary-37">4.43.1 Class Summary</h3>
 
-public sealed class Expression&lt;TDelegate&gt; : LambdaExpression {
-
-public new TDelegate Compile();
-
-public new TDelegate Compile(DebugInfoGenerator debugInfoGenerator)
+``` csharp
+public sealed class Expression<TDelegate> : LambdaExpression {
+    public new TDelegate Compile();
+    public new TDelegate Compile(DebugInfoGenerator debugInfoGenerator)
+```
 
 <h2 id="debuginfogenerator-class">4.44 DebugInfoGenerator Class</h2>
 
@@ -6921,17 +5756,14 @@ This class allows you to own the debug info writing, or to intercept it. You mig
 
 <h3 id="class-summary-38">4.44.1 Class Summary</h3>
 
+``` csharp
 public abstract class DebugInfoGenerator {
-
-public static DebugInfoGenerator CreatePdbGenerator() {
-
-return new SymbolDocumentGenerator();
-
-public abstract void MarkSequencePoint
-
-(LambdaExpression method, int ilOffset,
-
-DebugInfoExpression sequencePoint);
+    public static DebugInfoGenerator CreatePdbGenerator() {
+        return new SymbolDocumentGenerator();
+    public abstract void MarkSequencePoint
+        (LambdaExpression method, int ilOffset,
+         DebugInfoExpression sequencePoint);
+```
 
 <h3 id="debuginfogenerator-method">4.44.2 DebugInfoGenerator Method</h3>
 
@@ -6939,9 +5771,10 @@ This static factory method returns a default info write that generates a pdb fil
 
 Signature:
 
+``` csharp
 public static DebugInfoGenerator CreatePdbGenerator() {
-
-return new SymbolDocumentGenerator();
+    return new SymbolDocumentGenerator();
+```
 
 <h3 id="marksequencepoint-method">4.44.3 MarkSequencePoint Method</h3>
 
@@ -6949,11 +5782,11 @@ This method takes sequence point information from LambdaExpression.Compile\* met
 
 Signature:
 
+``` csharp
 public abstract void MarkSequencePoint
-
-(LambdaExpression method, int ilOffset,
-
-DebugInfoExpression sequencePoint);
+    (LambdaExpression method, int ilOffset,
+     DebugInfoExpression sequencePoint);
+```
 
 <h2 id="parameterexpression-class">4.45 ParameterExpression Class</h2>
 
@@ -6967,11 +5800,11 @@ Closure environments and lifting variables happens automatically as needed when 
 
 <h3 id="class-summary-39">4.45.1 Class Summary</h3>
 
+``` csharp
 public class ParameterExpression : Expression {
-
-public Boolean IsByRef { get; }
-
-public String Name { get; }
+    public Boolean IsByRef { get; }
+    public String Name { get; }
+```
 
 <h3 id="isbyref-property">4.45.2 IsByRef Property</h3>
 
@@ -6982,11 +5815,7 @@ An example of creating a ByRef parameter follows:
 ``` csharp
 delegate void RefDelegate(ref int a);
 ...
-```
-
-// In some code somewhere ...
-
-``` csharp
+      // In some code somewhere ...
     var parameter = Expression.Parameter(typeof(int).MakeByRefType(), "x");
     var lambda = Expression.Lambda<RefDelegate>
         (Expression.Assign(parameter, Expression.Constant(123)), 
@@ -7000,7 +5829,9 @@ delegate void RefDelegate(ref int a);
 
 Signature:
 
+``` csharp
 public Boolean IsByRef { get; }
+```
 
 <h3 id="name-property-2">4.45.3 Name Property</h3>
 
@@ -7008,23 +5839,22 @@ This property returns the string name of the variable for debugging or pretty pr
 
 Signature:
 
+``` csharp
 public String Name { get; }
+```
 
 <h3 id="factory-methods-25">4.45.4 Factory Methods</h3>
 
 Expressions have the following factory methods for ParameterExpressions:
 
+``` csharp
 public static ParameterExpression Parameter
-
-(Type type, String name);
-
+    (Type type, String name);
 public static ParameterExpression Parameter(Type type)
-
 public static ParameterExpression Variable
-
-(Type type, String name);
-
+    (Type type, String name);
 public static ParameterExpression Variable(Type type)
+```
 
 Type must be non-null. The resulting node has Type and Name set to the factory arguments.
 
@@ -7036,13 +5866,12 @@ The Type property of this expression kind is IRuntimeVariables. This could have 
 
 <h3 id="class-summary-40">4.46.1 Class Summary</h3>
 
+``` csharp
 public sealed class RuntimeVariablesExpression : Expression {
-
-public ReadOnlyCollection&lt;ParameterExpression&gt; Variables { get; }
-
-public RuntimeVariablesExpression Update
-
-(IEnumerable&lt;ParameterExpression&gt; variables)
+    public ReadOnlyCollection<ParameterExpression> Variables { get; }
+    public RuntimeVariablesExpression Update
+        (IEnumerable<ParameterExpression> variables)
+```
 
 <h3 id="variables-property-1">4.46.2 Variables Property</h3>
 
@@ -7050,7 +5879,9 @@ This property returns the collection of ParameterExpressions representing the va
 
 Signaure:
 
-public ReadOnlyCollection&lt;ParameterExpression&gt; Variables { get; }
+``` csharp
+public ReadOnlyCollection<ParameterExpression> Variables { get; }
+```
 
 <h3 id="update-method-24">4.46.3 Update Method</h3>
 
@@ -7058,23 +5889,22 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
+``` csharp
 public RuntimeVariablesExpression Update
-
-(IEnumerable&lt;ParameterExpression&gt; variables)
+    (IEnumerable<ParameterExpression> variables)
+```
 
 <h3 id="factory-methods-26">4.46.4 Factory Methods</h3>
 
 The Expression class has the following factory methods for creating RuntimeVariableExpressions:
 
+``` csharp
 public static RuntimeVariablesExpression RuntimeVariables
-
-(IEnumerable&lt;ParameterExpression&gt;
-
-variables);
-
+    (IEnumerable<ParameterExpression>
+     variables);
 public static RuntimeVariablesExpression RuntimeVariables
-
-(params ParameterExpression\[\] variables);
+    (params ParameterExpression[] variables);
+```
 
 If any member of variables is null, these throw an ArgumentNullException.
 
@@ -7084,11 +5914,11 @@ This interface provides access to local variables explicitly requested to be lif
 
 <h3 id="class-summary-41">4.47.1 Class Summary</h3>
 
+``` csharp
 public interface IRuntimeVariables {
-
-int Count { get; }
-
-object this\[int index\] { get; set; }
+    int Count { get; }
+    object this[int index] { get; set; }
+```
 
 <h3 id="count-property">4.47.2 Count Property</h3>
 
@@ -7096,7 +5926,9 @@ This property returns the number of variables captured by the RuntimeVariablesEx
 
 Signature:
 
+``` csharp
 int Count { get; }
+```
 
 <h3 id="this-property">4.47.3 This Property</h3>
 
@@ -7104,7 +5936,9 @@ This property takes an index, zero to Count - 1, to get or set a closed over var
 
 Signature:
 
-object this\[int index\] { get; set; }
+``` csharp
+object this[int index] { get; set; }
+```
 
 <h2 id="switchexpression-class">4.48 SwitchExpression Class</h2>
 
@@ -7118,23 +5952,17 @@ If you want the effect of case fall through, then you can use GotoExpression and
 
 <h3 id="class-summary-42">4.48.1 Class Summary</h3>
 
+``` csharp
 public sealed class SwitchExpression : Expression {
-
-public ReadOnlyCollection&lt;SwitchCase&gt;
-
-Cases { get; }
-
-public MethodInfo Comparison { get; }
-
-public Expression DefaultBody { get; }
-
-public Expression SwitchValue { get; }
-
-public SwitchExpression Update(Expression switchValue,
-
-IEnumerable&lt;SwitchCase&gt; cases,
-
-Expression defaultBody)
+    public ReadOnlyCollection<SwitchCase>
+           Cases { get; }
+    public MethodInfo Comparison { get; }
+    public Expression DefaultBody { get; }
+    public Expression SwitchValue { get; }
+    public SwitchExpression Update(Expression switchValue, 
+                                   IEnumerable<SwitchCase> cases,
+                                   Expression defaultBody)
+```
 
 <h3 id="cases-property">4.48.2 Cases Property</h3>
 
@@ -7142,9 +5970,10 @@ This property returns the collection of SwitchCases describing each branch of th
 
 Signature:
 
-public ReadOnlyCollection&lt;SwitchCase&gt;
-
-Cases { get; }
+``` csharp
+public ReadOnlyCollection<SwitchCase>
+       Cases { get; }
+```
 
 <h3 id="comparison-property">4.48.3 Comparison Property</h3>
 
@@ -7152,7 +5981,9 @@ This property returns the function that takes as its first argument the SwitchEx
 
 Signature:
 
+``` csharp
 public MethodInfo Comparison { get; }
+```
 
 <h3 id="defaultbody-property">4.48.4 DefaultBody Property</h3>
 
@@ -7160,13 +5991,17 @@ This property returns the Expression to execute if no cases match the SwitchValu
 
 Signature:
 
+``` csharp
 public Expression DefaultBody { get; }
+```
 
 <h3 id="switchvalue-property">4.48.5 SwitchValue Property</h3>
 
 This property returns the test condition value to be compared with all the cases' test values.
 
+``` csharp
 public Expression SwitchValue { get; }
+```
 
 <h3 id="update-method-25">4.48.6 Update Method</h3>
 
@@ -7174,49 +6009,35 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
-public SwitchExpression Update(Expression switchValue,
-
-IEnumerable&lt;SwitchCase&gt; cases,
-
-Expression defaultBody)
+``` csharp
+public SwitchExpression Update(Expression switchValue, 
+                               IEnumerable<SwitchCase> cases,
+                               Expression defaultBody)
+```
 
 <h3 id="factory-methods-27">4.48.7 Factory Methods</h3>
 
 The Expression class has the following factory methods for creating SwitchExpressions:
 
+``` csharp
 public static SwitchExpression Switch(Expression value,
-
-params SwitchCase\[\] cases);
-
+                                      params SwitchCase[] cases);
 public static SwitchExpression Switch
-
-(Expression switchValue, Expression defaultBody,
-
-params SwitchCase\[\] cases)
-
+    (Expression switchValue, Expression defaultBody,
+     params SwitchCase[] cases)
 public static SwitchExpression Switch
-
-(Expression switchValue, Expression defaultBody,
-
-MethodInfo comparison, params SwitchCase\[\] cases)
-
+    (Expression switchValue, Expression defaultBody,
+     MethodInfo comparison, params SwitchCase[] cases)
 public static SwitchExpression Switch
-
-(Type type, Expression switchValue, Expression defaultBody,
-
-MethodInfo comparison, params SwitchCase\[\] cases)
-
+    (Type type, Expression switchValue, Expression defaultBody,
+     MethodInfo comparison, params SwitchCase[] cases)
 public static SwitchExpression Switch
-
-(Expression switchValue, Expression defaultBody,
-
-MethodInfo comparison, IEnumerable&lt;SwitchCase&gt; cases)
-
+    (Expression switchValue, Expression defaultBody,
+     MethodInfo comparison, IEnumerable<SwitchCase> cases)
 public static SwitchExpression Switch
-
-(Type type, Expression switchValue, Expression defaultBody,
-
-MethodInfo comparison, IEnumerable&lt;SwitchCase&gt; cases)
+    (Type type, Expression switchValue, Expression defaultBody,
+     MethodInfo comparison, IEnumerable<SwitchCase> cases)
+```
 
 Comparison defaults to the effect of using Expression.Equal. The comparison function gets invoked with the switch value as the first argument and each case's test value in turn as the second argument.
 
@@ -7234,17 +6055,14 @@ This class represents a single case in a SwitchExpression. While the cases do fi
 
 <h3 id="class-summary-43">4.49.1 Class Summary</h3>
 
+``` csharp
 public sealed class SwitchCase {
-
-public Expression Body { get; }
-
-public ReadOnlyCollection&lt;Expression&gt;
-
-TestValues { get; }
-
-public SwitchCase Update(IEnumerable&lt;Expression&gt; testValues,
-
-Expression body)
+    public Expression Body { get; }
+    public ReadOnlyCollection<Expression>
+           TestValues { get; }
+    public SwitchCase Update(IEnumerable<Expression> testValues,
+                             Expression body)
+```
 
 <h3 id="body-property-3">4.49.2 Body Property</h3>
 
@@ -7252,7 +6070,9 @@ This property returns the Expression to execute if one of this case's test value
 
 Signature:
 
+``` csharp
 public Expression Body { get; }
+```
 
 <h3 id="testvalues-property">4.49.3 TestValues Property</h3>
 
@@ -7260,9 +6080,10 @@ This property returns the collection of test value Expressions to consider in or
 
 Signature:
 
-public ReadOnlyCollection&lt;Expression&gt;
-
-TestValues { get; }
+``` csharp
+public ReadOnlyCollection<Expression>
+       TestValues { get; }
+```
 
 <h3 id="update-method-26">4.49.4 Update Method</h3>
 
@@ -7270,21 +6091,21 @@ This method creates a new expression that is like this one, but using the suppli
 
 Signature:
 
-public SwitchCase Update(IEnumerable&lt;Expression&gt; testValues,
-
-Expression body)
+``` csharp
+public SwitchCase Update(IEnumerable<Expression> testValues,
+                         Expression body)
+```
 
 <h3 id="factory-methods-28">4.49.5 Factory Methods</h3>
 
 The Expression class has the following factory for creating SwitchCases objects:
 
+``` csharp
 public static SwitchCase SwitchCase(Expression body,
-
-params Expression\[\] testValues)
-
+                                    params Expression[] testValues)
 public static SwitchCase SwitchCase
-
-(Expression body, IEnumerable&lt;Expression&gt; testValues)
+    (Expression body, IEnumerable<Expression> testValues)
+```
 
 If the SwitchExpression to which the resulting SwitchCase gets added has an explicit comparison function, then each of the testValues must have a Type property that represents a type that is reference assignable to the second parameter of the comparison function. Otherwise all test value Expressions must have exactly the same Type property. This is for simplicity of the compiler in choosing a unifying type and searching for an Equal method as well as simplicity for ET consumer.
 
@@ -7324,163 +6145,87 @@ When there is no explicit method info, if the children nodes are primitive types
 
 <h3 id="class-summary-44">4.50.2 Class Summary</h3>
 
+``` csharp
 public abstract class ExpressionVisitor {
-
-protected ExpressionVisitor();
-
-protected static ReadOnlyCollection&lt;T&gt; Visit&lt;T&gt;
-
-(ReadOnlyCollection&lt;T&gt; nodes, Func&lt;T,T&gt; elementVisitor);
-
-protected ReadOnlyCollection&lt;Expression&gt; Visit
-
-(ReadOnlyCollection&lt;Expression&gt; nodes);
-
-// Visit is virtual just for consistency with the visitor sample
-
-// popular with ETs v1. You should never need to override it.
-
-public virtual Expression Visit(Expression node);
-
-protected ReadOnlyCollection&lt;T&gt; VisitAndConvert&lt;T&gt;
-
-(ReadOnlyCollection&lt;T&gt; nodes, String callerName)
-
-where T : Expression;
-
-protected T VisitAndConvert&lt;T&gt;(T node, String callerName)
-
-where T : Expression;
-
-protected virtual Expression VisitBinary
-
-(BinaryExpression node);
-
-protected virtual Expression VisitBlock
-
-(BlockExpression node);
-
-protected virtual CatchBlock VisitCatchBlock(CatchBlock node);
-
-protected virtual Expression VisitConditional
-
-(ConditionalExpression node);
-
-protected virtual Expression VisitConstant
-
-(ConstantExpression node);
-
-protected virtual Expression VisitDebugInfo
-
-(DebugInfoExpression node);
-
-protected virtual Expression VisitDefault
-
-(DefaultExpression node);
-
-protected virtual Expression VisitDynamic
-
-(DynamicExpression node);
-
-protected virtual ElementInit VisitElementInit(ElementInit node);
-
-protected virtual Expression VisitExtension
-
-(Expression node);
-
-protected virtual Expression VisitGoto
-
-(GotoExpression node);
-
-protected virtual Expression VisitIndex
-
-(IndexExpression node);
-
-protected virtual Expression VisitInvocation
-
-(InvocationExpression node);
-
-protected virtual Expression VisitLabel
-
-(LabelExpression node);
-
-protected virtual LabelTarget VisitLabelTarget
-
-(LabelTarget node);
-
-protected virtual Expression VisitLambda&lt;T&gt;
-
-(Expression&lt;T&gt; node);
-
-protected virtual Expression VisitListInit
-
-(ListInitExpression node);
-
-protected virtual Expression VisitLoop
-
-(LoopExpression node);
-
-protected virtual Expression VisitMember
-
-(MemberExpression node);
-
-protected virtual MemberAssignment VisitMemberAssignment
-
-(MemberAssignment node);
-
-protected virtual MemberBinding VisitMemberBinding
-
-(MemberBinding node);
-
-protected virtual Expression VisitMemberInit
-
-(MemberInitExpression node);
-
-protected virtual MemberListBinding VisitMemberListBinding
-
-(MemberListBinding binding);
-
-protected virtual MemberMemberBinding VisitMemberMemberBinding
-
-(MemberMemberBinding node);
-
-protected virtual Expression VisitMethodCall
-
-(MethodCallExpression node);
-
-protected virtual Expression VisitNew
-
-(NewExpression node);
-
-protected virtual Expression VisitNewArray
-
-(NewArrayExpression node);
-
-protected virtual Expression VisitParameter
-
-(ParameterExpression node);
-
-protected virtual Expression VisitRuntimeVariables
-
-(RuntimeVariablesExpression node);
-
-protected virtual Expression VisitSwitch
-
-(SwitchExpression node);
-
-protected virtual SwitchCase VisitSwitchCase(SwitchCase node);
-
-protected virtual Expression VisitTry
-
-(TryExpression node);
-
-protected virtual Expression VisitTypeBinary
-
-(TypeBinaryExpression node);
-
-protected virtual Expression VisitUnary
-
-(UnaryExpression node);
+    protected ExpressionVisitor();
+    protected static ReadOnlyCollection<T> Visit<T>
+        (ReadOnlyCollection<T> nodes, Func<T,T> elementVisitor);
+    protected ReadOnlyCollection<Expression> Visit
+        (ReadOnlyCollection<Expression> nodes);
+    // Visit is virtual just for consistency with the visitor sample
+    // popular with ETs v1.  You should never need to override it.
+    public virtual Expression Visit(Expression node);
+    protected ReadOnlyCollection<T> VisitAndConvert<T>
+        (ReadOnlyCollection<T> nodes, String callerName)
+        where T : Expression;
+    protected T VisitAndConvert<T>(T node, String callerName)
+        where T : Expression;
+    protected virtual Expression VisitBinary
+        (BinaryExpression node);
+    protected virtual Expression VisitBlock
+        (BlockExpression node);
+    protected virtual CatchBlock VisitCatchBlock(CatchBlock node);
+    protected virtual Expression VisitConditional
+        (ConditionalExpression node);
+    protected virtual Expression VisitConstant
+        (ConstantExpression node);
+    protected virtual Expression VisitDebugInfo
+        (DebugInfoExpression node);
+    protected virtual Expression VisitDefault
+        (DefaultExpression node);
+    protected virtual Expression VisitDynamic
+        (DynamicExpression node);
+    protected virtual ElementInit VisitElementInit(ElementInit node);
+    protected virtual Expression VisitExtension
+        (Expression node);
+    protected virtual Expression VisitGoto
+        (GotoExpression node);
+    protected virtual Expression VisitIndex
+        (IndexExpression node);
+    protected virtual Expression VisitInvocation
+        (InvocationExpression node);
+    protected virtual Expression VisitLabel
+        (LabelExpression node);
+    protected virtual LabelTarget VisitLabelTarget
+        (LabelTarget node);
+    protected virtual Expression VisitLambda<T>
+        (Expression<T> node);
+    protected virtual Expression VisitListInit
+        (ListInitExpression node);
+    protected virtual Expression VisitLoop
+        (LoopExpression node);
+    protected virtual Expression VisitMember
+        (MemberExpression node);
+    protected virtual MemberAssignment VisitMemberAssignment
+        (MemberAssignment node);
+    protected virtual MemberBinding VisitMemberBinding
+        (MemberBinding node);
+    protected virtual Expression VisitMemberInit
+        (MemberInitExpression node);
+    protected virtual MemberListBinding VisitMemberListBinding
+        (MemberListBinding binding);
+    protected virtual MemberMemberBinding VisitMemberMemberBinding
+        (MemberMemberBinding node);
+    protected virtual Expression VisitMethodCall
+        (MethodCallExpression node);
+    protected virtual Expression VisitNew
+        (NewExpression node);
+    protected virtual Expression VisitNewArray
+        (NewArrayExpression node);
+    protected virtual Expression VisitParameter
+        (ParameterExpression node);
+    protected virtual Expression VisitRuntimeVariables
+        (RuntimeVariablesExpression node);
+    protected virtual Expression VisitSwitch
+        (SwitchExpression node);
+    protected virtual SwitchCase VisitSwitchCase(SwitchCase node);
+    protected virtual Expression VisitTry
+        (TryExpression node);
+    protected virtual Expression VisitTypeBinary
+        (TypeBinaryExpression node);
+    protected virtual Expression VisitUnary
+        (UnaryExpression node);
+```
 
 <h3 id="visitt-method">4.50.3 Visit&lt;T&gt; Method</h3>
 
@@ -7490,9 +6235,10 @@ This method is for convenience, and it is used in the default implementations of
 
 Signature:
 
-protected static ReadOnlyCollection&lt;T&gt; Visit&lt;T&gt;
-
-(ReadOnlyCollection&lt;T&gt; nodes, Func&lt;T,T&gt; elementVisitor);
+``` csharp
+protected static ReadOnlyCollection<T> Visit<T>
+    (ReadOnlyCollection<T> nodes, Func<T,T> elementVisitor);
+```
 
 <h3 id="visitlambdat-method">4.50.4 VisitLambda&lt;T&gt; Method</h3>
 
@@ -7500,9 +6246,10 @@ This method visits the parameters and the body of a LambdaExpression. It require
 
 Signature:
 
-protected virtual Expression VisitLambda&lt;T&gt;
-
-(Expression&lt;T&gt; node);
+``` csharp
+protected virtual Expression VisitLambda<T>
+    (Expression<T> node);
+```
 
 <h3 id="visitandconvertt-method">4.50.5 VisitAndConvert&lt;T&gt; Method</h3>
 
@@ -7512,15 +6259,13 @@ This is a convenience method for iterating nodes like BlockExpression.Variables 
 
 Signature:
 
-protected ReadOnlyCollection&lt;T&gt; VisitAndConvert&lt;T&gt;
-
-(ReadOnlyCollection&lt;T&gt; nodes, String callerName)
-
-where T : Expression;
-
-protected T VisitAndConvert&lt;T&gt;(T node, String callerName)
-
-where T : Expression;
+``` csharp
+protected ReadOnlyCollection<T> VisitAndConvert<T>
+    (ReadOnlyCollection<T> nodes, String callerName)
+    where T : Expression;
+protected T VisitAndConvert<T>(T node, String callerName)
+    where T : Expression;
+```
 
 <h3 id="visitconstant-method">4.50.6 VisitConstant Method</h3>
 
@@ -7528,9 +6273,10 @@ This method by default just returns the node with no recursive visiting.
 
 Signature:
 
+``` csharp
 protected virtual Expression VisitConstant
-
-(ConstantExpression node);
+    (ConstantExpression node);
+```
 
 <h3 id="visitdebuginfo-method">4.50.7 VisitDebugInfo Method</h3>
 
@@ -7538,9 +6284,10 @@ This method by default just returns the node with no recursive visiting.
 
 Signature:
 
+``` csharp
 protected virtual Expression VisitDebugInfo
-
-(DebugInfoExpression node);
+    (DebugInfoExpression node);
+```
 
 <h3 id="visitdynamic-method">4.50.8 VisitDynamic Method</h3>
 
@@ -7548,9 +6295,10 @@ This method by default just visits the argument expressions.
 
 Signature:
 
+``` csharp
 protected virtual Expression VisitDynamic
-
-(DynamicExpression node);
+    (DynamicExpression node);
+```
 
 <h3 id="visitdefault-method">4.50.9 VisitDefault Method</h3>
 
@@ -7558,9 +6306,10 @@ This method by default just returns the node with no recursive visiting.
 
 Signature:
 
+``` csharp
 protected virtual Expression VisitDefault
-
-(DefaultExpression node);
+    (DefaultExpression node);
+```
 
 <h3 id="visitextension-method">4.50.10 VisitExtension Method</h3>
 
@@ -7568,9 +6317,10 @@ This method by default calls node.VisitChildren.
 
 Signature:
 
+``` csharp
 protected virtual Expression VisitExtension
-
-(Expression node);
+    (Expression node);
+```
 
 <h3 id="visitlabeltarget-method">4.50.11 VisitLabelTarget Method</h3>
 
@@ -7578,9 +6328,10 @@ This method by default just returns the node with no recursive visiting.
 
 Signature:
 
+``` csharp
 protected virtual Expression VisitLabelTarget
-
-(LabelTarget node);
+    (LabelTarget node);
+```
 
 <h3 id="visitmember-method">4.50.12 VisitMember Method</h3>
 
@@ -7588,9 +6339,10 @@ This method by default just visits the object expression.
 
 Signature:
 
+``` csharp
 protected virtual Expression VisitMember
-
-(MemberExpression node);
+    (MemberExpression node);
+```
 
 <h3 id="visitnew-method">4.50.13 VisitNew Method</h3>
 
@@ -7598,9 +6350,10 @@ This method by default just visits the argument expressions. If any argument exp
 
 Signature:
 
+``` csharp
 protected virtual Expression VisitNew
-
-(NewExpression node);
+    (NewExpression node);
+```
 
 <h3 id="visitparameter-method">4.50.14 VisitParameter Method</h3>
 
@@ -7608,9 +6361,10 @@ This method by default just returns the node with no recursive visiting.
 
 Signature:
 
+``` csharp
 protected virtual Expression VisitParameter
-
-(ParameterExpression node);
+    (ParameterExpression node);
+```
 
 <h2 id="post-clr-4.0----globalvariableexpression-class">4.51 POST CLR 4.0 -- GlobalVariableExpression Class</h2>
 
@@ -7620,11 +6374,11 @@ This node's kind is Extension.
 
 <h3 id="class-summary-45">4.51.1 Class Summary</h3>
 
+``` csharp
 public sealed class GlobalVariableExpression : Expression {
-
-public Boolean IsLocal { get; }
-
-public String Name { get; }
+    public Boolean IsLocal { get; }
+    public String Name { get; }
+```
 
 <h2 id="post-clr-4.0----generatorexpression">4.52 POST CLR 4.0 -- GeneratorExpression</h2>
 
@@ -7636,11 +6390,11 @@ While this expression is generally useful, it implements a couple of behaviors s
 
 <h3 id="class-summary-46">4.52.1 Class Summary</h3>
 
+``` csharp
 public sealed class GeneratorExpression : Expression {
-
-public Expression Body { get; }
-
-public LabelTarget Target { get; }
+    public Expression Body { get; }
+    public LabelTarget Target { get; }
+```
 
 <h3 id="body-property-4">4.52.2 Body Property</h3>
 
@@ -7660,13 +6414,12 @@ While this expression is generally useful, it implements a couple of behaviors s
 
 <h3 id="class-summary-47">4.53.1 Class Summary</h3>
 
+``` csharp
 public sealed class YieldExpression : Expression {
-
-public LabelTarget Target { get; }
-
-public Expression Value { get; }
-
-public Int32 YieldMarker { get; }
+    public LabelTarget Target { get; }
+    public Expression Value { get; }
+    public Int32 YieldMarker { get; }
+```
 
 <h3 id="target-property-3">4.53.2 Target Property</h3>
 
@@ -7674,7 +6427,9 @@ This property returns the representation of the place in the code that YieldExpr
 
 Signature:
 
+``` csharp
 public LabelTarget Target { get; }
+```
 
 <h3 id="value-property-2">4.53.3 Value Property</h3>
 
@@ -7682,7 +6437,9 @@ This property returns the expression that models the value the generator returns
 
 Signature:
 
+``` csharp
 public Expression Value { get; }
+```
 
 <h3 id="yieldmarker-property">4.53.4 YieldMarker Property</h3>
 
@@ -7692,7 +6449,9 @@ The uniqueness of this value is the responsibility of the node creator, and the 
 
 Signature:
 
+``` csharp
 public Int32 YieldMarker { get; }
+```
 
 <h2 id="cut-annotations-class">4.54 CUT ~~Annotations Class~~</h2>
 
@@ -7702,23 +6461,17 @@ public Int32 YieldMarker { get; }
 
 <h3 id="class-summary-48">4.54.1 ~~Class Summary~~</h3>
 
-~~\[SerializableAttribute\]~~
-
-~~public sealed class Annotations : IEnumerable&lt;System.Object&gt;,~~
-
-~~IEnumerable {~~
-
-~~public static readonly Annotations Empty;~~
-
-~~public Annotations Add&lt;T&gt;(T annotation);~~
-
-~~public Boolean Contains&lt;T&gt;();~~
-
-~~public T Get&lt;T&gt;();~~
-
-~~public Annotations Remove&lt;T&gt;();~~
-
-~~public Boolean TryGet&lt;T&gt;(out T annotation);~~
+``` csharp
+[SerializableAttribute]
+public sealed class Annotations : IEnumerable<System.Object>,
+                                  IEnumerable {
+    public static readonly Annotations Empty;
+    public Annotations Add<T>(T annotation);
+    public Boolean Contains<T>();
+    public T Get<T>();
+    public Annotations Remove<T>();
+    public Boolean TryGet<T>(out T annotation);
+```
 
 <h3 id="empty-field">4.54.2 ~~Empty Field~~</h3>
 
@@ -7726,7 +6479,9 @@ public Int32 YieldMarker { get; }
 
 ~~Signature:~~
 
-~~public static readonly Annotations Empty;~~
+``` csharp
+public static readonly Annotations Empty;
+```
 
 <h3 id="addt-method">4.54.3 ~~Add&lt;T&gt; Method~~</h3>
 
@@ -7736,7 +6491,9 @@ public Int32 YieldMarker { get; }
 
 ~~Signature:~~
 
-~~public Annotations Add&lt;T&gt;(T annotation);~~
+``` csharp
+public Annotations Add<T>(T annotation);
+```
 
 <h3 id="containst-method">4.54.4 ~~Contains&lt;T&gt; Method~~</h3>
 
@@ -7744,7 +6501,9 @@ public Int32 YieldMarker { get; }
 
 ~~Signature:~~
 
-~~public Boolean Contains&lt;T&gt;();~~
+``` csharp
+public Boolean Contains<T>();
+```
 
 <h3 id="gett-method">4.54.5 ~~Get&lt;T&gt; Method~~</h3>
 
@@ -7752,7 +6511,9 @@ public Int32 YieldMarker { get; }
 
 ~~Signature:~~
 
-~~public T Get&lt;T&gt;();~~
+``` csharp
+public T Get<T>();
+```
 
 <h3 id="trygett-method">4.54.6 ~~TryGet&lt;T&gt; Method~~</h3>
 
@@ -7760,7 +6521,9 @@ public Int32 YieldMarker { get; }
 
 ~~Signature:~~
 
-~~public Boolean TryGet&lt;T&gt;(out T annotation);~~
+``` csharp
+public Boolean TryGet<T>(out T annotation);
+```
 
 <h3 id="removet-method">4.54.7 ~~Remove&lt;T&gt; Method~~</h3>
 
@@ -7768,4 +6531,6 @@ public Int32 YieldMarker { get; }
 
 ~~Signature:~~
 
-~~public Annotations Remove&lt;T&gt;();~~
+``` csharp
+public Annotations Remove<T>();
+```

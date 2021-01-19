@@ -8,26 +8,30 @@ There is a host globals table. Sympl programs can import names from the globals 
 
 This class represents a Sympl runtime. It is not intentionally thread-safe or necessarily hardened in any way.
 
+``` csharp
 public ExpandoObject ExecuteFile(string filename)
-
 public ExpandoObject ExecuteFile(string filename,
-
-string globalVar)
+                                 string globalVar)
+```
 
 ExecuteFile reads the file and executes its contents in a fresh scope or module. Then it adds a variable in the Globals table based on the file's name (no directory or extension), so that importing can refer to the name to access the file's module. When globalVar is supplied, this is the name entered into the Globals table instead of the file's base name. These functions also add a variable to the module called "\_\_file\_\_" with the file's full pathname, which importing uses to load file names relative to the current file executing.
 
+``` csharp
 public void ExecuteFileInScope(string filename,
-
-ExpandoObject moduleEO)
+                               ExpandoObject moduleEO)
+```
 
 ExecuteFile is just like ExecuteFile except that it uses the scope provided, and it does not add a name to Globals.
 
-public object ExecuteExpr(string expr\_str,
-
-ExpandoObject moduleEO)
+``` csharp
+public object ExecuteExpr(string expr_str,
+                          ExpandoObject moduleEO)
+```
 
 ExecuteExpr reads the string for one expression, then executes it in the provided scope or module. It returns the value of the expression.
 
+``` csharp
 public static ExpandoObject CreateScope()
+```
 
 CreateScope returns a new module suitable for executing files and expression in.

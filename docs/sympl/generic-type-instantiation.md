@@ -7,7 +7,6 @@ Instantiating .NET generic types in Sympl may not be obvious. It is similar to I
 (set types (system.array.CreateInstance system.type 1))
 (set (elt types 0) System.Int32)
 (new (system.collections.generic.list`1.MakeGenericType types)))
-
 ;;; Create a Dictionary<string,int>
 (set types (system.array.CreateInstance system.type 2))
 (set (elt types 0) system.string)

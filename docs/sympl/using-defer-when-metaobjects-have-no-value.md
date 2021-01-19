@@ -15,64 +15,44 @@ Without SymplInvokeMemberBinder.FallbackInvokeMember testing whether the Dynamic
 
 Before adding the HasValue check to the Sympl binders, the runtime helper function GetRuntimeTypeMoFromModel had to supply a value to the meta-object it produced. This is not always possible or the right thing to do, but it worked for GetRuntimeTypeMoFromModel because it could produce a regular .NET static object for the binder that was consistent with an instance restriction on the type object.
 
+``` csharp
 public static DynamicMetaObject GetRuntimeTypeMoFromModel
-
-(DynamicMetaObject typeModelMO) {
-
-Debug.Assert((typeModelMO.LimitType == typeof(TypeModel)),
-
-"Internal: MO is not a TypeModel?!");
-
-// Get tm.ReflType
-
-var pi = typeof(TypeModel).GetProperty("ReflType");
-
-Debug.Assert(pi != null);
-
-return new DynamicMetaObject(
-
-Expression.Property(
-
-Expression.Convert(typeModelMO.Expression,
-
-typeof(TypeModel)),
-
-pi),
-
-typeModelMO.Restrictions.Merge(
-
-BindingRestrictions.GetTypeRestriction(
-
-typeModelMO.Expression, typeof(TypeModel)))//,
-
-//((TypeModel)typeModelMO.Value).ReflType
-
-);
+   (DynamicMetaObject typeModelMO) {
+    Debug.Assert((typeModelMO.LimitType == typeof(TypeModel)),
+                 "Internal: MO is not a TypeModel?!");
+    // Get tm.ReflType
+    var pi = typeof(TypeModel).GetProperty("ReflType");
+    Debug.Assert(pi != null);
+    return new DynamicMetaObject(
+        Expression.Property(
+            Expression.Convert(typeModelMO.Expression, 
+                               typeof(TypeModel)),
+            pi),
+        typeModelMO.Restrictions.Merge(
+            BindingRestrictions.GetTypeRestriction(
+                typeModelMO.Expression, typeof(TypeModel)))//,
+        //((TypeModel)typeModelMO.Value).ReflType
+    );
+```
 
 When the highlight code above gets comment out, the code below is what prevents the FallbackInvokeMember function from infintely looping through the CallSite, trying to bind with the TypeModel's meta-object:
 
+``` csharp
 public override DynamicMetaObject FallbackInvokeMember(
-
-DynamicMetaObject targetMO, DynamicMetaObject\[\] args,
-
-DynamicMetaObject errorSuggestion) {
-
-// ... code deleted for example ...
-
-if (!targetMO.HasValue \|\| args.Any((a) =&gt; !a.HasValue)) {
-
-var deferArgs = new DynamicMetaObject\[args.Length + 1\];
-
-for (int i = 0; i &lt; args.Length; i++) {
-
-deferArgs\[i + 1\] = args\[i\];
-
-}
-
-deferArgs\[0\] = targetMO;
-
-return Defer(deferArgs);
+        DynamicMetaObject targetMO, DynamicMetaObject[] args,
+        DynamicMetaObject errorSuggestion) {
+    // ... code deleted for example ...
+    if (!targetMO.HasValue || args.Any((a) => !a.HasValue)) {
+        var deferArgs = new DynamicMetaObject[args.Length + 1];
+        for (int i = 0; i < args.Length; i++) {
+            deferArgs[i + 1] = args[i];
+        }
+        deferArgs[0] = targetMO;
+        return Defer(deferArgs);
+```
 
 Every FallbackX method on all your binders should protect themselves by checking all arguments for HasValue. If HasValue is false for any, then call Defer as shown in the Sympl binders. Note, the above code is the most complicated, and for FallbackGetMember, it is just this:
 
+``` csharp
 if (!targetMO.HasValue) return Defer(targetMO);
+```

@@ -28,99 +28,55 @@ The ScriptRuntime.GetEngine and ScriptScope.Engine are bridges to more advanced 
 
 The following code sample assumes you have a default app .config file (see section ):
 
-public class Level\_1 {
-
-ScriptRuntime env = ScriptRuntime.CreateFromConfiguration();
-
-MyHostObjectModel hostOM = new MyHostObjectModel();
-
-/// &lt;summary&gt;
-
-/// Shows setting Host OM on globals so that dynamic languages
-
-/// can import, require, etc., to access the host's OM.
-
-/// &lt;/summary&gt;
-
-/// my\_user\_script.py:
-
-/// import HostModule
-
-/// def foo () ...
-
-/// HostModule.UserCommands\["foo"\] = foo
-
-///
-
-public void RunFile\_Isolated\_Scope\_ImportsFromHost() {
-
-env.Globals.SetVariable("HostModule", hostOM);
-
-// Imagine this runs my\_user\_script.py above.
-
-env.ExecuteFile(GetFileFromUserOrSettings());
-
-}
-
-delegate void Command();
-
-/// &lt;summary&gt;
-
-/// Shows getting command implementations from dynamic language.
-
-/// Assumes menu item text is command name in table.
-
-/// Builds on previous function.
-
-/// &lt;/summary&gt;
-
-public void Run\_User\_Command\_from\_MenuItem (string menuItemName) {
-
-// UserCommands is Dictionary&lt;string, Command&gt;.
-
-hostOM.UserCommands\[menuItemName\]();
-
-}
-
-/// Fetch scope var as Command.
-
-///
-
-/// &lt;summary&gt;
-
-/// Shows discovering command implementations from globals in scope.
-
-/// Above user code explicitly added commands, but this code finds
-
-/// commands matching a delegate type, Command.
-
-/// &lt;/summary&gt;
-
-public void Collect\_User\_Commands\_From\_File (string menuItemName) {
-
-env.Globals.SetVariable("HostModule", hostOM);
-
-ScriptScope scope
-
-= env.ExecuteFile(GetFileFromUserOrSettings());
-
-// UserCommands is dictionary from string to Command.
-
-Command fun;
-
-foreach (string id in scope.GetVariableNames()) {
-
-bool got\_fun = scope.TryGetVariable&lt;Command&gt;(id, out fun);
-
-if (got\_fun) {
-
-my\_OM.UserCommands\[id\] = fun;
-
-}
-
-}
-
-}
+``` csharp
+public class Level_1 {
+    ScriptRuntime env = ScriptRuntime.CreateFromConfiguration();
+    MyHostObjectModel hostOM = new MyHostObjectModel();
+    /// <summary>
+    /// Shows setting Host OM on globals so that dynamic languages
+    /// can import, require, etc., to access the host's OM.
+    /// </summary>
+    /// my_user_script.py:
+    /// import HostModule
+    /// def foo () ...
+    /// HostModule.UserCommands["foo"] = foo
+    /// 
+    public void RunFile_Isolated_Scope_ImportsFromHost() {
+        env.Globals.SetVariable("HostModule", hostOM);
+        // Imagine this runs my_user_script.py above.
+        env.ExecuteFile(GetFileFromUserOrSettings());
+    }
+    delegate void Command();
+    /// <summary>
+    /// Shows getting command implementations from dynamic language.
+    /// Assumes menu item text is command name in table.
+    /// Builds on previous function.
+    /// </summary>
+    public void Run_User_Command_from_MenuItem (string menuItemName) {
+        // UserCommands is Dictionary<string, Command>.
+        hostOM.UserCommands[menuItemName]();
+    }
+    /// Fetch scope var as Command.
+    ///
+    /// <summary>
+    /// Shows discovering command implementations from globals in scope.
+    /// Above user code explicitly added commands, but this code finds
+    /// commands matching a delegate type, Command.
+    /// </summary>
+    public void Collect_User_Commands_From_File (string menuItemName) {
+        env.Globals.SetVariable("HostModule", hostOM);
+        ScriptScope scope 
+            = env.ExecuteFile(GetFileFromUserOrSettings());
+        // UserCommands is dictionary from string to Command.
+        Command fun;
+        foreach (string id in scope.GetVariableNames()) {
+            bool got_fun = scope.TryGetVariable<Command>(id, out fun);
+            if (got_fun) {
+                my_OM.UserCommands[id] = fun;
+            }
+        }
+    }
+```
 
 }
 
@@ -144,123 +100,67 @@ These are the main types of level two:
 
 The following code sample assumes you have a default app .config file (see section ):
 
-public class Level\_2 {
-
-ScriptRuntime env = ScriptRuntime.CreateFromConfiguration();
-
-public void REPL\_fragments {
-
-ScriptSource input;
-
-object result;
-
-// Assume user has chosen a context with the REPL's
-
-// default scope and the Python language.
-
-ScriptScope defaultScope = env.CreateScope();
-
-ScriptEngine curEngine = env.GetEngine("py");
-
-// Use interactive source units for special REPL variables
-
-// or syntax, such as IPy's underscore or VB's '?',
-
-// provided by standard interpreters for the languages.
-
-ScriptSource input
-
-= curEngine
-
-.CreateScriptSourceFromString
-
-// E.g., input is "x = 'foo'".
-
-(GetInputAsString(),
-
-SourceCodeKind.InteractiveCode);
-
-result = input.Execute(defaultScope);
-
-REPLOutput.WriteLine(curEngine
-
-.Operations
-
-.GetObjectCodeRepresentation(result));
-
-// Assume user has chosen somehow to switch to Ruby.
-
-curEngine = env.GetEngine("rb");
-
-// E.g., input is "puts x"
-
-input = curEngine
-
-.CreateScriptSourceFromString
-
-(GetInputAsString(),
-
-SourceCodeKind.InteractiveCode);
-
-result = input.Execute(defaultScope);
-
-System.Console.WriteLine
-
-(curEngine
-
-.Operations
-
-.GetObjectCodeRepresentation(result));
-
-// Assume user has chosen to execute a file from another
-
-// language, and you want to set the REPL's context to that
-
-// file's scope. Use scope now for interactions like above,
-
-// and save it for use with this file later.
-
-ScriptScope scope = env.ExecuteFile(GetFileFromUserOrEditor());
-
-curEngine = scope.Engine;
-
+``` csharp
+public class Level_2 {
+    ScriptRuntime env = ScriptRuntime.CreateFromConfiguration();
+    public void REPL_fragments {
+        ScriptSource input;
+        object result;
+        // Assume user has chosen a context with the REPL's 
+        // default scope and the Python language.
+        ScriptScope defaultScope = env.CreateScope();
+        ScriptEngine curEngine = env.GetEngine("py");
+        // Use interactive source units for special REPL variables
+        // or syntax, such as IPy's underscore or VB's '?',
+        // provided by standard interpreters for the languages.
+        ScriptSource input 
+            = curEngine
+                .CreateScriptSourceFromString
+                  // E.g., input is "x = 'foo'".
+                  (GetInputAsString(), 
+                   SourceCodeKind.InteractiveCode);
+        result = input.Execute(defaultScope);
+        REPLOutput.WriteLine(curEngine
+                               .Operations
+                                 .GetObjectCodeRepresentation(result));
+        // Assume user has chosen somehow to switch to Ruby.
+        curEngine = env.GetEngine("rb");
+        // E.g., input is "puts x"
+        input = curEngine
+                  .CreateScriptSourceFromString
+                    (GetInputAsString(), 
+                     SourceCodeKind.InteractiveCode);
+        result = input.Execute(defaultScope);
+        System.Console.WriteLine
+                        (curEngine
+                           .Operations
+                             .GetObjectCodeRepresentation(result));
+        // Assume user has chosen to execute a file from another 
+        // language, and you want to set the REPL's context to that
+        // file's scope.  Use scope now for interactions like above,
+        // and save it for use with this file later.
+        ScriptScope scope = env.ExecuteFile(GetFileFromUserOrEditor());
+        curEngine = scope.Engine;
+    }
+    public delegate string OnLoadDelegate();
+    // MerlinWeb:
+    public void ReUseCompiledCodeDifferentScopes() {
+        ScriptEngine engine = env.GetEngine("rb");
+        CompiledCode compiledCode 
+          = engine.CreateScriptSourceFromFile("foo.rb").Compile();
+        // on each request, create new scope with custom dictionary
+        // for latebound look up of elements on page.  This uses a
+        // derived type of DynamicObject for convenience.
+        DynamicObject pageDynObj = GetNewDynamicObject();
+        pageDynObj["Page"] = thisRequestPage;
+        ScriptScope scope = engine.CreateScope(pageDynObj);
+        compiledCode.Execute(scope);
+        // Expect on_Load function name to be defined, or throw error.
+        // Could have used scope.GetVariable but it's case-sensitive.
+        scope.GetVariable<OnLoadDelegate>("on_Load")();
+    }
 }
-
-public delegate string OnLoadDelegate();
-
-// MerlinWeb:
-
-public void ReUseCompiledCodeDifferentScopes() {
-
-ScriptEngine engine = env.GetEngine("rb");
-
-CompiledCode compiledCode
-
-= engine.CreateScriptSourceFromFile("foo.rb").Compile();
-
-// on each request, create new scope with custom dictionary
-
-// for latebound look up of elements on page. This uses a
-
-// derived type of DynamicObject for convenience.
-
-DynamicObject pageDynObj = GetNewDynamicObject();
-
-pageDynObj\["Page"\] = thisRequestPage;
-
-ScriptScope scope = engine.CreateScope(pageDynObj);
-
-compiledCode.Execute(scope);
-
-// Expect on\_Load function name to be defined, or throw error.
-
-// Could have used scope.GetVariable but it's case-sensitive.
-
-scope.GetVariable&lt;OnLoadDelegate&gt;("on\_Load")();
-
-}
-
-}
+```
 
 <h2 id="level-three----full-control-remoting-tool-support-and-more">2.3 Level Three -- Full Control, Remoting, Tool Support, and More</h2>
 
@@ -290,357 +190,186 @@ Advanced hosts can also provide late-bound values for variables that dynamic lan
 
 The following code sample assumes you have a default app .config file (see section ):
 
-public class Level\_3 {
-
-ScriptRuntime env = ScriptRuntime.CreateFromConfiguration();
-
-/// &lt;summary&gt;
-
-/// Shows reflecting over object members for tool support
-
-/// &lt;/summary&gt;
-
-public static void Introspection() {
-
-ScriptEngine engine = env.GetEngine("py");
-
-ScriptScope scope = env.CreateScriptScope();
-
-engine.Execute("import datetime", scope);
-
-object obj = scope.GetVariable("datetime");
-
-ObjectOperations objops = engine.Operations;
-
-string\[\] members = objops.GetMemberNames(obj);
-
-// Start with known "date" member. Throws KeyNotFoundException.
-
-obj = objops.GetMember(obj, "date");
-
-// Drill down through members for a.b.c style
-
-// completion support in a tool.
-
-obj = objops.GetMember(obj, "replace");
-
-objops.IsCallable(obj);
-
-string\[\] signatures = objops.GetCallSignatures(obj);
-
-}
-
-/// &lt;summary&gt;
-
-/// Shows reflection for tools using a remote ScriptRuntime.
-
-/// &lt;/summary&gt;
-
-public static void RemoteIntrospection() {
-
-setup = ScriptRuntimeSetup.ReadConfiguration();
-
-ScriptRuntime env = ScriptRuntime.CreateRemote(appDomain,setup);
-
-ScriptEngine engine = env.GetEngine("py");
-
-ScriptScope scope = env.CreateScriptScope();
-
-engine.Execute("import datetime", scope);
-
-ObjectHandle obj = scope.GetVariableAndWrap("datetime");
-
-ObjectOperations objops = engine.Operations;
-
-string\[\] members = objops.GetMemberNames(obj);
-
-// Start with "date" member.
-
-objops.GetMember(obj, "date", out obj);
-
-// Drill down through members for a.b.c style
-
-// completion support in a tool.
-
-objops.GetMember(obj, "replace", out obj);
-
-objops.IsCallable(obj);
-
-string\[\] signatures = objops.GetCallSignatures(obj);
-
-}
-
+``` csharp
+public class Level_3 {
+    ScriptRuntime env = ScriptRuntime.CreateFromConfiguration();
+    /// <summary>
+    /// Shows reflecting over object members for tool support
+    /// </summary>
+    public static void Introspection() {
+        ScriptEngine engine = env.GetEngine("py");
+        ScriptScope scope = env.CreateScriptScope();
+        engine.Execute("import datetime", scope);
+        object obj = scope.GetVariable("datetime");
+        ObjectOperations objops = engine.Operations;
+        string[] members = objops.GetMemberNames(obj);
+        // Start with known "date" member. Throws KeyNotFoundException.
+        obj = objops.GetMember(obj, "date");
+        // Drill down through members for a.b.c style 
+        // completion support in a tool.
+        obj = objops.GetMember(obj, "replace");
+        objops.IsCallable(obj);
+        string[] signatures = objops.GetCallSignatures(obj);
+    }
+    
+    /// <summary>
+    /// Shows reflection for tools using a remote ScriptRuntime.
+    /// </summary>
+    public static void RemoteIntrospection() {
+        setup = ScriptRuntimeSetup.ReadConfiguration();
+        ScriptRuntime env = ScriptRuntime.CreateRemote(appDomain,setup);
+        ScriptEngine engine = env.GetEngine("py");
+        ScriptScope scope = env.CreateScriptScope();
+        engine.Execute("import datetime", scope);
+        ObjectHandle obj = scope.GetVariableAndWrap("datetime");
+        ObjectOperations objops = engine.Operations;
+        string[] members = objops.GetMemberNames(obj);
+        // Start with "date" member.
+        objops.GetMember(obj, "date", out obj);
+        // Drill down through members for a.b.c style 
+        // completion support in a tool.
+        objops.GetMember(obj, "replace", out obj);
+        objops.IsCallable(obj);
+        string[] signatures = objops.GetCallSignatures(obj);
+    }
+    
 //////////////////////////////////////////////////////////////////
-
-/// &lt;summary&gt;
-
+/// <summary>
 /// Shows late binding host-supplied variables.
-
-/// &lt;/summary&gt;
-
+/// </summary>
 class Program {
-
-public static object GetLateBoundValue (string name) {
-
-// Pretend call back into host to look up the value of name.
-
-return "yo";
-
+    public static object GetLateBoundValue (string name) {
+        // Pretend call back into host to look up the value of name.
+        return "yo";
+    }
+    static void Main(string[] args) {
+        var sr = ScriptRuntime.CreateFromConfiguration();
+        var eng = sr.GetEngine("ironpython");
+        var scope2 = eng.CreateScope(new MyLBHG());
+        Console.WriteLine("Engine: " + eng.Setup.DisplayName);
+        eng.Execute("print 'hey'");
+        eng.Execute("x = 3", scope2);
+        eng.Execute("print x", scope2);
+        // foo is supplied by host when script code fetches the value.
+        eng.Execute("print foo", scope2);
+        //eng.Execute("foo = 3", scope2); shouldn't work, host decided
+        Console.Read();
+    }
 }
-
-static void Main(string\[\] args) {
-
-var sr = ScriptRuntime.CreateFromConfiguration();
-
-var eng = sr.GetEngine("ironpython");
-
-var scope2 = eng.CreateScope(new MyLBHG());
-
-Console.WriteLine("Engine: " + eng.Setup.DisplayName);
-
-eng.Execute("print 'hey'");
-
-eng.Execute("x = 3", scope2);
-
-eng.Execute("print x", scope2);
-
-// foo is supplied by host when script code fetches the value.
-
-eng.Execute("print foo", scope2);
-
-//eng.Execute("foo = 3", scope2); shouldn't work, host decided
-
-Console.Read();
-
-}
-
-}
-
 public class MyLBHG : LateBoundHostGlobals {
-
-// Instantiate class with names that should be fetched from host
-
-// each time value is needed, and host must implement properties
-
-// in this class for each name in the list.
-
-public MyLBHG ()
-
-: base("foo") {
-
+    // Instantiate class with names that should be fetched from host
+    // each time value is needed, and host must implement properties
+    // in this class for each name in the list.
+    public MyLBHG ()
+        : base("foo") {
+    }
+    public object foo {
+        get { return Program.GetLateBoundValue("foo"); }
+        // Notice no 'set', hence "foo = 3" does not work
+    }
 }
-
-public object foo {
-
-get { return Program.GetLateBoundValue("foo"); }
-
-// Notice no 'set', hence "foo = 3" does not work
-
-}
-
-}
-
 ///////////////////////////////////
-
 // This will become part of the DLR so that you do not need to write it.
-
 // Will remove from spec when that happens.
-
 // For more info see sites-binder-dynobj-interop.doc on DLR Codeplex.
-
 ///////////////////////////////////
-
 public class LateBoundHostGlobals : IDynamicMetaObjectProvider {
-
-private readonly Dictionary&lt;string, object&gt; \_dict =
-
-new Dictionary&lt;string, object&gt;();
-
-internal readonly string\[\] \_specialNames;
-
-public LateBoundHostGlobals (params string\[\] specialNames) {
-
-\_specialNames = specialNames;
-
-}
-
-public DynamicMetaObject GetMetaObject
-
-(System.Linq.Expressions.Expression parameter) {
-
-return new Meta(parameter, this);
-
-}
-
-public bool TryGetMember (string name, out object value) {
-
-return \_dict.TryGetValue(name, out value);
-
-}
-
-public object SetMember (string name, object value) {
-
-return \_dict\[name\] = value;
-
-}
-
-class Meta : DynamicMetaObject {
-
-private Expression \_parameter;
-
-private string \[\] SpecialNames {
-
-get {
-
-return ((LateBoundHostGlobals)Value).\_specialNames;
-
-}
-
-}
-
-public Meta (Expression parameter, LateBoundHostGlobals self)
-
-: base(parameter, BindingRestrictions.Empty, self) {
-
-\_parameter = parameter;
-
-}
-
-public override DynamicMetaObject BindGetMember
-
-(GetMemberBinder binder) {
-
-if (SpecialNames.Contains(binder.Name)) {
-
-return binder.FallbackGetMember(this);
-
-}
-
-var param = Expression.Parameter(typeof(object));
-
-return new DynamicMetaObject(
-
-Expression.Block(
-
-new\[\] { param },
-
-Expression.Condition(
-
-Expression.Call(
-
-Expression.Convert
-
-(Expression,
-
-typeof(LateBoundHostGlobals)),
-
-typeof(LateBoundHostGlobals)
-
-.GetMethod("TryGetMember"),
-
-Expression.Constant(binder.Name),
-
-param),
-
-param,
-
-Expression.Convert(
-
-binder.FallbackGetMember(this)
-
-.Expression, typeof(object)))),
-
-BindingRestrictions.GetTypeRestriction(
-
-\_parameter,
-
-Value.GetType()));
-
-} //BindGetMember
-
-public override DynamicMetaObject BindSetMember
-
-(SetMemberBinder binder, DynamicMetaObject value) {
-
-if (SpecialNames.Contains(binder.Name)) {
-
-return binder.FallbackSetMember(this, value);
-
-}
-
-return new DynamicMetaObject(
-
-Expression.Call(
-
-Expression.Convert
-
-(Expression, typeof(LateBoundHostGlobals)),
-
-typeof(LateBoundHostGlobals).GetMethod("SetMember"),
-
-Expression.Constant(binder.Name),
-
-Expression.Convert(value.Expression,
-
-typeof(object))),
-
-BindingRestrictions.GetTypeRestriction(
-
-\_parameter,
-
-Value.GetType()));
-
-}
-
-} // class Meta
-
-} // class LateBoundHostGlobals
-
+    private readonly Dictionary<string, object> _dict = 
+        new Dictionary<string, object>();
+    internal readonly string[] _specialNames;
+    public LateBoundHostGlobals (params string[] specialNames) {
+        _specialNames = specialNames;
+    }
+    public DynamicMetaObject GetMetaObject
+          (System.Linq.Expressions.Expression parameter) {
+        return new Meta(parameter, this);
+    }
+    public bool TryGetMember (string name, out object value) {
+        return _dict.TryGetValue(name, out value);
+    }
+    public object SetMember (string name, object value) {
+        return _dict[name] = value;
+    }
+    class Meta : DynamicMetaObject {
+        private Expression _parameter;
+        private string [] SpecialNames {
+            get {
+                return ((LateBoundHostGlobals)Value)._specialNames;
+            }
+        }   
+        public Meta (Expression parameter, LateBoundHostGlobals self)
+            : base(parameter, BindingRestrictions.Empty, self) {
+            _parameter = parameter;
+        }
+        public override DynamicMetaObject BindGetMember
+               (GetMemberBinder binder) {
+            if (SpecialNames.Contains(binder.Name)) {
+                return binder.FallbackGetMember(this);
+            }
+            var param = Expression.Parameter(typeof(object));
+            return new DynamicMetaObject(
+                Expression.Block(
+                    new[] { param },
+                    Expression.Condition(
+                        Expression.Call(
+                            Expression.Convert
+                               (Expression,
+                               typeof(LateBoundHostGlobals)),
+                            typeof(LateBoundHostGlobals)
+                               .GetMethod("TryGetMember"),
+                            Expression.Constant(binder.Name),
+                            param),
+                        param,
+                        Expression.Convert(
+                           binder.FallbackGetMember(this)
+                          .Expression, typeof(object)))),
+                BindingRestrictions.GetTypeRestriction(
+                    _parameter,
+                    Value.GetType()));
+        } //BindGetMember
+        public override DynamicMetaObject BindSetMember
+               (SetMemberBinder binder, DynamicMetaObject value) {
+            if (SpecialNames.Contains(binder.Name)) {
+                return binder.FallbackSetMember(this, value);
+            }
+            return new DynamicMetaObject(
+                Expression.Call(
+                    Expression.Convert
+                       (Expression, typeof(LateBoundHostGlobals)),
+                    typeof(LateBoundHostGlobals).GetMethod("SetMember"),
+                    Expression.Constant(binder.Name),
+                    Expression.Convert(value.Expression,
+                                       typeof(object))),
+                BindingRestrictions.GetTypeRestriction(
+                    _parameter,
+                    Value.GetType()));
+        }
+    } // class Meta 
+} // class LateBoundHostGlobals 
 //////////////////////////////////////////////////////////////////
-
-/// &lt;summary&gt;
-
-/// executes a file within a remote environment;
-
-/// note almost transparent remoting (host only needs to care when
-
-/// converting to a non-remotable object.
-
-/// Shows late binding host-supplied variables.
-
-/// &lt;/summary&gt;
-
-public static void Remotable1(System.AppDomain appDomain) {
-
-setup = ScriptRuntimeSetup.ReadConfiguration();
-
-ScriptRuntime env = ScriptRuntime.CreateRemote(appDomain,setup);
-
-ScriptScope scope = env.ExecuteFile("foo.py");
-
-ObjectHandle load\_fun = scope.GetVariableHandle("on\_load");
-
-ScriptEngine engine = scope.Engine;
-
-ObjectHandle result
-
-= engine.Operations.Call(load\_fun, "arg1", "arg2");
-
-object localResult;
-
-try {
-
-localResult = engine.Operations.UnWrap&lt;object&gt;(result);
-
-}
-
-catch (System.Runtime.Serialization.SerializationException) {
-
-// error
-
-}
-
-}
+    /// <summary>
+    /// executes a file within a remote environment;
+    /// note almost transparent remoting (host only needs to care when 
+    /// converting to a non-remotable object.
+    /// Shows late binding host-supplied variables.
+    /// </summary>
+    public static void Remotable1(System.AppDomain appDomain) {
+        setup = ScriptRuntimeSetup.ReadConfiguration();
+        ScriptRuntime env = ScriptRuntime.CreateRemote(appDomain,setup);
+        ScriptScope scope = env.ExecuteFile("foo.py");
+        ObjectHandle load_fun = scope.GetVariableHandle("on_load");
+        ScriptEngine engine = scope.Engine;
+        ObjectHandle result 
+           = engine.Operations.Call(load_fun, "arg1", "arg2");
+        object localResult;
+        try {
+            localResult = engine.Operations.UnWrap<object>(result);
+        }
+        catch (System.Runtime.Serialization.SerializationException) {
+            // error
+        }
+    }
+```
 
 <h2 id="implementers-convenience">2.4 ~~Implementer’s Convenience~~</h2>
 

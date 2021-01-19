@@ -14,59 +14,35 @@ Next the Sympl implementation gained some easy constructs that are either direct
 
 Here's the code from etgen.cs that handles this keyword form:
 
+``` csharp
 public static Expression AnalyzeLetStarExpr(SymplLetStarExpr expr,
-
-AnalysisScope scope) {
-
-var letscope = new AnalysisScope(scope, "let\*");
-
-// Analyze bindings.
-
-List&lt;Expression&gt; inits = new List&lt;Expression&gt;();
-
-List&lt;ParameterExpression&gt; varsInOrder =
-
-new List&lt;ParameterExpression&gt;();
-
-foreach (var b in expr.Bindings) {
-
-// Need richer logic for mvbind
-
-var v = Expression.Parameter(typeof(object),
-
-b.Variable.Name);
-
-varsInOrder.Add(v);
-
-inits.Add(
-
-Expression.Assign(
-
-v,
-
-Expression.Convert(AnalyzeExpr(b.Value, letscope),
-
-v.Type))
-
-);
-
-letscope.Names\[b.Variable.Name.ToLower()\] = v;
-
-}
-
-List&lt;Expression&gt; body = new List&lt;Expression&gt;();
-
-foreach (var e in expr.Body) {
-
-body.Add(AnalyzeExpr(e, letscope));
-
-}
-
-inits.AddRange(body);
-
-return Expression.Block(typeof(object), varsInOrder.ToArray(),
-
-inits);
+                                            AnalysisScope scope) {
+    var letscope = new AnalysisScope(scope, "let*");
+    // Analyze bindings.
+    List<Expression> inits = new List<Expression>();
+    List<ParameterExpression> varsInOrder =
+        new List<ParameterExpression>();
+    foreach (var b in expr.Bindings) {
+        // Need richer logic for mvbind
+        var v = Expression.Parameter(typeof(object), 
+                                     b.Variable.Name);
+        varsInOrder.Add(v);
+        inits.Add(
+            Expression.Assign(
+                v,
+                Expression.Convert(AnalyzeExpr(b.Value, letscope), 
+                                   v.Type))
+        );
+        letscope.Names[b.Variable.Name.ToLower()] = v;
+    }
+    List<Expression> body = new List<Expression>();
+    foreach (var e in expr.Body) {
+        body.Add(AnalyzeExpr(e, letscope));
+    }
+    inits.AddRange(body);
+    return Expression.Block(typeof(object), varsInOrder.ToArray(), 
+                            inits);
+```
 
 This code pushes a new, nested AnalysisScope just like Sympl did for function definition parameters. However, AnalyzeLetStarExpr handles the nested scope differently. It adds each variable to the nested scope after analyzing the initialization expression for the variable. This is obvious from the stand point that the initialization expression cannot refer to the variable for which it is producing the initial value. However, to implement let\* semantics instead of let semantics (which is effectively "parallel" assignment), you need to make sure you add each variable to the scope so that successive variable initialization expressions can refer to previous variables.
 
@@ -88,65 +64,40 @@ To have something easy to test at this point in Sympl's implementation, we added
 
 Here's the code for **IF** from etgen.cs, which is described further below:
 
+``` csharp
 public static Expression AnalyzeIfExpr (SymplIfExpr expr,
-
-AnalysisScope scope) {
-
-Expression alt = null;
-
-if (expr.Alternative != null) {
-
-alt = AnalyzeExpr(expr.Alternative, scope);
-
-} else {
-
-alt = Expression.Constant(false);
-
-}
-
-return Expression.Condition(
-
-WrapBooleanTest(AnalyzeExpr(expr.Test, scope)),
-
-Expression.Convert(AnalyzeExpr(expr.Consequent,
-
-scope),
-
-typeof(object)),
-
-Expression.Convert(alt, typeof(object)));
-
+                                        AnalysisScope scope) {
+    Expression alt = null;
+    if (expr.Alternative != null) {
+        alt = AnalyzeExpr(expr.Alternative, scope);
+    } else {
+        alt = Expression.Constant(false);
+    }
+    return Expression.Condition(
+               WrapBooleanTest(AnalyzeExpr(expr.Test, scope)),
+               Expression.Convert(AnalyzeExpr(expr.Consequent, 
+                                              scope),
+                                     typeof(object)),
+               Expression.Convert(alt, typeof(object)));
 }
 
 private static Expression WrapBooleanTest (Expression expr) {
-
-var tmp = Expression.Parameter(typeof(object), "testtmp");
-
-return Expression.Block(
-
-new ParameterExpression\[\] { tmp },
-
-new Expression\[\]
-
-{Expression.Assign(tmp, Expression
-
-.Convert(expr,
-
-typeof(object))),
-
-Expression.Condition(
-
-Expression.TypeIs(tmp, typeof(bool)),
-
-Expression.Convert(tmp, typeof(bool)),
-
-Expression.NotEqual(
-
-tmp,
-
-Expression.Constant(null,
-
-typeof(object))))});
+    var tmp = Expression.Parameter(typeof(object), "testtmp");
+    return Expression.Block(
+        new ParameterExpression[] { tmp },
+        new Expression[] 
+                {Expression.Assign(tmp, Expression
+                                          .Convert(expr, 
+                                                   typeof(object))),
+                 Expression.Condition(
+                     Expression.TypeIs(tmp, typeof(bool)), 
+                     Expression.Convert(tmp, typeof(bool)),
+                     Expression.NotEqual(
+                        tmp, 
+                        Expression.Constant(null, 
+                                            typeof(object))))});
+    
+```
 
 The first thing AnalyzeIfExpr does is get an expression for the alternative branch or third argument to IF. This defaults to the constant false. Then it simply emits a Conditional Expression with the analyzed sub expressions, forcing everything to type object so that the Conditional factory method sees consistent types and also emits code to return a value.
 
@@ -156,23 +107,17 @@ AnalyzeIfExpr uses WrapBoolenTest. It emits an Expression that captures Sympl's 
 
 To have something to test along with IF at this point in Sympl's evolution, we added the **eq** keyword form. We can implement this quickly as a runtime helper rather than getting into BinaryOperationBinders and design in the parser. **Eq** has the semantics of returning **true** if the arguments are integers with the same value, or the arguments are the same identical object in memory. To implement **eq**, Sympl just emits a call to it the runtime helper (from etgen.cs):
 
+``` csharp
 public static Expression AnalyzeEqExpr (SymplEqExpr expr,
-
-AnalysisScope scope) {
-
-var mi = typeof(RuntimeHelpers).GetMethod("SymplEq");
-
-return Expression.Call(mi, Expression.Convert(
-
-AnalyzeExpr(expr.Left, scope),
-
-typeof(object)),
-
-Expression.Convert(
-
-AnalyzeExpr(expr.Right, scope),
-
-typeof(object)));
+                                        AnalysisScope scope) {
+    var mi = typeof(RuntimeHelpers).GetMethod("SymplEq");
+    return Expression.Call(mi, Expression.Convert(
+                                   AnalyzeExpr(expr.Left, scope),
+                                   typeof(object)),
+                           Expression.Convert(
+                               AnalyzeExpr(expr.Right, scope),
+                               typeof(object)));
+```
 
 Sympl needs to place the ConvertExpressions in the argument list to satisfy the Call factory and make sure conversions are explicit for the Expression Tree compiler and .NET CLR.
 
@@ -180,31 +125,21 @@ Emitting the code to call SymplEq in the IronPython implementation is not this e
 
 This is the code for the runtime helper function, from the class RuntimeHelpers in runtime.cs:
 
+``` csharp
 public static bool SymplEq (object x, object y) {
-
-if (x == null)
-
-return y == null;
-
-else if (y == null)
-
-return x == null;
-
-else {
-
-var xtype = x.GetType();
-
-var ytype = y.GetType();
-
-if (xtype.IsPrimitive && xtype != typeof(string) &&
-
-ytype.IsPrimitive && ytype != typeof(string))
-
-return x.Equals(y);
-
-else
-
-return object.ReferenceEquals(x, y);
+    if (x == null)
+        return y == null;
+    else if (y == null)
+        return x == null;
+    else {
+        var xtype = x.GetType();
+        var ytype = y.GetType();
+        if (xtype.IsPrimitive && xtype != typeof(string) &&
+            ytype.IsPrimitive && ytype != typeof(string))
+            return x.Equals(y);
+        else
+            return object.ReferenceEquals(x, y);
+```
 
 There's not much to explain further since It is a pretty direct implementation of the semantics described above.
 
@@ -214,61 +149,37 @@ Adding loops is almost straightforward translations to Expression Trees. Sympl o
 
 Here's the code for AnalyzeLoopExpr and AnalyzeBreakExpr from etgen.cs, which are described further below:
 
+``` csharp
 public static Expression AnalyzeLoopExpr (SymplLoopExpr expr,
-
-AnalysisScope scope) {
-
-var loopscope = new AnalysisScope(scope, "loop ");
-
-loopscope.IsLoop = true; // needed for break and continue
-
-loopscope.LoopBreak = Expression.Label(typeof(object),
-
-"loop break");
-
-int len = expr.Body.Length;
-
-var body = new Expression\[len\];
-
-for (int i = 0; i &lt; len; i++) {
-
-body\[i\] = AnalyzeExpr(expr.Body\[i\], loopscope);
-
+                                          AnalysisScope scope) {
+    var loopscope = new AnalysisScope(scope, "loop ");
+    loopscope.IsLoop = true; // needed for break and continue
+    loopscope.LoopBreak = Expression.Label(typeof(object),
+                                           "loop break");
+    int len = expr.Body.Length;
+    var body = new Expression[len];
+    for (int i = 0; i < len; i++) {
+        body[i] = AnalyzeExpr(expr.Body[i], loopscope);
+    }
+    return Expression.Loop(Expression.Block(typeof(object), body), 
+                           loopscope.LoopBreak);
 }
-
-return Expression.Loop(Expression.Block(typeof(object), body),
-
-loopscope.LoopBreak);
-
-}
-
 public static Expression AnalyzeBreakExpr (SymplBreakExpr expr,
-
-AnalysisScope scope) {
-
-var loopscope = \_findFirstLoop(scope);
-
-if (loopscope == null)
-
-throw new InvalidOperationException(
-
-"Call to Break not inside loop.");
-
-Expression value;
-
-if (expr.Value == null)
-
-value = Expression.Constant(null, typeof(object));
-
-else
-
-// Ok if value jumps to break label.
-
-value = AnalyzeExpr(expr.Value, loopscope);
-
-return Expression.Break(loopscope.LoopBreak, value,
-
-typeof(object));
+                                AnalysisScope scope) {
+    var loopscope = _findFirstLoop(scope);
+    if (loopscope == null)
+        throw new InvalidOperationException(
+                       "Call to Break not inside loop.");
+    Expression value;
+    if (expr.Value == null)
+        value = Expression.Constant(null, typeof(object));
+    else
+        // Ok if value jumps to break label.
+        value = AnalyzeExpr(expr.Value, loopscope);
+    return Expression.Break(loopscope.LoopBreak, value, 
+                            typeof(object));
+    
+```
 
 AnalyzeLoopExpr needs to push a new AnalysisScope on the chain. This enables AnalyzeBreakExpr to confirm the break is within a loop and to find the LabelTarget to use to escape from the innermost containing loop expression. Sympl makes the LabelTarget have type object because Sympl loops are expressions that can produce values. This is explained further below.
 

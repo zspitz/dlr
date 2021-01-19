@@ -74,7 +74,9 @@ The following sections walk through some simple binding operations to help demon
 
 This walkthrough describes how the C\# Compiler will dispatch the operation a + b dynamically:
 
-> c = a + b;
+``` csharp
+c = a + b;
+```
 
 The C\# language specifies that operations are dispatched dynamically when at least one operand has the static C\# type, *dynamic*, introduced in C\# 4.0. In this case, we’ll assume that at least the left operand has the type *dynamic*.
 
@@ -155,7 +157,9 @@ To be compatible with all DLR-aware languages, DynamicMetaObject (MO) implementa
 
 Consider the C\# Compiler dispatching the following member invocation dynamically, where a is a Python object and b is a standard .NET object:
 
-> c = a.Foo(b);
+``` csharp
+c = a.Foo(b);
+```
 
 Binding proceeds mostly as described for a+b, with some important differences around fallback methods:
 

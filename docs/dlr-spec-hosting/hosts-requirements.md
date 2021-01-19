@@ -18,31 +18,35 @@ MerlinWeb needs to work with various script blocks of different languages in the
 
 With IPy, all ASP.NET files that are normally managed classes (e.g., aspx/ascx/master/ashx files) are represented by EngineScope objects, created using:
 
-> engineScope = s\_engine.CreateScope(String.Empty /\*scopeName\*/,
->
-> globals, false/\*publishScope\*/);
+``` csharp
+engineScope = s_engine.CreateScope(String.Empty /*scopeName*/,
+globals, false/*publishScope*/);
+```
 
 ****Execute script as text in the context of an EE scope.****
 
 Currently, the code found in a page’s code behind file or in its &lt;script runat=”server”&gt; block is fed into the page’s IPy EngineScope:
 
-s\_engine.Execute(scriptCode, engineScope);
+``` csharp
+s_engine.Execute(scriptCode, engineScope);
+```
 
 ****Enumerate a scope for functions.****
 
 Currently, after feeding code into an EngineScope, MerlinWeb looks for top-level functions with:
 
-> foreach (KeyValuePair&lt;string, object&gt; pair in EngineScope.Globals) {
->
-> PythonFunction f = pair.Value as PythonFunction;
->
-> //...
+``` csharp
+foreach (KeyValuePair<string, object> pair in EngineScope.Globals) {
+    PythonFunction f = pair.Value as PythonFunction;
+    //...
+```
 
 For each PythonFunction, MerlinWeb checks a few properties such as its ArgCount (for a rough signature check) and line number where the function starts:
 
-> f.ArgCount
->
-> ((FunctionCode)f.FunctionCode).FirstLineNumber”
+``` csharp
+f.ArgCount
+((FunctionCode)f.FunctionCode).FirstLineNumber”
+```
 
 ****Invoke functions.****
 
@@ -60,7 +64,9 @@ MerlinWeb apps support an App\_Script directory containing script files that any
 
 ****Currently, the code does the following:****
 
-s\_engine.Sys.path.Add(s\_scriptFolder);
+``` csharp
+s_engine.Sys.path.Add(s_scriptFolder);
+```
 
 ****Reload scripts that are in use and have changed.****
 
@@ -68,13 +74,12 @@ MerlinWeb detects scripts that have changed, and it needs to direct the engine t
 
 Currently, MerlinWeb does something like the following:
 
-> foreach (PythonScope scope in s\_engine.Sys.scopes.Values) {
->
-> if (scope.Filename.StartsWith(s\_scriptFolder))
->
-> Builtin.Reload(scope);
->
-> }
+``` csharp
+foreach (PythonScope scope in s_engine.Sys.scopes.Values) {
+    if (scope.Filename.StartsWith(s_scriptFolder))
+        Builtin.Reload(scope);
+}
+```
 
 MerlinWeb is also okay with throwing out the ScriptRuntime and creating a new instance if this is on the order of 1-2s vs. several seconds.
 
@@ -114,31 +119,21 @@ When a run-time error occurs, MerlinWeb needs to get an error message, file name
 
 Currently, the code looks like this (not pretty, should be cleaned up):
 
-> // Though we ignore the return value, this call is needed
->
-> Ops.ExtractException(e, s\_engine.Sys);
->
-> Tuple t = s\_engine.Sys.exc\_info();
->
-> string message = (string)t\[1\].ToString();
->
-> TraceBack tb = (TraceBack)t\[2\];
->
-> // Find the initial exception frame
->
-> while (tb.Next != null)
->
-> tb = tb.Next;
->
-> // Clear the exception
->
-> Ops.ClearException(s\_engine.Sys);
->
-> int line = tb.Line;
->
-> string path = (string)((FunctionCode)
->
-> (((TraceBackFrame)(tb.ScopeScope)).Code)).Filename;
+``` csharp
+// Though we ignore the return value, this call is needed
+Ops.ExtractException(e, s_engine.Sys);
+Tuple t = s_engine.Sys.exc_info();
+string message = (string)t[1].ToString();
+TraceBack tb = (TraceBack)t[2];
+// Find the initial exception frame
+while (tb.Next != null)
+    tb = tb.Next;
+// Clear the exception
+Ops.ClearException(s_engine.Sys);
+int line = tb.Line;
+string path = (string)((FunctionCode)
+(((TraceBackFrame)(tb.ScopeScope)).Code)).Filename;
+```
 
 ****Line pragmas for debugging support****
 
@@ -146,27 +141,23 @@ MerlinWeb generates code for code found in .aspx files. For debuggers and tools 
 
 Currently, this is not well supported. For example, if you have this on an .aspx page:
 
-> &lt;%
->
-> for i in range(max):
->
-> %&gt;
->
-> i=&lt;%=i%&gt; i\*i=&lt;%=i\*i%&gt;&lt;br /&gt;
+``` csharp
+<%
+for i in range(max):
+    %>
+i=<%=i%> i*i=<%=i*i%><br />
+```
 
 MerlinWeb will generate code that looks like this:
 
-> for i in range(max):
->
-> \_\_param.RenderControl(0)
->
-> \_\_param.Render(i)
->
-> \_\_param.RenderControl(1)
->
-> \_\_param.Render(i\*i)
->
-> \_\_param.RenderControl(2)
+``` csharp
+for i in range(max):
+    __param.RenderControl(0)
+    __param.Render(i)
+    __param.RenderControl(1)
+    __param.Render(i*i)
+    __param.RenderControl(2)
+```
 
 Note that this code contains a mix of user code (in green) and generated code. Furthermore, there is no correlation between the line numbers of the user code in the aspx and in the generated code. By using a line pragma mechanism, we can tell the compiler exactly where each snippet of code came from, which allows the aspx file to be debugged directly.
 
@@ -344,70 +335,51 @@ We finally decided to go with constructors over factory methods for a couple of 
 
 We kept the static CreateRemote factory for discoverability, but it was much simpler to implement with the constructors. Going to constructors from factory methods would allow you to write these two "lines" instead of the helper class et al needed with only factory methods.
 
-> AppDomain.CreateInstanceAndUnwrap
->
-> (typeof(ScriptRuntime).Assembly.FullName,
->
-> typeof(ScriptRuntime).FullName);
+``` csharp
+AppDomain.CreateInstanceAndUnwrap
+             (typeof(ScriptRuntime).Assembly.FullName, 
+              typeof(ScriptRuntime).FullName);
+```
 
 And if you want to pass ScriptRuntimeSetup (as value of setup variable below):
 
-> AppDomain.CreateInstanceAndUnwrap
->
-> (typeof(ScriptRuntime).Assembly.FullName,
->
-> typeof(ScriptRuntime).FullName, false,
->
-> BindingFlags.Default, null, new object\[\] { setup },
->
-> null, null, null);
+``` csharp
+AppDomain.CreateInstanceAndUnwrap
+              (typeof(ScriptRuntime).Assembly.FullName, 
+               typeof(ScriptRuntime).FullName, false, 
+               BindingFlags.Default, null, new object[] { setup }, 
+               null, null, null);
+```
 
 If we only had factory methods, and we did not provide this factory for users:
 
+``` csharp
 runtime = ScriptRuntime
-
-.Create(AppDomain.CreateDomain("foo"), setup);
+             .Create(AppDomain.CreateDomain("foo"), setup);
+```
 
 Then they would have to write:
 
+``` csharp
 runtime = RemoteRuntimeFactory
-
-.CreateRuntime(AppDomain.CreateDomain("foo"), setup);
-
+              .CreateRuntime(AppDomain.CreateDomain("foo"), setup);
 private sealed class RemoteRuntimeFactory : MarshalByRefObject {
-
-public readonly ScriptRuntime Runtime;
-
-public RemoteRuntimeFactory(ScriptRuntimeSetup setup) {
-
-Runtime = ScriptRuntime.Create(setup);
-
+    public readonly ScriptRuntime Runtime;
+    public RemoteRuntimeFactory(ScriptRuntimeSetup setup) {
+        Runtime = ScriptRuntime.Create(setup);
+    }
+    public static ScriptRuntime CreateRuntime
+                                (AppDomain domain, 
+                                 ScriptRuntimeSetup setup) {
+        RemoteRuntimeFactory rd 
+            = (RemoteRuntimeFactory)domain
+                  .CreateInstanceAndUnwrap
+                      (typeof(RemoteRuntimeFactory)
+                           .Assembly.FullName,
+                       typeof(RemoteRuntimeFactory).FullName, 
+                       false, BindingFlags.Default, null, 
+                       new object[] { setup }, null, null, null);
+        return rd.Runtime;
+    }
 }
-
-public static ScriptRuntime CreateRuntime
-
-(AppDomain domain,
-
-ScriptRuntimeSetup setup) {
-
-RemoteRuntimeFactory rd
-
-= (RemoteRuntimeFactory)domain
-
-.CreateInstanceAndUnwrap
-
-(typeof(RemoteRuntimeFactory)
-
-.Assembly.FullName,
-
-typeof(RemoteRuntimeFactory).FullName,
-
-false, BindingFlags.Default, null,
-
-new object\[\] { setup }, null, null, null);
-
-return rd.Runtime;
-
-}
-
-}
+```

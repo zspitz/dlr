@@ -50,9 +50,10 @@ Add to ScriptScope
 
 **Need to revisit ScriptIO.SetInput**. Do we need encoding arg?
 
-public void SetInput(Stream stream, TextReader reader,
-
-Encoding encoding)
+``` csharp
+public void SetInput(Stream stream, TextReader reader, 
+                     Encoding encoding) 
+```
 
 **Consider expanding LoadAssembly and simplifying name.** Probably need to expand to type libs for COM interop (check with BizApps folks):
 

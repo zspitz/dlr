@@ -4,99 +4,55 @@ At runtime, when trying to set a member of a .NET static object, the default .NE
 
 Here's the code for SymplSetMemberBinder's FallbackSetMember from runtime.cs, which is essentially all there is to the class:
 
+``` csharp
 public override DynamicMetaObject FallbackSetMember(
-
-DynamicMetaObject targetMO, DynamicMetaObject value,
-
-DynamicMetaObject errorSuggestion) {
-
-// ... Deleted checking for COM and need to Defer for now ...
-
-var flags = BindingFlags.IgnoreCase \| BindingFlags.Static \|
-
-BindingFlags.Instance \| BindingFlags.Public;
-
-var members = targetMO.LimitType.GetMember(this.Name, flags);
-
-if (members.Length == 1) {
-
-MemberInfo mem = members\[0\];
-
-Expression val;
-
-if (mem.MemberType == MemberTypes.Property)
-
-val = Expression.Convert(
-
-value.Expression,
-
-((PropertyInfo)mem).PropertyType);
-
-else if (mem.MemberType == MemberTypes.Field)
-
-val = Expression.Convert(value.Expression,
-
-((FieldInfo)mem).FieldType);
-
-else
-
-return (errorSuggestion ??
-
-RuntimeHelpers.CreateThrow(
-
-targetMO, null,
-
-BindingRestrictions.GetTypeRestriction(
-
-targetMO.Expression,
-
-targetMO.LimitType),
-
-typeof(InvalidOperationException),
-
-"Sympl only supports setting Properties " +
-
-"and fields at this time."));
-
-return new DynamicMetaObject(
-
-RuntimeHelpers.EnsureObjectResult(
-
-Expression.Assign(
-
-Expression.MakeMemberAccess(
-
-Expression.Convert(targetMO.Expression,
-
-members\[0\].DeclaringType),
-
-members\[0\]),
-
-val)),
-
-BindingRestrictions.GetTypeRestriction(
-
-targetMO.Expression,
-
-targetMO.LimitType));
-
-} else {
-
-return errorSuggestion ??
-
-RuntimeHelpers.CreateThrow(
-
-targetMO, null,
-
-BindingRestrictions.GetTypeRestriction(
-
-targetMO.Expression,
-
-targetMO.LimitType),
-
-typeof(MissingMemberException),
-
-"IDynObj member name conflict.");
+            DynamicMetaObject targetMO, DynamicMetaObject value,
+            DynamicMetaObject errorSuggestion) {
+    // ... Deleted checking for COM and need to Defer for now ...
+    var flags = BindingFlags.IgnoreCase | BindingFlags.Static | 
+                BindingFlags.Instance | BindingFlags.Public;
+    var members = targetMO.LimitType.GetMember(this.Name, flags);
+    if (members.Length == 1) {
+        MemberInfo mem = members[0];
+        Expression val;
+        if (mem.MemberType == MemberTypes.Property)
+            val = Expression.Convert(
+                                value.Expression,
+                                ((PropertyInfo)mem).PropertyType);
+        else if (mem.MemberType == MemberTypes.Field)
+            val = Expression.Convert(value.Expression,
+                                     ((FieldInfo)mem).FieldType);
+        else
+            return (errorSuggestion ??
+                    RuntimeHelpers.CreateThrow(
+                        targetMO, null,
+                        BindingRestrictions.GetTypeRestriction(
+                            targetMO.Expression,
+                            targetMO.LimitType),
+                        typeof(InvalidOperationException),
+                        "Sympl only supports setting Properties " +
+                            "and fields at this time."));
+        return new DynamicMetaObject(
+            RuntimeHelpers.EnsureObjectResult(
+              Expression.Assign(
+                Expression.MakeMemberAccess(
+                    Expression.Convert(targetMO.Expression,
+                                       members[0].DeclaringType),
+                    members[0]),
+                val)),
+             BindingRestrictions.GetTypeRestriction(
+                                     targetMO.Expression,
+                                     targetMO.LimitType));
+    } else {
+        return errorSuggestion ??
+            RuntimeHelpers.CreateThrow(
+                targetMO, null, 
+                    BindingRestrictions.GetTypeRestriction(
+                                            targetMO.Expression,
+                                            targetMO.LimitType),
+                typeof(MissingMemberException),
+                "IDynObj member name conflict.");
+```
 
 Let's first talk about what we aren't talking about now. This code snippet omits the code to check if the target is a COM object and to use built-in COM support. See section for information adding this to your binders. The snippet also omits some very important code that protects binders and DynamicMetaObjects from infinitely looping due to producing bad rules. It is best to discuss this in one place, so see section for how the infinite loop happens and how to prevent it for all binders.
 

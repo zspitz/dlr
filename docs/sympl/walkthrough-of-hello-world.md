@@ -11,15 +11,13 @@ This is the Sympl program to get working end-to-end:
 
 If the above code were in test.sympl, the host code snippet is (see program.cs):
 
-static void Main(string\[\] args) {
-
-string dllPath = typeof(object).Assembly.Location;
-
-Assembly asm = Assembly.LoadFile(dllPath);
-
-Sympl s = new Sympl(new Assembly\[\] { asm });
-
-s.ExecuteFile("test.sympl");
+``` csharp
+static void Main(string[] args) {
+    string dllPath = typeof(object).Assembly.Location;
+    Assembly asm = Assembly.LoadFile(dllPath);
+    Sympl s = new Sympl(new Assembly[] { asm });
+    s.ExecuteFile("test.sympl");
+```
 
 This two line Sympl program requires a surprising amount of support if you do not cut corners such as having a built-in print function. The needed language implementation pieces are:
 
@@ -77,53 +75,32 @@ The Sympl.Globals table is the root of a tree of ExpandoObjects. Each interior E
 
 This is Sympl's reflection code, which is pretty simple, while IronPython's is much richer and also tuned for startup performance (from sympl.cs):
 
+``` csharp
 public void AddAssemblyNamesAndTypes() {
-
-foreach (var assm in \_assemblies) {
-
-foreach (var typ in assm.GetExportedTypes()) {
-
-string\[\] names = typ.FullName.Split('.');
-
-var table = \_globals;
-
-for (int i = 0; i &lt; names.Length - 1; i++) {
-
-string name = names\[i\].ToLower();
-
-if (DynamicObjectHelpers.HasMember(
-
-(IDynamicMetaObjectProvider)table, name)) {
-
-table = (ExpandoObject)(DynamicObjectHelpers
-
-.GetMember(table,
-
-name));
-
-} else {
-
-var tmp = new ExpandoObject();
-
-DynamicObjectHelpers.SetMember(table, name,tmp);
-
-table = tmp;
-
+    foreach (var assm in _assemblies) {
+        foreach (var typ in assm.GetExportedTypes()) {
+            string[] names = typ.FullName.Split('.');
+            var table = _globals;
+            for (int i = 0; i < names.Length - 1; i++) {
+                string name = names[i].ToLower();
+                if (DynamicObjectHelpers.HasMember(
+                       (IDynamicMetaObjectProvider)table, name)) {
+                    table = (ExpandoObject)(DynamicObjectHelpers
+                                               .GetMember(table,
+                                                          name));
+                } else {
+                    var tmp = new ExpandoObject();
+                    DynamicObjectHelpers.SetMember(table, name,tmp);
+                    table = tmp;
+                }
+            }
+            DynamicObjectHelpers.SetMember(table,
+                                           names[names.Length - 1],
+                                           new TypeModel(typ));
+        }
+    }
 }
-
-}
-
-DynamicObjectHelpers.SetMember(table,
-
-names\[names.Length - 1\],
-
-new TypeModel(typ));
-
-}
-
-}
-
-}
+```
 
 <h3 id="dlr-dynamic-binding-and-interoperability----a-very-quick-description">3.2.1 DLR Dynamic Binding and Interoperability -- a Very Quick Description</h3>
 
@@ -175,61 +152,45 @@ Sympl needs to use DynamicObjectHelpers because it reflects over namespaces and 
 
 DynamicObjectHelpers explicitly creates a CallSite so that it can encode a request of the dynamic object. DynamicObjectHelpers.GetMember must put a binder in the CallSite, even though the expectation is that the dynamic object would handle the operation. The binder's only metadata is the name to look up. There is also metadata for whether to ignore case, but DoHelpersGetMemberBinder inherently sets that to true. GetMember invokes the CallSite as shown below (from runtime.cs):
 
-static private Dictionary&lt;string,
-
-CallSite&lt;Func&lt;CallSite, object, object&gt;&gt;&gt;
-
-\_getSites = new ...;
-
+``` csharp
+static private Dictionary<string,
+                          CallSite<Func<CallSite, object, object>>>
+        _getSites = new ...;
 internal static object GetMember(IDynamicMetaObjectProvider o,
-
-string name) {
-
-CallSite&lt;Func&lt;CallSite, object, object&gt;&gt; site;
-
-if (! DynamicObjectHelpers.\_getSites.TryGetValue(
-
-name, out site)) {
-
-site = CallSite&lt;Func&lt;CallSite, object, object&gt;&gt;
-
-.Create(new DoHelpersGetMemberBinder(name));
-
-DynamicObjectHelpers.\_getSites\[name\] = site;
-
-}
-
-return site.Target(site, o);
+                                 string name) {
+    CallSite<Func<CallSite, object, object>> site;
+    if (! DynamicObjectHelpers._getSites.TryGetValue(
+                                            name, out site)) {
+        site = CallSite<Func<CallSite, object, object>>
+                       .Create(new DoHelpersGetMemberBinder(name));
+        DynamicObjectHelpers._getSites[name] = site;
+    }
+    return site.Target(site, o);
+```
 
 Except for the last line, all this code is just for caching and fetching the CallSite object with the binder that has the right metadata (that is, the name to look up). We cache these since it speeds up Sympl's launch time 4-5X depending on whether it is the C\# or IronPython implementation.
 
 If the requested member is not present in object o, the dynamic object's meta-object will call FallbackGetMember on the binder, DoHelperGetMemberBinder. There are two cases for this binder in this situation. The first is that the DynamicMetaObject provided a way to look up the name, via errorSuggestion, in case the DoHelperGetMemberBinder can't. ErrorSuggestion is discussed later when we drill into real Sympl runtime binders. If the errorSuggestion is null, then this binder returns a DynamicMetaObject result that represents a sentinel value for HasMember. You can see the FallbackGetMember method for DoHelperGetMemberBinder in runtime.cs:
 
+``` csharp
 public override DynamicMetaObject FallbackGetMember(
-
-DynamicMetaObject target, DynamicMetaObject errorSuggestion) {
-
-return errorSuggestion ??
-
-new DynamicMetaObject(
-
-Expression.Constant(DynamicObjectHelpers.Sentinel),
-
-target.Restrictions.Merge(
-
-BindingRestrictions.GetTypeRestriction(
-
-target.Expression, target.LimitType)));
+      DynamicMetaObject target, DynamicMetaObject errorSuggestion) {
+    return errorSuggestion ??
+           new DynamicMetaObject(
+                 Expression.Constant(DynamicObjectHelpers.Sentinel),
+                 target.Restrictions.Merge(
+                     BindingRestrictions.GetTypeRestriction(
+                         target.Expression, target.LimitType)));
+```
 
 Sympl's DynamicObjectHelpers also needs to support a HasMember method, which the DLR's interoperability protocol does not support. Sympl implements this with the sentinel value mentioned above and a HasMember implemented as follows:
 
+``` csharp
 internal static bool HasMember(IDynamicMetaObjectProvider o,
-
-string name) {
-
-return (DynamicObjectHelpers.GetMember(o, name) !=
-
-DynamicObjectHelpers.Sentinel);
+                               string name) {
+    return (DynamicObjectHelpers.GetMember(o, name) !=
+            DynamicObjectHelpers.Sentinel);
+```
 
 If you look at DoHelpersSetMemberBinder, it simply returns a DynamicMetaObject that represents an error because if the dynamic object didn't handle the SetMember operation, then Sympl doesn't know how to store members into it. Some languages like IronPython do manufacture members that can be set on objects, but Sympl does not do that.
 
@@ -241,15 +202,13 @@ As stated above, Sympl needs to wrap RuntimeType objects in Sympl's TypeModel ob
 
 TypeModel is very simple. Each instance holds a RuntimeType object. The only functionality of the TypeModel as an IDynamicMetaObjectProvider is to return a DynamicMetaObject that represents the TypeModel instance during the binding process in the previous section. This is most of the class from sympl.cs:
 
+``` csharp
 public class TypeModel : IDynamicMetaObjectProvider {
-
-...
-
-DynamicMetaObject IDynamicMetaObjectProvider
-
-.GetMetaObject(Expression parameter) {
-
-return new TypeModelMetaObject(parameter, this);
+    ...
+    DynamicMetaObject IDynamicMetaObjectProvider
+                          .GetMetaObject(Expression parameter) {
+        return new TypeModelMetaObject(parameter, this);
+```
 
 TypeModelMetaObject is only used in Hello World for its BindInvokeMember when binding the call console.writeline. By the time Sympl's implementation is done, its TypeModelMetaObject needs a BindGetMember and a BindCreateInstance, which later sections describe.
 
@@ -259,105 +218,68 @@ The IronPython implementation of these types, and some of the uses of them in ru
 
 TypeModelMetaObject's BindInvokeMember is where the real work happens for console.writeline. Sympl uses very similar logic throughout its binders. InvokeMember binding is very similar to CreateInstance, Invoke, GetIndex, and SetIndex for matching arguments to parameters. Here is the code from sympl.cs, which is described in detail below:
 
+``` csharp
 public override DynamicMetaObject BindInvokeMember(
-
-InvokeMemberBinder binder, DynamicMetaObject\[\] args) {
-
-var flags = BindingFlags.IgnoreCase \| BindingFlags.Static \|
-
-BindingFlags.Public;
-
-var members = ReflType.GetMember(binder.Name, flags);
-
-if ((members.Length == 1) && (members\[0\] is PropertyInfo \|\|
-
-members\[0\] is FieldInfo)){
-
-// Code deleted, not implemented yet.
-
-} else {
-
-// Get MethodInfos with right arg counts.
-
-var mi\_mems = members.
-
-Select(m =&gt; m as MethodInfo).
-
-Where(m =&gt; m is MethodInfo &&
-
-((MethodInfo)m).GetParameters().Length ==
-
-args.Length);
-
-// See if params are assignable from args.
-
-List&lt;MethodInfo&gt; res = new List&lt;MethodInfo&gt;();
-
-foreach (var mem in mi\_mems) {
-
-if (RuntimeHelpers.ParametersMatchArguments(
-
-mem.GetParameters(), args)) {
-
-res.Add(mem);
-
-}
-
-}
-
-// When MOs can't bind, they fall back to binders.
-
-if (res.Count == 0) {
-
-var typeMO =
-
-RuntimeHelpers.GetRuntimeTypeMoFromModel(this);
-
-var result = binder.FallbackInvokeMember(typeMO, args,
-
-null);
-
-return result;
-
-}
-
-var restrictions = RuntimeHelpers.GetTargetArgsRestrictions(
-
-this, args, true);
-
-var callArgs =
-
-RuntimeHelpers.ConvertArguments(
-
-args, res\[0\].GetParameters());
-
-return new DynamicMetaObject(
-
-RuntimeHelpers.EnsureObjectResult(
-
-Expression.Call(res\[0\], callArgs)),
-
-restrictions);
+        InvokeMemberBinder binder, DynamicMetaObject[] args) {
+    var flags = BindingFlags.IgnoreCase | BindingFlags.Static |
+                BindingFlags.Public;
+    var members = ReflType.GetMember(binder.Name, flags);
+    if ((members.Length == 1) && (members[0] is PropertyInfo || 
+                                  members[0] is FieldInfo)){
+        // Code deleted, not implemented yet. 
+    } else {
+        // Get MethodInfos with right arg counts.
+        var mi_mems = members.
+            Select(m => m as MethodInfo).
+            Where(m => m is MethodInfo &&
+                       ((MethodInfo)m).GetParameters().Length ==
+                           args.Length);
+        // See if params are assignable from args.
+        List<MethodInfo> res = new List<MethodInfo>();
+        foreach (var mem in mi_mems) {
+            if (RuntimeHelpers.ParametersMatchArguments(
+                                   mem.GetParameters(), args)) {
+                res.Add(mem);
+            }
+        }
+        // When MOs can't bind, they fall back to binders.
+        if (res.Count == 0) {
+            var typeMO = 
+                    RuntimeHelpers.GetRuntimeTypeMoFromModel(this);
+            var result = binder.FallbackInvokeMember(typeMO, args,
+                                                     null);
+            return result;
+        }
+        var restrictions = RuntimeHelpers.GetTargetArgsRestrictions(
+            this, args, true);
+        var callArgs = 
+            RuntimeHelpers.ConvertArguments(
+            args, res[0].GetParameters());
+        return new DynamicMetaObject(
+               RuntimeHelpers.EnsureObjectResult(
+                   Expression.Call(res[0], callArgs)),
+           restrictions);
+```
 
 Sympl takes the name from the binder's metadata and looks for all public, static members on the type represented by the target meta-object. TypeModelMetaObjects also looks for members ignoring case because Sympl is a case-INsensitive language.
 
 Next, TypeModelMetaObject's BindInvokeMember filters for all the members that are MethodInfos and have the right number of arguments. Ignore the checks for properties or fields that have delegate values for now. Then the binding logic filters for the MethodInfos that have parameters that can be bound given the types of arguments present at this invocation of the call site. There are a few things to note (see next few paragraphs), but essentially the matching test in ParametersMatchArguments is (in runtime.cs):
 
-MethodInfo.GetParameters\[i\].IsAssignableFrom(args\[i\].LimitType)
+``` csharp
+MethodInfo.GetParameters[i].IsAssignableFrom(args[i].LimitType)
+```
 
 DynamicMetaObjects have a RuntimeType and a LimitType. You can disregard RuntimeType because if the DynamicMetaObject has a concrete value (HasValue is true) as opposed to just an Expression, then RuntimeType is the same as LimitType; otherwise, RuntimeType is null. LimitType comes from either the Type property of the expression with which the DynamicMetaObject was created, or LimitType is the actual specific runtime type of the object represented by the DynamicMetaObject. There is always an expression, even if it is just a ParameterExpression for a local or temporary value.
 
 The function ParametersMatchArguments also tests whether any of the arguments is a TypeModel object. This is more important to understand when Sympl adds instantiating and indexing generic types, but for now, it is enough to know that ParametersMatchArguments matches TypeModels if the parameter type is Type:
 
+``` csharp
 ...
-
 if (paramType == typeof(Type) &&
-
-(args\[i\].LimitType == typeof(TypeModel)))
-
-continue; // accept as matching
-
+    (args[i].LimitType == typeof(TypeModel)))
+    continue;  // accept as matching
 ...
+```
 
 You might think you could just use the Expression.Call factory to find a matching member. This is not generally a good idea for a few reasons. The first is that any real language should provide its own semantics for finding a most applicable method and resolving overloads when more than one could apply. The second is that Expression.Call can't handle special language semantics such as handling TypeModels or mapping nil to Boolean false. The third is that even though Sympl doesn't care and just picks the first matching MethodInfo, Expression.Call throws an error if it finds more than one matching.
 
@@ -367,21 +289,16 @@ If there are applicable methods, Sympl binds the InvokeMember operation. Sympl d
 
 The DLR enforces that rules produced by DynamicMetaObjects and binders have implementation expressions of type object (or a reference type). This is necessary because a site potentially mixes rules from various objects and languages, and the CallSite must in effect unify all the expression result types in the code it produces and compiles into a delegate. Rather than have various arbitrary policies and conversions, the DLR simply says all CallSites that use binders that derive from DynamicMetaObjectBinder must have object results. Sympl uses this little helper from RuntimeHelpers in runtime.cs, which is pretty self-explanatory:
 
+``` csharp
 public static Expression EnsureObjectResult (Expression expr) {
-
-if (! expr.Type.IsValueType)
-
-return expr;
-
-if (expr.Type == typeof(void))
-
-return Expression.Block(
-
-expr, Expression.Default(typeof(object)));
-
-else
-
-return Expression.Convert(expr, typeof(object));
+    if (! expr.Type.IsValueType)
+        return expr;
+    if (expr.Type == typeof(void))
+        return Expression.Block(
+                   expr, Expression.Default(typeof(object)));
+    else
+        return Expression.Convert(expr, typeof(object));
+```
 
 If BindInvokeMember finds no matching MethodInfos, then it falls back to the binder passed to it in the parameters. Falling back is explained at a high level in section . In this particular case, Sympl generates an expression to represent fetching the underlying RuntimeType from the TypeModel object by calling GetRuntimeTypeMoFromModel. This helper function is explained further when we describe how Sympl supports instantiating arrays and generic types. For now, you can see that since Sympl falls back to the binder, which might not be a Sympl binder. Sympl needs to pass a .NET Type representation since the binder may not know what a TypeModel is.
 
@@ -391,69 +308,40 @@ Nearing the end of binding for Hello World, BindInvokeMember needs to create res
 
 This is the code that generates the restrictions (from runtime.cs), more on this below:
 
+``` csharp
 public static BindingRestrictions GetTargetArgsRestrictions(
-
-DynamicMetaObject target, DynamicMetaObject\[\] args,
-
-bool instanceRestrictionOnTarget){
-
-var restrictions = target.Restrictions
-
-.Merge(BindingRestrictions
-
-.Combine(args));
-
-if (instanceRestrictionOnTarget) {
-
-restrictions = restrictions.Merge(
-
-BindingRestrictions.GetInstanceRestriction(
-
-target.Expression,
-
-target.Value
-
-));
-
-} else {
-
-restrictions = restrictions.Merge(
-
-BindingRestrictions.GetTypeRestriction(
-
-target.Expression,
-
-target.LimitType
-
-));
-
+        DynamicMetaObject target, DynamicMetaObject[] args,
+        bool instanceRestrictionOnTarget){
+    var restrictions = target.Restrictions
+                             .Merge(BindingRestrictions
+                                        .Combine(args));
+    if (instanceRestrictionOnTarget) {
+        restrictions = restrictions.Merge(
+            BindingRestrictions.GetInstanceRestriction(
+                target.Expression,
+                target.Value
+            ));
+    } else {
+        restrictions = restrictions.Merge(
+            BindingRestrictions.GetTypeRestriction(
+                target.Expression,
+                target.LimitType
+            ));
+    }
+    for (int i = 0; i < args.Length; i++) {
+        BindingRestrictions r;
+        if (args[i].HasValue && args[i].Value == null) {
+            r = BindingRestrictions.GetInstanceRestriction(
+                    args[i].Expression, null);
+        } else {
+            r = BindingRestrictions.GetTypeRestriction(
+                    args[i].Expression, args[i].LimitType);
+        }
+        restrictions = restrictions.Merge(r);
+    }
+    return restrictions;
 }
-
-for (int i = 0; i &lt; args.Length; i++) {
-
-BindingRestrictions r;
-
-if (args\[i\].HasValue && args\[i\].Value == null) {
-
-r = BindingRestrictions.GetInstanceRestriction(
-
-args\[i\].Expression, null);
-
-} else {
-
-r = BindingRestrictions.GetTypeRestriction(
-
-args\[i\].Expression, args\[i\].LimitType);
-
-}
-
-restrictions = restrictions.Merge(r);
-
-}
-
-return restrictions;
-
-}
+```
 
 You need to be careful to gather all the restrictions from arguments and from the target object first. The binding computations BindInvokeMember does with DynamicMetaObject LimitType and Value properties depend on those restrictions. Having those restrictions come first is like testing that an argument is not null and has a specific type, or perhaps is a non-empty collection, before you test details about members or elements.
 
@@ -463,39 +351,25 @@ The last bit of restrictions code needs to be consistent with any argument conve
 
 This is the conversion code Sympl uses (from runtime.cs):
 
-public static Expression\[\] ConvertArguments(
-
-DynamicMetaObject\[\] args, ParameterInfo\[\] ps) {
-
-Debug.Assert(args.Length == ps.Length,
-
-"Internal: args are not same len as params?!");
-
-Expression\[\] callArgs = new Expression\[args.Length\];
-
-for (int i = 0; i &lt; args.Length; i++) {
-
-Expression argExpr = args\[i\].Expression;
-
-if (args\[i\].LimitType == typeof(TypeModel) &&
-
-ps\[i\].ParameterType == typeof(Type)) {
-
-// Get arg.ReflType
-
-argExpr = GetRuntimeTypeMoFromModel(args\[i\]).Expression;
-
+``` csharp
+public static Expression[] ConvertArguments(
+           DynamicMetaObject[] args, ParameterInfo[] ps) {
+    Debug.Assert(args.Length == ps.Length,
+                 "Internal: args are not same len as params?!");
+    Expression[] callArgs = new Expression[args.Length];
+    for (int i = 0; i < args.Length; i++) {
+        Expression argExpr = args[i].Expression;
+        if (args[i].LimitType == typeof(TypeModel) && 
+            ps[i].ParameterType == typeof(Type)) {
+            // Get arg.ReflType
+            argExpr = GetRuntimeTypeMoFromModel(args[i]).Expression;
+        }
+        argExpr = Expression.Convert(argExpr, ps[i].ParameterType);
+        callArgs[i] = argExpr;
+    }
+    return callArgs;
 }
-
-argExpr = Expression.Convert(argExpr, ps\[i\].ParameterType);
-
-callArgs\[i\] = argExpr;
-
-}
-
-return callArgs;
-
-}
+```
 
 There two ways in which the restrictions and argument conversions code appear to be different. The first is where the restrictions code tests for null values. Nulls need to be handled as instance restriction, but the conversions don't need to change in any way. The second difference is that DynamicMetaObjects representing Sympl's TypeModels need to be wrapped in expressions that get the .NET's RuntimeType values. The restrictions ensure the argument is of type TypeModel so that the wrapping expression works.
 
@@ -511,37 +385,24 @@ Sympl compiles an Import keyword form to a call to RuntimeHelpers.SymplImport. I
 
 This is the code from etgen.cs to analyze and emit code for Import:
 
+``` csharp
 public static Expression AnalyzeImportExpr(SymplImportExpr expr,
-
-AnalysisScope scope) {
-
-if (!scope.IsModule) {
-
-throw new InvalidOperationException(
-
-"Import expression must be a top level expression.");
-
-}
-
-return Expression.Call(
-
-typeof(RuntimeHelpers).GetMethod("SymplImport"),
-
-scope.RuntimeExpr,
-
-scope.ModuleExpr,
-
-Expression.Constant(expr.NamespaceExpr.Select(id =&gt; id.Name)
-
-.ToArray()),
-
-Expression.Constant(expr.MemberNames.Select(id =&gt; id.Name)
-
-.ToArray()),
-
-Expression.Constant(expr.Renames.Select(id =&gt; id.Name)
-
-.ToArray()));
+                                            AnalysisScope scope) {
+    if (!scope.IsModule) {
+        throw new InvalidOperationException(
+            "Import expression must be a top level expression.");
+    }
+    return Expression.Call(
+        typeof(RuntimeHelpers).GetMethod("SymplImport"),
+        scope.RuntimeExpr,
+        scope.ModuleExpr,
+        Expression.Constant(expr.NamespaceExpr.Select(id => id.Name)
+                                              .ToArray()),
+        Expression.Constant(expr.MemberNames.Select(id => id.Name)
+                                            .ToArray()),
+        Expression.Constant(expr.Renames.Select(id => id.Name)
+                                        .ToArray()));
+```
 
 Analysis passes an AnalysisScope chain throughout the analysis phase. The chain starts with a scope representing the file's top level. This scope has a ParameterExpression that will be bound to a Sympl runtime instance and a second ParameterExpresson for a file scope instance. Enforcing that the Import form is at top level in the file is unnecessary since this function could follow the scope chain to the first scope to get the RuntimeExpr and ModuleExpr properties. This restriction was just a design choice for Sympl.
 
@@ -559,95 +420,58 @@ It is worth a quick comment on Sympl's parser design and syntax for calls. Follo
 
 Here's the analysis and code generation for general function calls from etgen.cs, described in detail below:
 
+``` csharp
 public static DynamicExpression AnalyzeFunCallExpr(
-
-SymplFunCallExpr expr, AnalysisScope scope) {
-
-if (expr.Function is SymplDottedExpr) {
-
-SymplDottedExpr dottedExpr = (SymplDottedExpr)expr.Function;
-
-Expression objExpr;
-
-int length = dottedExpr.Exprs.Length;
-
-if (length &gt; 1) {
-
-objExpr = AnalyzeDottedExpr(
-
-new SymplDottedExpr(
-
-dottedExpr.ObjectExpr,
-
-RuntimeHelpers.RemoveLast(dottedExpr.Exprs)),
-
-scope
-
-);
-
-} else {
-
-objExpr = AnalyzeExpr(dottedExpr.ObjectExpr, scope);
-
-}
-
-List&lt;Expression&gt; args = new List&lt;Expression&gt;();
-
-args.Add(objExpr);
-
-args.AddRange(expr.Arguments
-
-.Select(a =&gt; AnalyzeExpr(a, scope)));
-
-// last expr must be an id
-
-var lastExpr = (SymplIdExpr)(dottedExpr.Exprs.Last());
-
-return Expression.Dynamic(
-
-scope.GetRuntime().GetInvokeMemberBinder(
-
-new InvokeMemberBinderKey(
-
-lastExpr.IdToken.Name,
-
-new CallInfo(expr.Arguments.Length))),
-
-typeof(object),
-
-args);
-
-} else {
-
-var fun = AnalyzeExpr(expr.Function, scope);
-
-List&lt;Expression&gt; args = new List&lt;Expression&gt;();
-
-args.Add(fun);
-
-args.AddRange(expr.Arguments
-
-.Select(a =&gt; AnalyzeExpr(a, scope)));
-
-return Expression.Dynamic(
-
-scope.GetRuntime()
-
-.GetInvokeBinder(
-
-new CallInfo(expr.Arguments.Length)),
-
-typeof(object),
-
-args);
+        SymplFunCallExpr expr, AnalysisScope scope) {
+    if (expr.Function is SymplDottedExpr) {
+        SymplDottedExpr dottedExpr = (SymplDottedExpr)expr.Function;
+        Expression objExpr;
+        int length = dottedExpr.Exprs.Length;
+        if (length > 1) {
+            objExpr = AnalyzeDottedExpr(
+                new SymplDottedExpr(
+                       dottedExpr.ObjectExpr, 
+                       RuntimeHelpers.RemoveLast(dottedExpr.Exprs)),
+                scope
+            );
+        } else {
+            objExpr = AnalyzeExpr(dottedExpr.ObjectExpr, scope);
+        }
+        List<Expression> args = new List<Expression>();
+        args.Add(objExpr);
+        args.AddRange(expr.Arguments
+                          .Select(a => AnalyzeExpr(a, scope)));
+        // last expr must be an id
+        var lastExpr = (SymplIdExpr)(dottedExpr.Exprs.Last());
+        return Expression.Dynamic(
+            scope.GetRuntime().GetInvokeMemberBinder(
+                new InvokeMemberBinderKey(
+                        lastExpr.IdToken.Name,
+                        new CallInfo(expr.Arguments.Length))),
+                    typeof(object),
+                    args);
+    } else {
+        var fun = AnalyzeExpr(expr.Function, scope);
+        List<Expression> args = new List<Expression>();
+        args.Add(fun);
+        args.AddRange(expr.Arguments
+                          .Select(a => AnalyzeExpr(a, scope)));
+        return Expression.Dynamic(
+            scope.GetRuntime()
+                 .GetInvokeBinder(
+                      new CallInfo(expr.Arguments.Length)),
+            typeof(object),
+            args);
+```
 
 Looking at the outer else branch first for simplicity, you see the DynamicExpression for a callable object. The CallInfo metadata on the Invoke binder counts only the argument expressions that you would normally think of as arguments to a function call. However, the 'args' variable includes as its first element the callable (function) object. This is often a confusing point for first-time DynamicExpression users.
 
 There are a couple of aside points to make now in Sympl's evolving implementation. The first is to ignore that the code calls GetInvokeBinder. Also, in the IF's consequent branch for the dotted expression case, ignore the call to GetInvokeMemberBinder. Imagine these are just calls to the constructors, which is what the code actually was at this point in Sympl's evolving implementation:
 
+``` csharp
 new SymplInvokeBinder(callinfo)
-
 new SymplInvokeMemberBinder(name, callinfo)
+```
 
 The Get... methods produce canonical binders, a single binder instance used on every call site with the same metadata. This is important for DLR L2 caching of rules. See section for how Sympl returns canonical binders and why, and see sites-binders-dynobj-interop.doc for more details on CallSite rule caching. The second point is that right now the SymplInvokeMemberBinder doesn't do any work, other than convey the identifier name and CallInfo as metadata. We know the TypeModelMetaObject will provide the implementation at runtime for how to invoke "console.writeline". Execution will never get to the Invoke DynamicExpression until later, see section .
 
@@ -661,63 +485,37 @@ AnalyzeFunCallExpr picks off the simple case in the else branch, when the length
 
 Here is the code for analyzing dotted expressions, from etgen.cs:
 
+``` csharp
 public static Expression AnalyzeDottedExpr(SymplDottedExpr expr,
-
-AnalysisScope scope) {
-
-var curExpr = AnalyzeExpr(expr.ObjectExpr, scope);
-
-foreach (var e in expr.Exprs) {
-
-if (e is SymplIdExpr) {
-
-curExpr = Expression.Dynamic(
-
-new SymplGetMemberBinder(
-
-((SymplIdExpr)e).IdToken.Name),
-
-typeof(object),
-
-curExpr);
-
-} else if (e is SymplFunCallExpr) {
-
-var call = (SymplFunCallExpr)e;
-
-List&lt;Expression&gt; args = new List&lt;Expression&gt;();
-
-args.Add(curExpr);
-
-args.AddRange(call.Arguments
-
-.Select(a =&gt; AnalyzeExpr(a, scope)));
-
-curExpr = Expression.Dynamic(
-
-new SymplInvokeMemberBinder(
-
-((SymplIdExpr)call.Function).IdToken
-
-.Name,
-
-new CallInfo(call.Arguments.Length)),
-
-typeof(object),
-
-args);
-
-} else {
-
-throw new InvalidOperationException(
-
-"Internal: dotted must be IDs or Funs.");
-
-}
-
-}
-
-return curExpr;
+                                           AnalysisScope scope) {
+    var curExpr = AnalyzeExpr(expr.ObjectExpr, scope);
+    foreach (var e in expr.Exprs) {
+        if (e is SymplIdExpr) {
+            curExpr = Expression.Dynamic(
+                new SymplGetMemberBinder(
+                        ((SymplIdExpr)e).IdToken.Name),
+                        typeof(object),
+                        curExpr);
+        } else if (e is SymplFunCallExpr) {
+            var call = (SymplFunCallExpr)e;
+            List<Expression> args = new List<Expression>();
+            args.Add(curExpr);
+            args.AddRange(call.Arguments
+                              .Select(a => AnalyzeExpr(a, scope)));
+            curExpr = Expression.Dynamic(
+                        new SymplInvokeMemberBinder(
+                              ((SymplIdExpr)call.Function).IdToken
+                                                          .Name,
+                              new CallInfo(call.Arguments.Length)),
+                        typeof(object),
+                        args);
+        } else {
+            throw new InvalidOperationException(
+                "Internal: dotted must be IDs or Funs.");
+        }
+    }
+    return curExpr;
+```
 
 AnalyzeDottedExpr just loops over all the sub expressions and turns them into dynamic expressions with GetMember or InvokeMember operations. Each iteration updates curExpr, which always represents the target object resulting from the previous GetMember or InvokeMember operation. GetMember takes the name, and Sympl's binder inherently ignores case. InvokeMember takes the name and the CallInfo, just as described above, and the Sympl binder inherently ignores case.
 
@@ -737,31 +535,21 @@ When resolving an identifier at code generation time, Sympl searches the current
 
 Here's the code for AnalyzeIdExpr from etgen.cs:
 
+``` csharp
 public static Expression AnalyzeIdExpr(SymplIdExpr expr,
-
-AnalysisScope scope) {
-
-if (expr.IdToken.IsKeywordToken) {
-
-// Ignore for now, discussed later with keyword literals.
-
-} else {
-
-var param = FindIdDef(expr.IdToken.Name, scope);
-
-if (param != null) {
-
-return param;
-
-} else {
-
-return Expression.Dynamic(
-
-new SymplGetMemberBinder(expr.IdToken.Name),
-
-typeof(object),
-
-scope.GetModuleExpr());
+                                        AnalysisScope scope) {
+    if (expr.IdToken.IsKeywordToken) {
+        // Ignore for now, discussed later with keyword literals.
+    } else {
+        var param = FindIdDef(expr.IdToken.Name, scope);
+        if (param != null) {
+            return param;
+        } else {
+            return Expression.Dynamic(
+               new SymplGetMemberBinder(expr.IdToken.Name),
+               typeof(object),
+               scope.GetModuleExpr());
+```
 
 Initially this function only contained the code in the else branch, which is where it handles lexicals and globals. FindIdDef does the AnalysisScope chain search. If it returns a ParameterExpression, then that's the result of AnalyzeIdExpr. Otherwise, AnalyzeIdExpr emits a GetMember DynamicExpression operation. The target object is a file's module object, which gets bound at run time to a variable represented by a ParameterExpression. The ParameterExpression is stored in the AnalysisScope representing the file's top level code. Since the file scope is an ExpandoObject, it's DynamicMetaObject will handle the name lookup for the call site that the DynamicExpression compile into.
 
@@ -773,93 +561,52 @@ There's been a long row to hoe getting real infrastructure for the Hello World e
 
 At a high level, program.cs calls Sympl.ExecuteFile on the test.sympl file. Sympl parses all the expressions in the file, wraps them in a LambdaExpression, compiles it, and then executes it. Let's look at the code before we walk through it:
 
+``` csharp
 public ExpandoObject ExecuteFile(string filename) {
-
-return ExecuteFile(filename, null);
-
+    return ExecuteFile(filename, null);
 }
-
 public ExpandoObject ExecuteFile(string filename,
-
-string globalVar) {
-
-var moduleEO = CreateScope();
-
-ExecuteFileInScope(filename, moduleEO);
-
-globalVar = globalVar ??
-
-Path.GetFileNameWithoutExtension(filename);
-
-DynamicObjectHelpers.SetMember(this.\_globals, globalVar,
-
-moduleEO);
-
-return moduleEO;
-
+                                 string globalVar) {
+    var moduleEO = CreateScope();
+    ExecuteFileInScope(filename, moduleEO);
+    globalVar = globalVar ??
+                Path.GetFileNameWithoutExtension(filename);
+    DynamicObjectHelpers.SetMember(this._globals, globalVar,
+                                   moduleEO);
+    return moduleEO;
 }
-
 public void ExecuteFileInScope(string filename,
-
-ExpandoObject moduleEO) {
-
-var f = new StreamReader(filename);
-
-DynamicObjectHelpers.SetMember(moduleEO, "\_\_file\_\_",
-
-Path.GetFullPath(filename));
-
-try {
-
-var asts = new Parser().ParseFile(f);
-
-var scope = new AnalysisScope(
-
-null,
-
-filename,
-
-this,
-
-Expression.Parameter(typeof(Sympl), "symplRuntime"),
-
-Expression.Parameter(typeof(ExpandoObject),
-
-"fileModule"));
-
-List&lt;Expression&gt; body = new List&lt;Expression&gt;();
-
-foreach (var e in asts) {
-
-body.Add(ETGen.AnalyzeExpr(e, scope));
-
+                               ExpandoObject moduleEO) {
+    var f = new StreamReader(filename);
+    DynamicObjectHelpers.SetMember(moduleEO, "__file__", 
+                                   Path.GetFullPath(filename));
+    try {
+        var asts = new Parser().ParseFile(f);
+        var scope = new AnalysisScope(
+            null,
+            filename,
+            this,
+            Expression.Parameter(typeof(Sympl), "symplRuntime"),
+            Expression.Parameter(typeof(ExpandoObject),
+                                 "fileModule"));
+        List<Expression> body = new List<Expression>();
+        foreach (var e in asts) {
+            body.Add(ETGen.AnalyzeExpr(e, scope));
+        }
+        var moduleFun = Expression
+                            .Lambda<Action<Sympl, ExpandoObject>>(
+            fType,
+            Expression.Block(body),
+            scope.RuntimeExpr,
+            scope.ModuleExpr
+        );
+        var d = moduleFun.Compile();
+        d(this, moduleEO);
+    } finally {
+        f.Close();
+    }
 }
-
-var moduleFun = Expression
-
-.Lambda&lt;Action&lt;Sympl, ExpandoObject&gt;&gt;(
-
-fType,
-
-Expression.Block(body),
-
-scope.RuntimeExpr,
-
-scope.ModuleExpr
-
-);
-
-var d = moduleFun.Compile();
-
-d(this, moduleEO);
-
-} finally {
-
-f.Close();
-
-}
-
-}
+```
 
 ExecuteFile creates a scope, an ExpandoObject, for the file globals. This ExpandoObject is also the result of ExecuteFile so that the host can access globals created by executing the Sympl source code. For example, the host could hook up a global function as a command handler or event hook. Before returning, ExecuteFile uses the file name, "test", to add a binding in Sympl.Globals to the file scope object. This doesn't matter for Hello World, but later when the test file imports lists.sympl and other libraries, it will be important for accessing those libraries. You can see the use of DynamicObjectHelpers again for accessing members on the runtime's globals and the file globals.
 

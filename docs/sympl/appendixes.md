@@ -16,95 +16,53 @@ A LanguageContext can participate in hosting by providing more functionality tha
 
 Let's start top-down and look at how program.cs changed in Main. This is a portion of the code:
 
-static void Main(string\[\] args)
-
+``` csharp
+static void Main(string[] args)
 {
-
-var setup = new ScriptRuntimeSetup();
-
-string qualifiedname =
-
-typeof(SymplSample.Hosting.SymplLangContext)
-
-.AssemblyQualifiedName;
-
-setup.LanguageSetups.Add(new LanguageSetup(
-
-qualifiedname, "Sympl", new\[\] { "sympl" },
-
-new\[\] { ".sympl" }));
-
-setup.LanguageSetups.Add(
-
-IronPython.Hosting.Python.CreateLanguageSetup(null));
-
-setup.LanguageSetups.Add(IronRuby.Ruby.CreateRubySetup());
-
-var dlrRuntime = new ScriptRuntime(setup);
-
-var engine = dlrRuntime.GetEngine("sympl");
-
-string filename = @"..\\..\\Languages\\sympl\\examples\\test.sympl";
-
-var feo = engine.ExecuteFile(filename);
-
-Console.WriteLine("ExecuteExpr ... ");
-
-engine.Execute("(print 5)", feo);
-
-// Get Python and Ruby engines
-
-var pyeng = dlrRuntime.GetEngine("Python");
-
-var rbeng = dlrRuntime.GetEngine("Ruby");
-
-// Run some Python and Ruby code in our shared Sympl module.
-
-pyeng.Execute("def pyfoo(): return 1", feo);
-
-rbeng.Execute("def rbbar; 2; end", feo);
-
-// Call those objects from Sympl.
-
-Console.WriteLine("pyfoo returns " +
-
-(engine.Execute("(pyfoo)", feo)).ToString());
-
-Console.WriteLine("rbbar returns " +
-
-(engine.Execute("(rbbar)", feo)).ToString());
-
-// Consume host supplied globals via DLR Hosting.
-
-dlrRuntime.Globals.SetVariable("DlrGlobal", new int\[\] { 3, 7 });
-
-engine.Execute("(import dlrglobal)", feo);
-
-engine.Execute("(print (elt dlrglobal 1))", feo);
-
-// Drop into the REPL ...
-
-... deleted code ...
-
-var s = engine.GetService&lt;Sympl&gt;();
-
-while (true) {
-
-... deleted code ...
-
-try {
-
-object res = engine.Execute(exprstr, feo);
-
-exprstr = "";
-
-prompt = "&gt;&gt;&gt; ";
-
-if (res == s.MakeSymbol("exit")) return;
-
-Console.WriteLine(res);
-
-... deleted code ...
+    var setup = new ScriptRuntimeSetup();
+    string qualifiedname = 
+        typeof(SymplSample.Hosting.SymplLangContext)
+            .AssemblyQualifiedName;
+    setup.LanguageSetups.Add(new LanguageSetup(
+        qualifiedname, "Sympl", new[] { "sympl" },
+        new[] { ".sympl" }));
+    setup.LanguageSetups.Add(
+        IronPython.Hosting.Python.CreateLanguageSetup(null));
+    setup.LanguageSetups.Add(IronRuby.Ruby.CreateRubySetup());
+    var dlrRuntime = new ScriptRuntime(setup);
+    var engine = dlrRuntime.GetEngine("sympl");
+    string filename = @"..\..\Languages\sympl\examples\test.sympl";
+    var feo = engine.ExecuteFile(filename);
+    Console.WriteLine("ExecuteExpr ... ");
+    engine.Execute("(print 5)", feo);
+    // Get Python and Ruby engines
+    var pyeng = dlrRuntime.GetEngine("Python");
+    var rbeng = dlrRuntime.GetEngine("Ruby");
+    // Run some Python and Ruby code in our shared Sympl module.
+    pyeng.Execute("def pyfoo(): return 1", feo);
+    rbeng.Execute("def rbbar; 2; end", feo);
+    // Call those objects from Sympl.
+    Console.WriteLine("pyfoo returns " + 
+                      (engine.Execute("(pyfoo)", feo)).ToString());
+    Console.WriteLine("rbbar returns " +
+                      (engine.Execute("(rbbar)", feo)).ToString());
+    // Consume host supplied globals via DLR Hosting.
+    dlrRuntime.Globals.SetVariable("DlrGlobal", new int[] { 3, 7 });
+    engine.Execute("(import dlrglobal)", feo);
+    engine.Execute("(print (elt dlrglobal 1))", feo);
+    // Drop into the REPL ...
+    ... deleted code ...
+    var s = engine.GetService<Sympl>();
+    while (true) {
+        ... deleted code ...
+        try {
+            object res = engine.Execute(exprstr, feo);
+            exprstr = "";
+            prompt = ">>> ";
+            if (res == s.MakeSymbol("exit")) return;
+            Console.WriteLine(res);
+        ... deleted code ...
+```
 
 This code creates a ScriptRuntimeSetup and fills it in with specific LanguageSetups for Sympl, IronPython, and Ironruby. An application may offer script engines to its users language-independently and work with newly added engines without changing its code. Application can do this by using an app.config file. See the dlr-spec-hosting.doc on codeplex.com/dlr. This example uses the convenience LanguageSetup factory functions from IronPython and IronRuby to get default setups for just those languages. If you use an app.config file, ScriptRuntime has a factory method that reads the app.config file and returns a configured ScriptRuntime.
 
@@ -142,95 +100,53 @@ This file is where the more interesting new code is. Primarily this file defines
 
 **Here is the code for the SymplLangContext in dlrhosting.cs:**
 
+``` csharp
 public sealed class SymplLangContext : LanguageContext {
-
-private readonly Sympl \_sympl;
-
-public SymplLangContext(ScriptDomainManager manager,
-
-IDictionary&lt;string, object&gt; options)
-
-: base(manager) {
-
-\_sympl = new Sympl(manager.GetLoadedAssemblyList(),
-
-manager.Globals);
-
-}
-
-protected override ScriptCode CompileSourceCode(
-
-SourceUnit sourceUnit, CompilerOptions options,
-
-ErrorSink errorSink) {
-
-using (var reader = sourceUnit.GetReader()) {
-
-try {
-
-switch (sourceUnit.Kind) {
-
-case SourceCodeKind.SingleStatement:
-
-case SourceCodeKind.Expression:
-
-case SourceCodeKind.AutoDetect:
-
-case SourceCodeKind.InteractiveCode:
-
-return new SymplScriptCode(
-
-\_sympl,
-
-\_sympl.ParseExprToLambda(reader),
-
-sourceUnit);
-
-case SourceCodeKind.Statements:
-
-case SourceCodeKind.File:
-
-return new SymplScriptCode(
-
-\_sympl,
-
-sympl.ParseFileToLambda(sourceUnit.Path,
-
-reader),
-
-sourceUnit);
-
-default:
-
-throw Assert.Unreachable;
-
-}
-
-}
-
-catch (Exception e) {
-
-errorSink.Add(sourceUnit, e.Message,
-
-SourceSpan.None, 0,
-
-Severity.FatalError);
-
-return null;
-
-public override TService GetService&lt;TService&gt;(
-
-params object\[\] args) {
-
-if (typeof(TService) == typeof(Sympl)) {
-
-return (TService)(object)\_sympl;
-
-}
-
-return base.GetService&lt;TService&gt;(args);
-
-}
+    private readonly Sympl _sympl;
+    public SymplLangContext(ScriptDomainManager manager,
+                            IDictionary<string, object> options)
+        : base(manager) {
+        _sympl = new Sympl(manager.GetLoadedAssemblyList(), 
+                           manager.Globals);
+    }
+    protected override ScriptCode CompileSourceCode(
+            SourceUnit sourceUnit, CompilerOptions options, 
+            ErrorSink errorSink) {
+        using (var reader = sourceUnit.GetReader()) {
+            try {
+                switch (sourceUnit.Kind) {
+                    case SourceCodeKind.SingleStatement:
+                    case SourceCodeKind.Expression:
+                    case SourceCodeKind.AutoDetect:
+                    case SourceCodeKind.InteractiveCode:
+                        return new SymplScriptCode(
+                            _sympl, 
+                            _sympl.ParseExprToLambda(reader),
+                            sourceUnit);
+                    case SourceCodeKind.Statements:
+                    case SourceCodeKind.File:
+                        return new SymplScriptCode(
+                            _sympl,
+                            sympl.ParseFileToLambda(sourceUnit.Path,
+                                                    reader),
+                            sourceUnit);
+                    default:
+                        throw Assert.Unreachable;
+                }
+            }
+            catch (Exception e) {
+                errorSink.Add(sourceUnit, e.Message, 
+                              SourceSpan.None, 0,
+                              Severity.FatalError);
+                return null;
+    public override TService GetService<TService>(
+                                  params object[] args) {
+        if (typeof(TService) == typeof(Sympl)) {
+            return (TService)(object)_sympl;
+        }
+        return base.GetService<TService>(args);
+    }
+```
 
 The key method is CompileSourceCode, which returns a SymplScriptCode object that is discussed below. There are several kinds of code the DLR might ask the language to compile. These kinds allow languages to set initial parser state (such as SourceCodeKind.Expression vs. SingleStatement) or to apply special semantics for magic interactive loop syntax or variables (SourceCodeKind.InteractiveCode). Sympl buckets all of these into either the Expression or File kind because Sympl doesn't need finer-grain distinctions. These two branches just call the new entry points in the Sympl class.
 
@@ -238,101 +154,61 @@ Regarding the catch block, a more serious language implementation would have a s
 
 **The SymplScriptCode returned from CompileSourceCode above represents code to the DLR Hosting APIs.** Sympl defines its ScriptCode as follows:
 
+``` csharp
 public sealed class SymplScriptCode : ScriptCode {
-
-private readonly Expression&lt;Func&lt;Sympl,
-
-IDynamicMetaObjectProvider,
-
-object&gt;&gt;
-
-\_lambda;
-
-private readonly Sympl \_sympl;
-
-private Func&lt;Sympl, IDynamicMetaObjectProvider, object&gt;
-
-\_compiledLambda;
-
-public SymplScriptCode(
-
-Sympl sympl,
-
-Expression&lt;Func&lt;Sympl, IDynamicMetaObjectProvider, object&gt;&gt;
-
-lambda,
-
-SourceUnit sourceUnit)
-
-: base(sourceUnit) {
-
-\_lambda = lambda;
-
-\_sympl = sympl;
-
-}
-
-public override object Run() {
-
-return Run(new Scope());
-
-}
-
-public override object Run(Scope scope) {
-
-if (\_compiledLambda == null) {
-
-\_compiledLambda = \_lambda.Compile();
-
-}
-
-var module = new SymplModuleDlrScope(scope);
-
-if (this.SourceUnit.Kind == SourceCodeKind.File) {
-
-DynamicObjectHelpers.SetMember(
-
-module, "\_\_file\_\_",
-
-Path.GetFullPath(this.SourceUnit.Path));
-
-}
-
-return \_compiledLambda(\_sympl, module);
+    private readonly Expression<Func<Sympl,
+                                     IDynamicMetaObjectProvider, 
+                                     object>>
+                     _lambda;
+    private readonly Sympl _sympl;
+    private Func<Sympl, IDynamicMetaObjectProvider, object> 
+            _compiledLambda;
+    public SymplScriptCode(
+         Sympl sympl, 
+         Expression<Func<Sympl, IDynamicMetaObjectProvider, object>> 
+             lambda,
+         SourceUnit sourceUnit)
+         : base(sourceUnit) {
+        _lambda = lambda;
+        _sympl = sympl;
+    }
+    public override object Run() {
+        return Run(new Scope());
+    }
+    public override object Run(Scope scope) {
+        if (_compiledLambda == null) {
+            _compiledLambda = _lambda.Compile();
+        }
+        var module = new SymplModuleDlrScope(scope);
+        if (this.SourceUnit.Kind == SourceCodeKind.File) {
+            DynamicObjectHelpers.SetMember(
+                module, "__file__",
+                Path.GetFullPath(this.SourceUnit.Path));
+        }
+        return _compiledLambda(_sympl, module);
+```
 
 There are three interesting notes on this code. The first is that we parse to a type of lambda just like Sympl does in the other version. In this version the type of the LambdaExpression is the same for both executing files and executing expressions because the DLR hosting expects a return value in both cases. In the other version, Sympl's file LambdaExpressions returned void. Now Sympl just returns null from each file lambda. The next point is that Sympl needs to wrap the Scope passed to the Run method. Sympl does this so that the DLR scope passed to Run can be passed around in Sympl code as a dynamic object. The last point is that before invoking the compiled lambda, the Run method stores the file module variable "\_\_file\_\_" so that Sympl's 'import' expressions work correctly. Sympl.ExecuteFile still stores "\_\_file\_\_" also.
 
 **Lastly, DlrHosting.cs defines a wrapper class for DLR language-implementation Scopes so that Sympl can pass them around as dynamic objects:**
 
+``` csharp
 public sealed class SymplModuleDlrScope : DynamicObject {
-
-private readonly Scope \_scope;
-
-public SymplModuleDlrScope(Scope scope) {
-
-\_scope = scope;
-
-}
-
-public override bool TryGetMember(GetMemberBinder binder,
-
-out object result) {
-
-return\_scope.TryGetName(
-
-SymbolTable.StringToCaseInsensitiveId(binder.Name),
-
-out result);
-
-}
-
-public override bool TrySetMember(SetMemberBinder binder,
-
-object value) {
-
-\_scope.SetName(SymbolTable.StringToId(binder.Name), value);
-
-return true;
+    private readonly Scope _scope;
+    public SymplModuleDlrScope(Scope scope) {
+        _scope = scope;
+    }
+    public override bool TryGetMember(GetMemberBinder binder,
+                                      out object result) {
+        return_scope.TryGetName(
+                 SymbolTable.StringToCaseInsensitiveId(binder.Name),
+                 out result);
+    }
+    public override bool TrySetMember(SetMemberBinder binder,
+                                      object value) {
+        _scope.SetName(SymbolTable.StringToId(binder.Name), value);
+        return true;
+```
 
 To get an easy implementation of IDynamicMetaObjectProvider, Sympl uses the DynamicObject type. It is a convenience type for library authors that enables you to avoid implementing a binder and generating expression trees. DynamicObject implements the IDynamicMetaObjectProvider interface by always returning a rule that calls Try... methods on the DynamicObject.
 
