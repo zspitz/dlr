@@ -1,7 +1,7 @@
 # Expression Trees v2 Spec
 
-[Frontmatter](frontmatter.md)  
-[1 Introduction](introduction.md)  
+### [Frontmatter](frontmatter.md)  
+### [1 Introduction](introduction.md)  
 &nbsp;&nbsp;[1.1 Relation to Other Models](introduction.md#relation-to-other-models)  
 &nbsp;&nbsp;[1.2 Review from LINQ Expression Trees v1](introduction.md#review-from-linq-expression-trees-v1)  
 &nbsp;&nbsp;[1.3 Design Goals](introduction.md#design-goals)  
@@ -9,7 +9,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[1.3.2 Model Abstraction Level](introduction.md#model-abstraction-level)  
 &nbsp;&nbsp;&nbsp;&nbsp;[1.3.3 .NET 4.0 vs. V-next+1](introduction.md#net-4.0-vs.-v-next1)  
 &nbsp;&nbsp;&nbsp;&nbsp;[1.3.4 Non-goal: Design Time Language Models](introduction.md#non-goal-design-time-language-models)  
-[2 Highlighted Concepts](highlighted-concepts.md)  
+### [2 Highlighted Concepts](highlighted-concepts.md)  
 &nbsp;&nbsp;[2.1 Expression-based Model](highlighted-concepts.md#expression-based-model)  
 &nbsp;&nbsp;[2.2 Reducible Nodes](highlighted-concepts.md#reducible-nodes)  
 &nbsp;&nbsp;[2.3 Bound, Unbound, and Dynamic Nodes](highlighted-concepts.md#bound-unbound-and-dynamic-nodes)  
@@ -42,8 +42,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[2.15.2 CUT General Annotations Support](highlighted-concepts.md#cut-general-annotations-support)  
 &nbsp;&nbsp;[2.16 Node Kind and Operator Enum Values](highlighted-concepts.md#node-kind-and-operator-enum-values)  
 &nbsp;&nbsp;[2.17 ToString Method](highlighted-concepts.md#tostring-method)  
-[3 ET Runtime](et-runtime.md)  
-[4 API Reference](api-reference.md)  
+### [3 ET Runtime](et-runtime.md)  
+### [4 API Reference](api-reference.md)  
 &nbsp;&nbsp;[4.1 Terminology for Lifted V1 Spec Text (marked by boxed red text)](api-reference.md#terminology-for-lifted-v1-spec-text-marked-by-boxed-red-text)  
 &nbsp;&nbsp;[4.2 Quirks Mode for Silverlight](api-reference.md#quirks-mode-for-silverlight)  
 &nbsp;&nbsp;[4.3 Expression Abstract Class](api-reference.md#expression-abstract-class)  
@@ -462,7 +462,7 @@
 Other documents:
 
 [Dynamic Language Runtime](../dlr-overview "Dynamic Language Runtime")  
-[DLR Hostirng Spec](../dlr-spec-hosting "DLR Hostirng Spec")  
+[DLR Hosting Spec](../dlr-spec-hosting "DLR Hosting Spec")  
 [Getting Started with the DLR as a Library Author](../library-authors-introduction "Getting Started with the DLR as a Library Author")  
 [Sites, Binders, and Dynamic Object Interop Spec](../sites-binders-dynobj-interop "Sites, Binders, and Dynamic Object Interop Spec")  
 [SymPL Implementation on the Dynamic Language Runtime](../sympl "SymPL Implementation on the Dynamic Language Runtime")  

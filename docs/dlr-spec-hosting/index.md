@@ -1,8 +1,8 @@
-# DLR Hostirng Spec
+# DLR Hosting Spec
 
-[Frontmatter](frontmatter.md)  
-[1 Introduction](introduction.md)  
-[2 High-level Hosting Model Concepts](high-level-hosting-model-concepts.md)  
+### [Frontmatter](frontmatter.md)  
+### [1 Introduction](introduction.md)  
+### [2 High-level Hosting Model Concepts](high-level-hosting-model-concepts.md)  
 &nbsp;&nbsp;[2.1 Level One -- Script Runtimes, Scopes, and Executing Files and Snippets](high-level-hosting-model-concepts.md#level-one----script-runtimes-scopes-and-executing-files-and-snippets)  
 &nbsp;&nbsp;&nbsp;&nbsp;[2.1.1 Code Sample -- Application Programmability](high-level-hosting-model-concepts.md#code-sample----application-programmability)  
 &nbsp;&nbsp;[2.2 Level Two -- Engines, Compiled Code, Sources, and Object Operations](high-level-hosting-model-concepts.md#level-two----engines-compiled-code-sources-and-object-operations)  
@@ -10,7 +10,7 @@
 &nbsp;&nbsp;[2.3 Level Three -- Full Control, Remoting, Tool Support, and More](high-level-hosting-model-concepts.md#level-three----full-control-remoting-tool-support-and-more)  
 &nbsp;&nbsp;&nbsp;&nbsp;[2.3.1 Code Sample -- Tools Support and Remoting](high-level-hosting-model-concepts.md#code-sample----tools-support-and-remoting)  
 &nbsp;&nbsp;[2.4 ~~Implementer’s Convenience~~](high-level-hosting-model-concepts.md#implementers-convenience)  
-[3 Hosts Requirements](hosts-requirements.md)  
+### [3 Hosts Requirements](hosts-requirements.md)  
 &nbsp;&nbsp;[3.1 SilverLight (RIA)](hosts-requirements.md#silverlight-ria)  
 &nbsp;&nbsp;[3.2 MerlinWeb (Server Side)](hosts-requirements.md#merlinweb-server-side)  
 &nbsp;&nbsp;&nbsp;&nbsp;[3.2.1 Compilation](hosts-requirements.md#compilation)  
@@ -26,7 +26,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[3.5.2 Goals](hosts-requirements.md#goals)  
 &nbsp;&nbsp;&nbsp;&nbsp;[3.5.3 Scenarios](hosts-requirements.md#scenarios)  
 &nbsp;&nbsp;[3.6 Remote Construction Design Notes](hosts-requirements.md#remote-construction-design-notes)  
-[4 API References](api-references.md)  
+### [4 API References](api-references.md)  
 &nbsp;&nbsp;[4.1 ScriptRuntime Class](api-references.md#scriptruntime-class)  
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1.1 Class Summary](api-references.md#class-summary)  
 &nbsp;&nbsp;&nbsp;&nbsp;[4.1.2 Constructor](api-references.md#constructor)  
@@ -245,7 +245,7 @@
 &nbsp;&nbsp;[4.36 CUT -- ConsoleHost Abstract Class ???](api-references.md#cut----consolehost-abstract-class)  
 &nbsp;&nbsp;[4.37 CUT -- ConsoleHostOptions Class](api-references.md#cut----consolehostoptions-class)  
 &nbsp;&nbsp;[4.38 CUT -- ConsoleHostOptionsParser Class](api-references.md#cut----consolehostoptionsparser-class)  
-[5 Current Issues](current-issues.md)
+### [5 Current Issues](current-issues.md)
 
 ------------------------------------------------------------------------
 
