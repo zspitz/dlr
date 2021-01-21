@@ -10,7 +10,7 @@ There is support for top-level functions and lambda expressions. There is no **f
 
 Sympl is a case-INsensitive language for identifiers.
 
-Sympl does not demonstrate class definitions. See section for more information.
+Sympl does not demonstrate class definitions. See section 21.7 for more information.
 
 <h2 id="lexical-aspects">21.2 Lexical Aspects</h2>
 

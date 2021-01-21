@@ -104,13 +104,13 @@ public void AddAssemblyNamesAndTypes() {
 
 <h3 id="dlr-dynamic-binding-and-interoperability----a-very-quick-description">3.2.1 DLR Dynamic Binding and Interoperability -- a Very Quick Description</h3>
 
-Before explaining how Sympl fills the Sympl.Globals table with models of namespaces and types, you need to be familiar with how dynamic CallSites work. This is a brief, high-level description, but you can see the sites-binders-dynobj-interop.doc document on [www.codeplex.com/dlr](http://www.codeplex.com/dlr) for details of the concepts and mechanisms. CallSites are one of the top benefits of using the DLR. They are the basis of the DLR's fast dynamic method caching. They work together with DLR runtime binders and dynamic objects to enable languages and dynamic library objects to interoperate.
+Before explaining how Sympl fills the Sympl.Globals table with models of namespaces and types, you need to be familiar with how dynamic CallSites work. This is a brief, high-level description, but you can see the sites-binders-dynobj-interop.doc document on www.codeplex.com/dlr for details of the concepts and mechanisms. CallSites are one of the top benefits of using the DLR. They are the basis of the DLR's fast dynamic method caching. They work together with DLR runtime binders and dynamic objects to enable languages and dynamic library objects to interoperate.
 
 The DLR has a notion of dynamic operations that extend beyond method invocation. There are twelve kinds of operations designed for interoperability, such as GetMember, SetMember, InvokeMember, GetIndex, Invoke, CreateInstance, BinaryOperation, UnaryOperation, and so on. See diagram below. They require runtime binding to inform a CallSite how to perform an operation given the object or objects that flowed into the call site. Binders represent the language that owns the CallSite as well as metadata to inform the binding search. Binders return a sort of rule, entailing how to perform the operation and when the particular implementation is appropriate to use. CallSites can cache these rules to avoid future binding searches on successive executions of the CallSite.
 
 ![binders](media/image1.jpeg)
 
-Figure : Twelve Standard Interop Binders
+Figure 1: Twelve Standard Interop Binders
 
 This is the basic flow end-to-end for binding a dynamic operation in the DLR when there is a cache miss (explained in detail below):
 
@@ -198,7 +198,7 @@ It is worth noting that using CallSites and binders in this way means you are no
 
 <h3 id="typemodels-and-typemodelmetaobjects">3.2.3 TypeModels and TypeModelMetaObjects</h3>
 
-As stated above, Sympl needs to wrap RuntimeType objects in Sympl's TypeModel objects. If Sympl did not do this, then Sympl code such as "console.writeline" (from the Hello Word snippet) would flow a RuntimeType object into an InvokeMember call site. Then Sympl's SymplInvokeMemberBinder would look for the member "writeline" on the type RuntimeType. When Sympl wraps RuntimeType objects, then instances of TypeModel flow into the call site, and a TypeModelMetaObject actually handles the binding as described in section .
+As stated above, Sympl needs to wrap RuntimeType objects in Sympl's TypeModel objects. If Sympl did not do this, then Sympl code such as "console.writeline" (from the Hello Word snippet) would flow a RuntimeType object into an InvokeMember call site. Then Sympl's SymplInvokeMemberBinder would look for the member "writeline" on the type RuntimeType. When Sympl wraps RuntimeType objects, then instances of TypeModel flow into the call site, and a TypeModelMetaObject actually handles the binding as described in section 3.2.1.
 
 TypeModel is very simple. Each instance holds a RuntimeType object. The only functionality of the TypeModel as an IDynamicMetaObjectProvider is to return a DynamicMetaObject that represents the TypeModel instance during the binding process in the previous section. This is most of the class from sympl.cs:
 
@@ -300,7 +300,7 @@ public static Expression EnsureObjectResult (Expression expr) {
         return Expression.Convert(expr, typeof(object));
 ```
 
-If BindInvokeMember finds no matching MethodInfos, then it falls back to the binder passed to it in the parameters. Falling back is explained at a high level in section . In this particular case, Sympl generates an expression to represent fetching the underlying RuntimeType from the TypeModel object by calling GetRuntimeTypeMoFromModel. This helper function is explained further when we describe how Sympl supports instantiating arrays and generic types. For now, you can see that since Sympl falls back to the binder, which might not be a Sympl binder. Sympl needs to pass a .NET Type representation since the binder may not know what a TypeModel is.
+If BindInvokeMember finds no matching MethodInfos, then it falls back to the binder passed to it in the parameters. Falling back is explained at a high level in section 3.2.1. In this particular case, Sympl generates an expression to represent fetching the underlying RuntimeType from the TypeModel object by calling GetRuntimeTypeMoFromModel. This helper function is explained further when we describe how Sympl supports instantiating arrays and generic types. For now, you can see that since Sympl falls back to the binder, which might not be a Sympl binder. Sympl needs to pass a .NET Type representation since the binder may not know what a TypeModel is.
 
 <h3 id="typemodelmetaobject.bindinvokemember----restrictions-and-conversions">3.2.5 TypeModelMetaObject.BindInvokeMember -- Restrictions and Conversions</h3>
 
@@ -377,7 +377,7 @@ Note, with TypeModelMetaObject.BindInvokeMember implemented, we can define a Sym
 
 <h2 id="import-code-generation-and-file-module-scopes">3.3 Import Code Generation and File Module Scopes</h2>
 
-Sympl adopts a pythonic model of file namespaces. Each file implicitly has its own globals scope. Importing another file's code creates a global name in the current global scope that is bound to the object representing the other file's global scope. There is support for member access to get to the other file's globals. You can also import names from the host provided Sympl.Globals table and .NET namespaces. Doing so binds file globals to the host objects or objects representing .NET namespaces and types. See section for more details.
+Sympl adopts a pythonic model of file namespaces. Each file implicitly has its own globals scope. Importing another file's code creates a global name in the current global scope that is bound to the object representing the other file's global scope. There is support for member access to get to the other file's globals. You can also import names from the host provided Sympl.Globals table and .NET namespaces. Doing so binds file globals to the host objects or objects representing .NET namespaces and types. See section 21.6 for more details.
 
 Sympl leverages the DLR's ExpandoObjects to represent file scopes. When Sympl compiles a free reference identifier, it emits an Expression Tree with a DynamicExpression that performs a GetMember operation on the ExpandoObject for the file's globals. The ExpandoObject's meta-object computes the runtime binding for Sympl and returns the value of the variable. There is no implicit chain of global scopes. The look up does NOT continue to the host globals table. Sympl could do this easily with a runtime helper function that first looked in the file's globals and then the Sympl.Globals.
 
@@ -414,7 +414,7 @@ Emitting the code to call SymplImport in the IronPython implementation is not th
 
 We've looked at most of the infrastructure needed for Hello Word at this point, ignoring lexical scanning and parsing. So far, Sympl has a runtime instance object, reflection modeling, dynamic object helpers, a TypeModel meta-object with InvokeMember binding logic, code generation for Import, and runtime helpers for Import and binding. Once Sympl can parse and emit code in general for keyword forms, function calls, and dotted expressions, Hello Word will be fully functional with no short cuts to be filled in later.
 
-It is worth a quick comment on Sympl's parser design and syntax for calls. Following an open parenthesis is either a keyword (import, new, elt, set, +, \*, etc.) or an expression that results in a callable object. If the first token after the parenthesis is a keyword, Sympl dispatches to a keyword form analysis function, such as shown above for Import. If following the parenthesis is a dotted expression, Sympl analyzes this into a series of dynamic GetMember and InvokeMember operations. Since the Sympl syntactic form is a parenthesis, and the dotted expression is the first sub expression, it must result in an InvokeMember operation. In any other position, the dotted expression would result in a GetMember operation. If the expression following the parenthesis is not a keyword or dotted expression, Sympl analyzes the expression to get a callable object. Sympl emits a dynamic expression with an Invoke operation on the callable object. For more information on function calls see section .
+It is worth a quick comment on Sympl's parser design and syntax for calls. Following an open parenthesis is either a keyword (import, new, elt, set, +, \*, etc.) or an expression that results in a callable object. If the first token after the parenthesis is a keyword, Sympl dispatches to a keyword form analysis function, such as shown above for Import. If following the parenthesis is a dotted expression, Sympl analyzes this into a series of dynamic GetMember and InvokeMember operations. Since the Sympl syntactic form is a parenthesis, and the dotted expression is the first sub expression, it must result in an InvokeMember operation. In any other position, the dotted expression would result in a GetMember operation. If the expression following the parenthesis is not a keyword or dotted expression, Sympl analyzes the expression to get a callable object. Sympl emits a dynamic expression with an Invoke operation on the callable object. For more information on function calls see section 21.4.1.
 
 <h3 id="analyzing-function-and-member-invocations">3.4.1 Analyzing Function and Member Invocations</h3>
 
@@ -473,7 +473,7 @@ new SymplInvokeBinder(callinfo)
 new SymplInvokeMemberBinder(name, callinfo)
 ```
 
-The Get... methods produce canonical binders, a single binder instance used on every call site with the same metadata. This is important for DLR L2 caching of rules. See section for how Sympl returns canonical binders and why, and see sites-binders-dynobj-interop.doc for more details on CallSite rule caching. The second point is that right now the SymplInvokeMemberBinder doesn't do any work, other than convey the identifier name and CallInfo as metadata. We know the TypeModelMetaObject will provide the implementation at runtime for how to invoke "console.writeline". Execution will never get to the Invoke DynamicExpression until later, see section .
+The Get... methods produce canonical binders, a single binder instance used on every call site with the same metadata. This is important for DLR L2 caching of rules. See section 18 for how Sympl returns canonical binders and why, and see sites-binders-dynobj-interop.doc for more details on CallSite rule caching. The second point is that right now the SymplInvokeMemberBinder doesn't do any work, other than convey the identifier name and CallInfo as metadata. We know the TypeModelMetaObject will provide the implementation at runtime for how to invoke "console.writeline". Execution will never get to the Invoke DynamicExpression until later, see section 5.
 
 In Sympl, it doesn't matter what the expression is that produces the callable object for a function call. It could be an **IF**, a **loop**, **try**, etc. There are two big reasons Sympl uses a dynamic expression rather than an Expression.Call or Expression.Invoke node. Sympl may need to do some argument conversions or general binding logic (such as converting TypeModel objects to RuntimeType objects), and it is good to isolate that to the binder. Also, using a DynamicExpression supports language and library interoperability. For example, an IronPython callable object might flow into the call site for the dynamic expression, and an IronPython DynamicMetaObject would handle the Invoke operation.
 
@@ -523,7 +523,7 @@ AnalyzeDottedExpr just loops over all the sub expressions and turns them into dy
 
 In the Hello World end-to-end example, the function call to "system.console.writeline" will turn into three operations. The first is a file scope global lookup for "system". The second is a GetMember operation for "console" on the ExpandoObject modeling the System namespace. Then the function call is actually an InvokeMember operation of "writeline" on the Console TypeModel.
 
-As stated above SymplInvokeMemberBinder doesn't do any real work now, other than convey the identifier name and CallInfo as metadata. Execution will never get to the Invoke DynamicExpression in AnalyzeFunCallExpr until later, see section .
+As stated above SymplInvokeMemberBinder doesn't do any real work now, other than convey the identifier name and CallInfo as metadata. Execution will never get to the Invoke DynamicExpression in AnalyzeFunCallExpr until later, see section 5.
 
 <h2 id="identifier-and-file-globals-code-generation">3.5 Identifier and File Globals Code Generation</h2>
 
@@ -553,11 +553,11 @@ public static Expression AnalyzeIdExpr(SymplIdExpr expr,
 
 Initially this function only contained the code in the else branch, which is where it handles lexicals and globals. FindIdDef does the AnalysisScope chain search. If it returns a ParameterExpression, then that's the result of AnalyzeIdExpr. Otherwise, AnalyzeIdExpr emits a GetMember DynamicExpression operation. The target object is a file's module object, which gets bound at run time to a variable represented by a ParameterExpression. The ParameterExpression is stored in the AnalysisScope representing the file's top level code. Since the file scope is an ExpandoObject, it's DynamicMetaObject will handle the name lookup for the call site that the DynamicExpression compile into.
 
-The SymplGetMemberBinder at this point just conveys the metadata of the name and that the look up is case-INsensitive. The Hello World end-to-end scenario doesn't need the binder to do any real binding. Later when Sympl adds the ability to create instances of .NET types, then we'll look at SymplGetMemberBinder (see section ).
+The SymplGetMemberBinder at this point just conveys the metadata of the name and that the look up is case-INsensitive. The Hello World end-to-end scenario doesn't need the binder to do any real binding. Later when Sympl adds the ability to create instances of .NET types, then we'll look at SymplGetMemberBinder (see section 11).
 
 <h2 id="sympl.executefile-and-finally-running-code">3.6 Sympl.ExecuteFile and Finally Running Code</h2>
 
-There's been a long row to hoe getting real infrastructure for the Hello World example. See the list in section . There's a very good foundation to Sympl now, and a lot of DLR concepts have been exposed. Now it is time to wrap all that up and make it work end-to-end from instantiating a Sympl runtime, to compiling test.sympl (just the first two lines), to running the code.
+There's been a long row to hoe getting real infrastructure for the Hello World example. See the list in section 3. There's a very good foundation to Sympl now, and a lot of DLR concepts have been exposed. Now it is time to wrap all that up and make it work end-to-end from instantiating a Sympl runtime, to compiling test.sympl (just the first two lines), to running the code.
 
 At a high level, program.cs calls Sympl.ExecuteFile on the test.sympl file. Sympl parses all the expressions in the file, wraps them in a LambdaExpression, compiles it, and then executes it. Let's look at the code before we walk through it:
 

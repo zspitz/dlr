@@ -1553,7 +1553,7 @@ public IList<string> GetCallSignatures(ObjectHandle obj)
 
 <h3 id="dooperation-methods">4.6.23 DoOperation\* Methods</h3>
 
-These methods perform the specified unary and binary operations on the supplied target and other objects, returning the results. If the specified operator cannot be performed on the object or objects supplied, then these throw an exception. See the [Expression Tree spec](http://www.codeplex.com/dlr/Wiki/View.aspx?title=Docs%20and%20specs&referringTitle=Home) for information on the expected semantics of the operators.
+These methods perform the specified unary and binary operations on the supplied target and other objects, returning the results. If the specified operator cannot be performed on the object or objects supplied, then these throw an exception. See the Expression Tree spec for information on the expected semantics of the operators.
 
 The Hosting APIs share the ExpressionType enum with Expression Trees and the dynamic object interop protocol to specify what operation to perform. Most values overlap making a distinct enum just another concept to learn, but this enum contains values for operations used in Expression Trees that do not make sense when passed to this method (for example, Block, Try, and Throw). These methods pass the operation to the language that created the ObjectOperations object, and the language handles the ExpressionType as it sees fit. For example, IronPython only supports the following ExpressionType values:
 

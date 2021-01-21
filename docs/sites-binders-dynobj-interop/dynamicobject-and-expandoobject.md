@@ -50,4 +50,4 @@ The **ExpandoObject** class is an efficient implementation of a dynamic property
 
 <h2 id="further-reading">4.3 Further Reading</h2>
 
-If you’d like to learn more about DynamicObject and ExpandoObject, check out the accompanying Getting Started with the DLR for Library Authors on the [DLR CodePlex site](http://www.codeplex.com/dlr) under Specs and Docs. That document covers DynamicObject and ExpandoObject at a deeper level and includes an example of using DynamicMetaObject to optimize a dynamic library.
+If you’d like to learn more about DynamicObject and ExpandoObject, check out the accompanying Getting Started with the DLR for Library Authors on the DLR CodePlex site under Specs and Docs. That document covers DynamicObject and ExpandoObject at a deeper level and includes an example of using DynamicMetaObject to optimize a dynamic library.

@@ -44,9 +44,13 @@ There are three basic mechanisms for partially isolating state for code executio
 
 The following diagram shows conceptually how hosts relate to ScriptRuntimes and other hosting objects:
 
+![](media/image2.svg)
+
 It is important for the DLR to support distinct ScriptRuntimes within .NET's AppDomains for a couple of reasons. First, key customers betting on us require the lighter-weight isolation than what AppDomains provide. Second, consider two independent .NET components loading as extensions to an application. Each component wants to provide scripting support to end users. The components should be able to do so without having to worry about how they might clash with other script-enabled components. Multiple ScriptRuntimes also makes the main application's job easier since it does not have to provide a model for independent components getting access to and coordinating code executions around a central ScriptRuntime.
 
 There's a rich set of ways to execute code. Our goal is to strike a balance between convenient execution methods on various objects and keeping redundancy across the types to a minimum. The diagram below shows how to navigate to the key objects for running code. The Sections on Levels One and Level Two below talk about types in this diagram (green being Level One types):
+
+![](media/image3.svg)
 
 <h2 id="level-one----script-runtimes-scopes-and-executing-files-and-snippets">3.2 Level One -- Script Runtimes, Scopes, and Executing Files and Snippets</h2>
 

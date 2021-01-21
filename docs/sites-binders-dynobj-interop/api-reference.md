@@ -73,7 +73,7 @@ The great majority of DynamicMetaObjects will have a value, either because they 
 
 An example is the intermediate result of a compound operation such as InvokeMember. A DynamicMetaObject that prefers to bind InvokeMember operations as a GetMember followed by a separate Invoke will likely bind the GetMember half of an InvokeMember operation and produce a new MO representing this intermediate result. The the original MO would use FallbackInvoke to have the language binder bind the Invoke operation on the result. In this case, you should not provide a value to the new intermediate result MetaObject produced by the GetMember operation, as this could allow the source language’s binder to perform its own Invoke binding against the static .NET type used for the intermediate object. Instead, omit the value.
 
-NOTE, binders must be careful to detect DynamicMetaObjects passed with HasValue== False and call the binder's Defer method to produce a nested CallSite. The nested CallSite in the case above would have an InvokeBinder, and the nesting allows the arguments to all get evaluated before flowing into the new CallSite. Then the InvokeBinder will see all MOs with actual values so that it can perform a proper binding. Without the Defer call, the binder and original DynamicMetaObject described in the previous paragraph will infinitely loop in the original CallSite. There is a concrete example of this explained in the sympl.doc file on [www.codeplex.com/dlr](http://www.codeplex.com/dlr) (see the "Documents and Specs" link on the home page).
+NOTE, binders must be careful to detect DynamicMetaObjects passed with HasValue== False and call the binder's Defer method to produce a nested CallSite. The nested CallSite in the case above would have an InvokeBinder, and the nesting allows the arguments to all get evaluated before flowing into the new CallSite. Then the InvokeBinder will see all MOs with actual values so that it can perform a proper binding. Without the Defer call, the binder and original DynamicMetaObject described in the previous paragraph will infinitely loop in the original CallSite. There is a concrete example of this explained in the sympl.doc file on www.codeplex.com/dlr (see the "Documents and Specs" link on the home page).
 
 <h3 id="limittype-property">6.1.6 LimitType Property</h3>
 
@@ -204,7 +204,7 @@ if (System.Dynamic.ComBinder.TryBindGetMember
 }
 ```
 
-For more information on the members of ComBinder, you may download the full DLR sources, including the COM binder at the [DLR CodePlex site](http://www.codeplex.com/dlr).
+For more information on the members of ComBinder, you may download the full DLR sources, including the COM binder at the DLR CodePlex site.
 
 <h3 id="class-summary-3">6.4.4 Class Summary</h3>
 
@@ -699,7 +699,7 @@ public class StrongBox<T> {
 
 The simplest way to give your own class custom dynamic dispatch semantics is to derive from the DynamicObject base class. While ExpandoObject only dynamically adds and removes members, DynamicObject lets your objects fully participate in the dynamic object interoperability protocol. There are several abstract operations users of your object can then request of it dynamically, such as getting a member, setting a member, invoking a member on the object, indexing the object, invoking the object itself, or performing standard operations such as addition, multiplication, etc. DynamicObject lets you choose which operations to implement, and lets you do it much more easily than a language implementer.
 
-For more information about DynamicObject, check out the accompanying Getting Started with the DLR for Library Authors on the [DLR CodePlex site](http://www.codeplex.com/dlr) under Specs and Docs.
+For more information about DynamicObject, check out the accompanying Getting Started with the DLR for Library Authors on the DLR CodePlex site under Specs and Docs.
 
 <h3 id="class-summary-20">6.21.1 Class Summary</h3>
 
@@ -738,7 +738,7 @@ public class DynamicObject : IDynamicMetaObjectProvider {
 
 The ExpandoObject class is an efficient implementation of a dynamic property bag provided for you by the DLR. It allows you to dynamically retrieve and set its member values, adding new members per instance as needed at runtime, as typically expected of dynamic objects in languages such as Python and JScript. Instances of ExpandoObject support consumers in writing code that naturally accesses these dynamic members with dot notation (o.foo) as if they were static members, instead of something more heavyweight such as o.GetAttribute("foo").
 
-For more information about ExpandoObject, check out the accompanying Getting Started with the DLR for Library Authors on the [DLR CodePlex site](http://www.codeplex.com/dlr) under Specs and Docs.
+For more information about ExpandoObject, check out the accompanying Getting Started with the DLR for Library Authors on the DLR CodePlex site under Specs and Docs.
 
 <h3 id="class-summary-21">6.22.1 Class Summary</h3>
 

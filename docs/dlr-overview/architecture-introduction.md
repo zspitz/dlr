@@ -1,6 +1,6 @@
 # 2 Architecture Introduction
 
-Microsoft is building the Dynamic Language Runtime (DLR), which adds to the CLR a set of services designed specifically for the needs of dynamic languages. The CLR has good support for dynamic languages already, and IronPython-1.0 is a good example ([www.codeplex.com/ironpython](http://www.codeplex.com/ironpython)). The DLR adds functionality to make it easier to port and use dynamic languages on the CLR. The DLR key pieces are:
+Microsoft is building the Dynamic Language Runtime (DLR), which adds to the CLR a set of services designed specifically for the needs of dynamic languages. The CLR has good support for dynamic languages already, and IronPython-1.0 is a good example (www.codeplex.com/ironpython). The DLR adds functionality to make it easier to port and use dynamic languages on the CLR. The DLR key pieces are:
 
 - common hosting model
 

@@ -92,6 +92,6 @@ Sometimes we've added node types because we know in V-next+1 we'll try to achiev
 
 <h3 id="non-goal-design-time-language-models">1.3.4 Non-goal: Design Time Language Models</h3>
 
-ETs have a mission that is distinct from Design Time Language Models (for example, VS Code Model). See section for several reasons or ways in which these two kinds of models are the same model.
+ETs have a mission that is distinct from Design Time Language Models (for example, VS Code Model). See section 1.1 for several reasons or ways in which these two kinds of models are the same model.
 
 We can provide a smooth transition from DTLMs to ETs as well as some interoperability. Using the reducible node mechanism in ETs v2, the DTLM types could all derive from Expression. They could have all the special properties and hook they need into the design time environment of a tool (project models, text models in editors, etc.). However, when a DTLM tree was complete, or error free, those node types could reduce to common ET v2 nodes representing a correct program's semantics. The reduced tree could have a very similar shape to the DTLM tree.

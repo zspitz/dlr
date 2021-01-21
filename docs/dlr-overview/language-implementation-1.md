@@ -258,7 +258,7 @@ ETs avoid needing a Y-Combinator expression by simply using assignment. An ET ca
 
 <h3 id="generators-codeplex-only">5.1.8 Generators (Codeplex only)</h3>
 
-Cut from .NET 4.0, available only on [www.codeplex.com/dlr](http://www.codeplex.com/dlr) .
+Cut from .NET 4.0, available only on www.codeplex.com/dlr .
 
 Generators are first-class concepts in the ET v2 model. However, they are only available in the DLR's Codeplex project. The code can be re-used readily and ships in IronPython and IronRuby. The basic model is that you create the LambdaExpression with your enumerable return type and then use a GeneratorExpression inside the lambda to get the yielding state machine. The outer lambda can do any argument validation needed, and the GeneratorExpression reduces to code that closes over the lambda's variables. The body of the GeneratorExpression can have YieldExpressions in it. The generator node reduces to an ET that open codes the state machine necessary for returning values and re-entering the state machine to re-establish any dynamic context (try-catch, etc.).
 

@@ -34,7 +34,7 @@ Silverlight has a high bar for compatibility between its releases. Due to code s
 
 - Improvements to ToString results are reverted in Quirks Mode.
 
-- The Quote factory method allows calls in Quirks Mode that resulted in trees that caused errors as explained in section .
+- The Quote factory method allows calls in Quirks Mode that resulted in trees that caused errors as explained in section 4.4.42.
 
 - The Call factory method does not throw an error when you pass a 'this' argument to a static method in Quirks Mode.
 
@@ -1407,7 +1407,7 @@ Each block also has a collection, possibly empty, of variables whose scope is th
 
 Some languages have strong lexical semantics for unique binding of variables. For example, in Common Lisp or Scheme, each iteration around a loop or any basic block of code creates unique bindings for variables introduced in those basic blocks. Thus, returning a lambda would create unique closures environments for each iteration. Some languages, such as Python and F\#, move all variables to the scope of their containing function. ETs v2 supports both models, depending on where you create the BlockExpression in the ET and list variables.
 
-For the stronger lexical model, for example with the loop, place the BlockExpression inside the loop body and list variables there. Putting the Block Expression outside the loop or at the start of the function ensures the variables have one binding across iterations of the loop. These effects are usually only observable when closing over lexical environments, and ETs v2 guarantees the unique binding semantics per loop iteration in this case. If you do not close over any of the Block's variables, and you do not explicitly assign to them before referencing them, then the behavior or observability of unique bindings is undefined. See section for an example.
+For the stronger lexical model, for example with the loop, place the BlockExpression inside the loop body and list variables there. Putting the Block Expression outside the loop or at the start of the function ensures the variables have one binding across iterations of the loop. These effects are usually only observable when closing over lexical environments, and ETs v2 guarantees the unique binding semantics per loop iteration in this case. If you do not close over any of the Block's variables, and you do not explicitly assign to them before referencing them, then the behavior or observability of unique bindings is undefined. See section 4.22.1.3 for an example.
 
 **Post CLR 4.0 (remove IsByRef error check):** If any of the ParameterExpressions representing the local variables has IsByRef set to True, then you must initialize them with an AssignRef BinaryExpression node. Otherwise, if the Body of the Block references the variable, or the variable appears as the Left expression of an Assign BinaryExpression node, there will be compile time error (or possibly an error when the code executes).
 
@@ -1427,7 +1427,7 @@ In DynamicExpressions the expected semantics are to ask the object to return a u
 
 The DynamicExpression node uses this node kind. It represents an operation that must be bound at runtime of the expression tree. The semantics is to create a DLR CallSite for caching of implementations of the operation given the different kinds of objects passed to the CallSite during the program's execution. The Dynamic node has a DLR CallSiteBinder that determines the exact semantics of the operation given the runtime operands. The binder encapsulates the language semantics for the creator of the node, as well as any payload meta data that informs the binder how to compute an implementation of the operation at runtime.
 
-For more on expected semantics, see other node kinds' statements as to their semantics in DynamicExpression nodes. You might also see the sub classes of DynamicMetaDataBinder and language documentation on their dynamic semantics. See the documents at on the [DLR Codeplex](http://www.codeplex.com/dlr/Wiki/View.aspx?title=Docs%20and%20specs&referringTitle=Home) site, sites-binders-dynobj-interop.doc and library-authors-introduction.doc.
+For more on expected semantics, see other node kinds' statements as to their semantics in DynamicExpression nodes. You might also see the sub classes of DynamicMetaDataBinder and language documentation on their dynamic semantics. See the documents at on the DLR Codeplex site, sites-binders-dynobj-interop.doc and library-authors-introduction.doc.
 
 <h3 id="default">4.4.54 Default</h3>
 
@@ -1513,7 +1513,7 @@ LabelExpressions use this node kind. It represents an unstructured flow of contr
 
 A LabelTarget object identifies the Label's location. GotoExpressions refer to the same target object to designate that they jump to this LabelExpression location in the ET.
 
-The target has a Type property because Goto's can transfer control to a location with a value. The type allows factory methods and the ET compiler to verify static typing intent within the ET. See section for more information.
+The target has a Type property because Goto's can transfer control to a location with a value. The type allows factory methods and the ET compiler to verify static typing intent within the ET. See section 2.4 for more information.
 
 A Goto can optionally deliver a value to the LabelExpression's location. In case execution flows through the label in a structured way (not via a jump), it has a DefaltValue expression that provides the result of the LabelExpression. The label's location is AFTER the DefaultValue expression. If an unstructured flow of control lands at this LabelExpression's location, the GotoExpression provides the result for the LabelExpression.
 
@@ -1842,7 +1842,7 @@ The exceptions to the shape design are Coalesce and ...Assign node kinds. They t
 
 Operations on numeric types do not implicitly expand to 32bit integers.
 
-These nodes have many node kinds for the various operations they can support. See section for more details on the semantics of various node kinds used with BinaryExpressions.
+These nodes have many node kinds for the various operations they can support. See section 4.4 for more details on the semantics of various node kinds used with BinaryExpressions.
 
 <h3 id="class-summary-2">4.6.1 Class Summary</h3>
 
@@ -2429,7 +2429,7 @@ Expression and type must be non-null. The resulting TypeBinaryExpression has:
 
 This class represents a many kinds of operations such as basic arithmetic, side-effecting arithemetic, control flow, and so on. With only a couple of exceptions, all the operations fit the shape of having a single operand as their primary input.
 
-These nodes have many node kinds for the various operations they can support. See section for more details on the semantics of various node kinds used with UnaryExpressions.
+These nodes have many node kinds for the various operations they can support. See section 4.4 for more details on the semantics of various node kinds used with UnaryExpressions.
 
 <h3 id="class-summary-4">4.8.1 Class Summary</h3>
 
@@ -2607,7 +2607,7 @@ public static UnaryExpression PreIncrementAssign
     (Expression expression);
 ```
 
-See section for more information.
+See section 4.4 for more information.
 
 <h3 id="numeric-negation-and-plus-factory-methods">4.8.11 Numeric Negation and Plus Factory Methods</h3>
 
@@ -2779,7 +2779,7 @@ public static UnaryExpression Quote(Expression expression);
 
 The following is derived from the v1 spec ... with a correction to the constraint on the expression parameter and usage.
 
-It would be rare that an ET producer would need to use this factory or node kind. It exists with special semantics for use in LINQ v1 language features. In v-next+1 we'll consider a complete quasi-quoting model. See section for more information.
+It would be rare that an ET producer would need to use this factory or node kind. It exists with special semantics for use in LINQ v1 language features. In v-next+1 we'll consider a complete quasi-quoting model. See section 4.4.42 for more information.
 
 Expression must be non-null. Expression.Type must be Expression&lt;T&gt;, where T is a delegate type.
 
@@ -2927,7 +2927,7 @@ The automatic conversion to void for the last expression also provides a simple 
 
 Variables must be listed using ParameterExpressions as lexical variables in a BlockExpression to (in effect) define them in some sub tree. To reference a variable, you alias the ParameterExpression object used to define the variable. Note, while Parameter node references are what determine variable binding, you can declare the same Parameter object in nested BlockExpressions. The ET compiler resovles the references to the tightest containing Block that declares the Parameter.
 
-See section for more details on the semantics of BlockExpressions, especially for unique binding semantics and guarantees (for example, within a loop).
+See section 4.4.50 for more details on the semantics of BlockExpressions, especially for unique binding semantics and guarantees (for example, within a loop).
 
 <h3 id="class-summary-5">4.9.1 Class Summary</h3>
 
@@ -3069,7 +3069,7 @@ The resulting ConstantExpression has:
 
 <h2 id="conditionalexpression-class">4.11 ConditionalExpression Class</h2>
 
-This class represents an if-then-else for value. The node kind is Conditional. See section for more details on the semantics.
+This class represents an if-then-else for value. The node kind is Conditional. See section 4.4 for more details on the semantics.
 
 <h3 id="class-summary-7">4.11.1 Class Summary</h3>
 
@@ -3153,7 +3153,7 @@ The resulting ConditionalExpression has:
 
 This class represents a dynamic operation that must be bound at runtime of the expression tree. The semantics is to create a DLR CallSite for caching of implementations of the operation given the different kinds of objects passed to the CallSite during the program's execution. The Dynamic node has a DLR CallSiteBinder that determines the exact semantics of the operation given the runtime operands. The binder encapsulates the language semantics for the creator of the node, as well as any payload meta data that informs the binder how to compute an implementation of the operation at runtime.
 
-For more on expected semantics, see other node kinds' statements as to their semantics in DynamicExpression nodes. You might also see the sub classes of DynamicMetaDataBinder and language documentation on their dynamic semantics. See the documents at on the [DLR Codeplex](http://www.codeplex.com/dlr/Wiki/View.aspx?title=Docs%20and%20specs&referringTitle=Home) site, sites-binders-dynobj-interop.doc and library-authors-introduction.doc.
+For more on expected semantics, see other node kinds' statements as to their semantics in DynamicExpression nodes. You might also see the sub classes of DynamicMetaDataBinder and language documentation on their dynamic semantics. See the documents at on the DLR Codeplex site, sites-binders-dynobj-interop.doc and library-authors-introduction.doc.
 
 To enable ET consumers to meta-program with ETs, languages should provide and document factories for their binders. For example, if you are rewriting a static operation into a dynamic one, or breaking a dynamic operation into two sub operations, you'll need to call the Expression.Dynamic factory. You'll need a CallSiteBinder from the language that captures the semantics you want, and you'll need to supply the binder with the appropriate payload meta data it needs to compute how to perform the operation at runtime.
 
@@ -3359,7 +3359,7 @@ public static DebugInfoExpression ClearDebugInfo
 
 <h2 id="symboldocumentinfo-class">4.15 SymbolDocumentInfo Class</h2>
 
-This class represents document information for debugging sequence point data. See DebugInfoExpression and <http://msdn.microsoft.com/en-us/library/system.diagnostics.symbolstore.isymboldocument.aspx> .
+This class represents document information for debugging sequence point data. See DebugInfoExpression and http://msdn.microsoft.com/en-us/library/system.diagnostics.symbolstore.isymboldocument.aspx .
 
 <h3 id="class-summary-11">4.15.1 Class Summary</h3>
 
@@ -3428,7 +3428,7 @@ public static SymbolDocumentInfo SymbolDocument
 
 If documentType is not supplied, it defaults to the guid indicating text. If language or languageVendor are not supplied, they default to Guid.Empty.
 
-See MSDN for more information on the members/parameters: and <http://msdn.microsoft.com/en-us/library/system.diagnostics.symbolstore.isymboldocument.aspx> .
+See MSDN for more information on the members/parameters: and http://msdn.microsoft.com/en-us/library/system.diagnostics.symbolstore.isymboldocument.aspx .
 
 <h2 id="tryexpression-class">4.16 TryExpression Class</h2>
 
@@ -3641,7 +3641,7 @@ If you want to invoke a callable object, such as applying a delegate or LambdaEx
 
 There is a factory method that uses this node type to represent fetching an element from a multi-dimensional array (still has node kind Call). It will be obsolete in a future version. You should use IndexExpression to get and set array elements.
 
-See section for more details on the semantics of the Call node kind.
+See section 4.4 for more details on the semantics of the Call node kind.
 
 <h3 id="class-summary-14">4.18.1 Class Summary</h3>
 
@@ -3796,7 +3796,7 @@ public sealed class ComplexMethodCallExpression : MethodCallExpression {
 
 <h2 id="invocationexpression-class">4.20 InvocationExpression Class</h2>
 
-This class represents invoking callable objects. These nodes use the Invoke node kind. See section for more details on the semantics.
+This class represents invoking callable objects. These nodes use the Invoke node kind. See section 4.4 for more details on the semantics.
 
 <h3 id="class-summary-16">4.20.1 Class Summary</h3>
 
@@ -4354,7 +4354,7 @@ The semantics of the LabelTarget chosen as the destination is lexically scoped i
 
 The Goto can optionally deliver a value to the location, as expressed by a non-null Expression property. If this property is non-null, then the expression Type property must represent a type that is reference assignable to the type represented by Target.Type. However, if Target.Type is void, the GotoExpression.Expression.Type can represent anything since the ET compiler will automatically convert the result to void or squelch the value.
 
-See section for more details on the semantics of GotoExpression, as well as the introductory section on iterations, lexical exits, and gotos ().
+See section 4.4 for more details on the semantics of GotoExpression, as well as the introductory section on iterations, lexical exits, and gotos (2.4).
 
 <h3 id="class-summary-23">4.27.1 Class Summary</h3>
 
@@ -4493,13 +4493,13 @@ This class represents an unstructured flow of control target location. It has no
 
 The expression points to a LabelTarget. GotoExpressions refer to the same target object to designate that they jump to this LabelExpression location in the ET. The LabelTarget enables the ET to be acyclic by avoiding having Goto nodes point directly to Label nodes. Rewriting ETs behaves better regarding with LabelExpression identity when the LabelTarget object is distinct due to changes not propagating as far and forcing more rewrites via GotoExpressions.
 
-The target has a Type property because Goto's can transfer control to a location with a value. The type allows factory methods and the ET compiler to verify static typing intent within the ET. See section for more information.
+The target has a Type property because Goto's can transfer control to a location with a value. The type allows factory methods and the ET compiler to verify static typing intent within the ET. See section 2.4 for more information.
 
 A Goto can optionally deliver a value to the LabelExpression's location. In case execution flows through the label in a structured way (not via a jump), it has a DefaltValue expression that provides the result of the LabelExpression. The label's location is AFTER the DefaultValue expression. If an unstructured flow of control lands at this LabelExpression's location, the GotoExpression provides the result for the LabelExpression.
 
 The LabelExpression.Type property gets its value from Target.Type. Any GotoExpression that references the same Target must have a Type property that represents a type that is reference assignable to the type represented by Target.Type. There are two exceptions, see the factory method documentation for an explanation.
 
-See section for more details on the semantics of GotoExpression and LabelExpression, as well as the introductory section on iterations, lexical exits, and gotos ().
+See section 4.4 for more details on the semantics of GotoExpression and LabelExpression, as well as the introductory section on iterations, lexical exits, and gotos (2.4).
 
 <h3 id="example">4.29.1 Example</h3>
 
@@ -4587,7 +4587,7 @@ There are two special cases the factory handles when defaultValue's Type propert
 
 This class represents the identity of a LabelExpression to which GotoExpressions refer that want to jump to that LabelExpression. The LabelTarget enables the ET to be acyclic by avoiding having Goto nodes point directly to Label nodes. Rewriting ETs behaves better regarding with LabelExpression identity when the LabelTarget object is distinct due to changes not propagating as far and forcing more rewrites via GotoExpressions.
 
-The target has a Type property because Goto's can transfer control to a location with a value. The type allows factory methods and the ET compiler to verify static typing intent within the ET. See section for more information.
+The target has a Type property because Goto's can transfer control to a location with a value. The type allows factory methods and the ET compiler to verify static typing intent within the ET. See section 2.4 for more information.
 
 <h3 id="class-summary-25">4.30.1 Class Summary</h3>
 
@@ -5942,7 +5942,7 @@ object this[int index] { get; set; }
 
 <h2 id="switchexpression-class">4.48 SwitchExpression Class</h2>
 
-This class represents a switch or select expression, where possible cases are considered to find a match to a condition value. These nodes use the Switch node kind. Below are summary semantics, but see section for more details on the semantics of the Switch node kind.
+This class represents a switch or select expression, where possible cases are considered to find a match to a condition value. These nodes use the Switch node kind. Below are summary semantics, but see section 4.4 for more details on the semantics of the Switch node kind.
 
 These sorts of constructs vary widely across languages (kinds of values you can select over, whether cases can be merged, whether cases fall through to one another, how default cases are handled, etc. SwitchExpression neither matches C\# nor VB exactly, but it has a nice simplicity that supports many uses in those languages.
 
@@ -6382,7 +6382,7 @@ public sealed class GlobalVariableExpression : Expression {
 
 <h2 id="post-clr-4.0----generatorexpression">4.52 POST CLR 4.0 -- GeneratorExpression</h2>
 
-This type models code that can contain YieldExpressions. This is not shipping in CLR 4.0 and is only available on [www.codeplex.com/dlr](http://www.codeplex.com/dlr) . This node reduces by generating an ET that embodies the state machine needed to return values, re-enter the generator, and re-establish any dynamic context such as try-catch's.
+This type models code that can contain YieldExpressions. This is not shipping in CLR 4.0 and is only available on www.codeplex.com/dlr . This node reduces by generating an ET that embodies the state machine needed to return values, re-enter the generator, and re-establish any dynamic context such as try-catch's.
 
 This node's kind is Extension.
 

@@ -54,7 +54,7 @@ Sympl has lambda keyword forms for first class functions. These are just like de
 
 As mentioned previously, closures are automatic with Expression Trees. Any uses references to ParameterExpressions that were established as lambda parameters or Block variables outside of the referencing lambda get lifted to closure environments as needed.
 
-The code for lambda expression is AnalyzeLambdaExpr in etgen.cs. It just calls the helper method used by AnalyzeDefunExpr discussed in section .
+The code for lambda expression is AnalyzeLambdaExpr in etgen.cs. It just calls the helper method used by AnalyzeDefunExpr discussed in section 5.
 
 <h2 id="conditional-if-expressions">7.3 Conditional (IF) Expressions</h2>
 
@@ -145,7 +145,7 @@ There's not much to explain further since It is a pretty direct implementation o
 
 <h2 id="loop-expressions">7.5 Loop Expressions</h2>
 
-Adding loops is almost straightforward translations to Expression Trees. Sympl only has one kind of loop. It repeats forever until the code calls the **break** keyword form. It would be trivial to add **continue** since it is directly supported by Expression Trees like **break**, but demonstrating **break** is enough to show you what to do. For a whileloop and foreach example, see the Expression Tree spec on [www.codeplex.com/dlr](http://www.codeplex.com/dlr) .
+Adding loops is almost straightforward translations to Expression Trees. Sympl only has one kind of loop. It repeats forever until the code calls the **break** keyword form. It would be trivial to add **continue** since it is directly supported by Expression Trees like **break**, but demonstrating **break** is enough to show you what to do. For a whileloop and foreach example, see the Expression Tree spec on www.codeplex.com/dlr .
 
 Here's the code for AnalyzeLoopExpr and AnalyzeBreakExpr from etgen.cs, which are described further below:
 

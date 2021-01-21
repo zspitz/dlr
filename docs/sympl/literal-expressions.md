@@ -15,7 +15,7 @@ if (expr is SymplLiteralExpr) {
 
 Literal keyword constants are nil, false, and true. Sympl includes nil for its built-in lists, and it includes true and false for easier .NET interoperability. Sympl could do more work in its runtime binders to map nil to false for Boolean parameters, and map anything else to true for Boolean parameters. Adding this to Sympl didn't seem to add any new lessons given the TypeModel mappings binders do.
 
-These literal keywords come out of the parser as SymplIdExprs. Section discussed part of AnalyzeIdExpr from etgen.cs, but it omitted the literal keywords branch shown here:
+These literal keywords come out of the parser as SymplIdExprs. Section 3.5 discussed part of AnalyzeIdExpr from etgen.cs, but it omitted the literal keywords branch shown here:
 
 ``` csharp
 public static Expression AnalyzeIdExpr(SymplIdExpr expr,

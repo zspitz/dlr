@@ -40,7 +40,7 @@ The following sections provide an overview of the DLR, its overall architecture,
 
 <h2 id="open-source-projects">1.2 Open Source Projects</h2>
 
-Most of our DLR languages and all the DLR source code are available on CodePlex and RubyForge. The sources are available under the Microsoft Public License, which is Open Software Initiative approved. The DLR and all of our open source languages are available for one-stop shopping at [www.codeplex.com/dlr](http://www.codeplex.com/dlr), where we will add more samples, specs, and getting started documentation over time. Microsoft currently provides two DLR languages, IronPython and IronRuby. IronPython is available open source at [www.codeplex.com/ironpython](http://www.codeplex.com/ironpython). IronRuby is available open source at <http://rubyforge.org/projects/ironruby>.
+Most of our DLR languages and all the DLR source code are available on CodePlex and RubyForge. The sources are available under the Microsoft Public License, which is Open Software Initiative approved. The DLR and all of our open source languages are available for one-stop shopping at www.codeplex.com/dlr, where we will add more samples, specs, and getting started documentation over time. Microsoft currently provides two DLR languages, IronPython and IronRuby. IronPython is available open source at www.codeplex.com/ironpython. IronRuby is available open source at http://rubyforge.org/projects/ironruby.
 
 <h2 id="why-dynamic-languages">1.3 Why Dynamic Languages</h2>
 

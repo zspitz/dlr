@@ -1,6 +1,6 @@
 # 2 Quick Language Overview
 
-This is a high-level description of language features to set the stage for starting to discuss the implementation. For a more detailed description (no language lawyer formal specification :-)), see section . For quick view of the simple hosting and runtime API, see section .
+This is a high-level description of language features to set the stage for starting to discuss the implementation. For a more detailed description (no language lawyer formal specification :-)), see section 10. For quick view of the simple hosting and runtime API, see section 22.
 
 SymPL stands for symbolic programming language. It is pronounced as "simple" and is usually written as "Sympl". It looks like a Lisp variant, but it lacks several of Lisp's semantics. For example, Sympl does NOT:
 

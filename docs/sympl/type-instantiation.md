@@ -28,7 +28,7 @@ For now, ignore GetCreateInstanceBinder. Imagine this is just a call to the cons
 new SymplCreateInstanceBinder(CallInfo)
 ```
 
-GetCreateInstanceBinder produces canonical binders, a single binder instance used on every call site with the same metadata. This is important for DLR L2 caching of rules. See section for how Sympl makes canonical binders and why, and see sites-binders-dynobj-interop.doc for more details on CallSite rule caching.
+GetCreateInstanceBinder produces canonical binders, a single binder instance used on every call site with the same metadata. This is important for DLR L2 caching of rules. See section 18 for how Sympl makes canonical binders and why, and see sites-binders-dynobj-interop.doc for more details on CallSite rule caching.
 
 This DynamicExpression has a result type of object. You might think Sympl could statically type this CallSite to the type of the instance being created. However, the type is unknown until run time when some expression results in a first class type object. Therefore, as with all Dynamic expressions in Sympl, the type is object.
 
@@ -73,11 +73,11 @@ public override DynamicMetaObject BindCreateInstance(
        restrictions);
 ```
 
-First BindCreateInstance gets the underlying RuntimeType's constructors and finds those with marching parameter counts. Then Sympl filters for constructors with matching parameters as discussed in section on TypeModelMetaObject's BindInvokeMember method.
+First BindCreateInstance gets the underlying RuntimeType's constructors and finds those with marching parameter counts. Then Sympl filters for constructors with matching parameters as discussed in section 3.2.4 on TypeModelMetaObject's BindInvokeMember method.
 
 If no constructors match, then Sympl falls back to the language binder after converting the TypeModel to a meta-object representing the RuntimeType object. See the sub section below on instantiating arrays for information on GetRuntimeTypeMoFromModel. Falling back may seem futile, but in addition to other language binders having richer matching rules that might succeed, the convention is to fall back to the binder to get a language-specific error for failing to bind.
 
-Finally, BindCreateInstance gathers restrictions for the rule it produces and converts the arguments, as discussed in section for TypeModelMetaObject's BindInvokeMember method. Then BindCreateInstance returns the DynamicMetaObject whose restrictions and Expression property (using the Expression Tree New factory) form a rule for creating instances of the target type. The resulting expression does not need to go through EnsureObjectResult since creating an instance necessarily returns objects.
+Finally, BindCreateInstance gathers restrictions for the rule it produces and converts the arguments, as discussed in section 3.2.5 for TypeModelMetaObject's BindInvokeMember method. Then BindCreateInstance returns the DynamicMetaObject whose restrictions and Expression property (using the Expression Tree New factory) form a rule for creating instances of the target type. The resulting expression does not need to go through EnsureObjectResult since creating an instance necessarily returns objects.
 
 <h2 id="binding-createinstance-operations-in-fallbackcreateinstance">10.3 Binding CreateInstance Operations in FallbackCreateInstance</h2>
 
@@ -145,9 +145,9 @@ public class SymplCreateInstanceBinder : CreateInstanceBinder {
     
 ```
 
-Let's first talk about what we aren't talking about now. This code snippet omits some very important code that protects binders and DynamicMetaObjects from infinitely looping due to producing bad rules. It is best to discuss this in one place, so see section for how the infinite loop happens and how to prevent it for all binders.
+Let's first talk about what we aren't talking about now. This code snippet omits some very important code that protects binders and DynamicMetaObjects from infinitely looping due to producing bad rules. It is best to discuss this in one place, so see section 20 for how the infinite loop happens and how to prevent it for all binders.
 
-This coded is nearly the same as TypeModelMetaObject's BindCreateInstance discussed in the previous section. One difference to note is that while DynamicMetaObjects can fall back to binders for errors or potentially more binding searching, the binder creates Throw expressions. FallbackCreateInstance has to gather the target and argument restrictions before deciding to return an error DynamicMetaObject result so that it can ensure it uses the same restrictions it would use in a positive result. See section for a discussion of CreateThrow and restrictions.
+This coded is nearly the same as TypeModelMetaObject's BindCreateInstance discussed in the previous section. One difference to note is that while DynamicMetaObjects can fall back to binders for errors or potentially more binding searching, the binder creates Throw expressions. FallbackCreateInstance has to gather the target and argument restrictions before deciding to return an error DynamicMetaObject result so that it can ensure it uses the same restrictions it would use in a positive result. See section 6 for a discussion of CreateThrow and restrictions.
 
 <h2 id="instantiating-arrays-and-getruntimetypemofrommodel">10.4 Instantiating Arrays and GetRuntimeTypeMoFromModel</h2>
 
@@ -157,7 +157,7 @@ Because Sympl has no built-in notion of arrays (similar to IronPython), you crea
 (System.Array.CreateInstance System.String 3)
 ```
 
-This expression turns into an InvokeMember DynamicExpression. The resulting CallSite gets a Sympl TypeModel object for System.String. This is an example of why ConvertArguments and GetTargetArgsRestrictions conspire to match TypeModel objects to parameters of type Type and convert the former to the latter, as discussed in section .
+This expression turns into an InvokeMember DynamicExpression. The resulting CallSite gets a Sympl TypeModel object for System.String. This is an example of why ConvertArguments and GetTargetArgsRestrictions conspire to match TypeModel objects to parameters of type Type and convert the former to the latter, as discussed in section 3.2.5.
 
 Here's the code for RuntimeHelpers.GetRuntimeTypeMoFromModel from runtime.cs, which converts a DynamicMetaObject holding a TypeModel value to one holding a RuntimeType value:
 

@@ -1,6 +1,6 @@
 # 17 Arithmetic, Comparison, and Boolean Operators
 
-Sympl supports addition, subtraction, multiplication, division, less than, greater than, equals, and not equal as the obvious corresponding Expression Tree nodes. It support **and**, **or**, and **not** logical operators (see section for their semantics). Here are example Sympl expressions:
+Sympl supports addition, subtraction, multiplication, division, less than, greater than, equals, and not equal as the obvious corresponding Expression Tree nodes. It support **and**, **or**, and **not** logical operators (see section 21.5 for their semantics). Here are example Sympl expressions:
 
 ``` csharp
 (+ 3 5)
@@ -13,7 +13,7 @@ Sympl supports addition, subtraction, multiplication, division, less than, great
 
 <h2 id="analysis-and-code-generation-for-binary-operations">17.1 Analysis and Code Generation for Binary Operations</h2>
 
-All these operators are all keyword forms that AnalyzeBinaryExpr in etgen.cs analyzes. It picks off **and** and **or** to handle specially since they are conditionally evaluating and need to support Sympl's truth value semantics (see section on **IF** expressions). Otherwise, AnalyzeBinaryExpr just emits a BinaryOperation DynamicExpression using the operator stored in the SymplBinaryExpr AST node.
+All these operators are all keyword forms that AnalyzeBinaryExpr in etgen.cs analyzes. It picks off **and** and **or** to handle specially since they are conditionally evaluating and need to support Sympl's truth value semantics (see section 7.3 on **IF** expressions). Otherwise, AnalyzeBinaryExpr just emits a BinaryOperation DynamicExpression using the operator stored in the SymplBinaryExpr AST node.
 
 Here's the code for AnalyzeBinaryExpr, which is discussed further below:
 
@@ -62,7 +62,7 @@ public static Expression AnalyzeBinaryExpr(SymplBinaryExpr expr,
 
 Because **and** and **or** have equivalent semantic to **IF** (with some temporary bindings for **or**), the code above creates ASTs for **IF** and re-uses the AnalyzeIfExpr and AnalyzeLetStarExpr. Sympl could also have "open coded" the equivalent Expression Tree code generation here.
 
-If the operation is other than **and** and **or**, AnalyzeBinaryExpr emits a DynamicExpression with a SymplBinaryOperationBinder. See section for a discussion of why this method calls GetBinaryOperationBinder rather than just calling the constructor. The reason Sympl uses a DynamicExpression when it only supports the static built-in semantics of Expression Trees is for interoperability with dynamic languages from other languages or libraries that might flow though a Sympl program.
+If the operation is other than **and** and **or**, AnalyzeBinaryExpr emits a DynamicExpression with a SymplBinaryOperationBinder. See section 18 for a discussion of why this method calls GetBinaryOperationBinder rather than just calling the constructor. The reason Sympl uses a DynamicExpression when it only supports the static built-in semantics of Expression Trees is for interoperability with dynamic languages from other languages or libraries that might flow though a Sympl program.
 
 <h2 id="analysis-and-code-generation-for-unary-operations">17.2 Analysis and Code Generation for Unary Operations</h2>
 
@@ -85,7 +85,7 @@ public static Expression AnalyzeUnaryExpr(SymplUnaryExpr expr,
 
 Execution never reaches the DynamicExpression result. This is there as plumbing and an example should Sympl support other unary operations, such as binary or arithmetic negation.
 
-Sympl's logical **not** translates directly to an Expression Tree Not node as long as the operand expression has a Boolean type. Because of Sympl's truth semantics (see section on **IF** expressions), AnalyzeUnaryExpr calls WrapBooleanTest which results in an Expression with Type bool.
+Sympl's logical **not** translates directly to an Expression Tree Not node as long as the operand expression has a Boolean type. Because of Sympl's truth semantics (see section 7.3 on **IF** expressions), AnalyzeUnaryExpr calls WrapBooleanTest which results in an Expression with Type bool.
 
 <h2 id="symplbinaryoperationbinder">17.3 SymplBinaryOperationBinder</h2>
 

@@ -30,11 +30,11 @@ The SymPL language implementation demonstrates the following:
 
 - Assignment with various left-hand-side expressions
 
-Before reading this document you may want to read dlr-overview.doc from [www.codeplex.com/dlr](http://www.codeplex.com/dlr) to get a general grasp of the DLR. You should read, either before or simultaneously with this document, the sites-binders-dynobj-interop.doc document from the same web site. This document refers to the latter now and then for more detailed background.
+Before reading this document you may want to read dlr-overview.doc from www.codeplex.com/dlr to get a general grasp of the DLR. You should read, either before or simultaneously with this document, the sites-binders-dynobj-interop.doc document from the same web site. This document refers to the latter now and then for more detailed background.
 
 <h2 id="sources">1.1 Sources</h2>
 
-All the source code for the DLR releases regularly on [www.codeplex.com/dlr](http://www.codeplex.com/dlr), with weekly source updates at least. The full sources for the language used in this document are under &lt;installdir&gt;\\languages\\sympl\\.
+All the source code for the DLR releases regularly on www.codeplex.com/dlr, with weekly source updates at least. The full sources for the language used in this document are under &lt;installdir&gt;\\languages\\sympl\\.
 
 As a side note, the implementation was started in IronPython as an experiment in using the DLR functionality from a dynamic language. Using a dynamic language with a REPL would provide some productivity gains in exploring implementation techniques and .NET-isms. The experiment was beneficial for flushing out some implementation and design issues in IronPython and DLR. It showed where the dynamic language made some things easier. It also showed some things that were more straightforward if done in C\# or VB due to the nature of the DLR APIs and some hurdles created by IronPython itself being implemented on the DLR. Since the code for both are in the source tree, you can see some of the IronPython comments that note where the C\# implementation was easier.
 
