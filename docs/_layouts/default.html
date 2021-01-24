@@ -38,7 +38,7 @@
 
     <div class="wrapper">
       <nav>
-          {% include_relative index.md %}
+          {% include_relative index.md | markdownify %}
       </nav>
       <section>
         {{ content }}
