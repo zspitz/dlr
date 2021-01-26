@@ -1,3 +1,7 @@
+---
+sort: 4
+---
+
 # 4 Assignment to Globals and Locals
 
 We already discussed lexical and globals in general in section 3.5. This section discusses adding variable assignment to Sympl. This starts with the keyword **set**, for which we won't discuss lexical scanning or parsing. As a reminder, Sympl is expression-based, and everything returns value. The **set** keyword form returns the value that is stored.

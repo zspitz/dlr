@@ -1,3 +1,7 @@
+---
+sort: 21
+---
+
 # 21 SymPL Language Description
 
 The following sub sections contain very brief descriptions of language features and semantics. Some sections have more details, such as the description of **Import**, but most loosely describe the construct, such as try-catch.
@@ -177,7 +181,7 @@ These are the built-in operations in Sympl, all coming in the form of keyword fo
 
 - Boolean: **and**, **or**, **not** keyword forms. For each operand, any value that is not **nil** or **false**, it is true. **And** is conditional, so it is equivalent to (if e1 e2). **Or** is conditional, so it is equivalent to (let\* ((tmp1 e1)) (if tmp1 tmp1 (let\* ((tmp2 e2)) (if tmp2 tmp2)))).
 
-- Comparisons: **=**, **!=**, **&lt;**, **&gt;**, **eq** keyword forms. All but **eq** have the semantics of Expression Trees v2 nodes. **Eq** returns true if two objects are reference equal, and for integers, returns true if they are numerically the same value.
+- Comparisons: **=**, **!=**, **\<**, **\>**, **eq** keyword forms. All but **eq** have the semantics of Expression Trees v2 nodes. **Eq** returns true if two objects are reference equal, and for integers, returns true if they are numerically the same value.
 
 - Indexing: **elt** keyword form
 
@@ -278,7 +282,7 @@ The following are keywords in Sympl:
 
 - +, -, \*, /
 
-- =, !=, &lt;, &gt;
+- =, !=, \<, \>
 
 - Or, And, Not
 

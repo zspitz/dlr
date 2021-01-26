@@ -1,3 +1,7 @@
+---
+sort: 5
+---
+
 # 5 Current Issues
 
 **Host aborts.** Need to provide a way for hosts to signal the DLR to abort execution so that we do not do a rude thread abort while the host is potentially executing deep in its code. The scenario is that the host has provided an OM layer that it protects all over and understands dyn code could abort, but the code internal (lower down) that the OM layer calls is not coded for rude aborts. The host executes dyn code, the dyn code calls back into the hosts OM, and the host then calls internal functions that shouldn't have to be protected everywhere against rude thread aborts. These internal functions do not worry about thread aborts because if that's happening, then the app is going down. The host would like to be able to support user actions to abort dyn code executions (for example, spinning cassette in VSMacros or ctrl-c in Nessie) by setting a ScriptRuntime.AbortExecutions flag. The DLR code periodically checks this, does whatever internal throwing it wants, but then just returns from whatever functions. Is the model that the host has to clear the flag, or can the DLR know to stop all code on all threads, then clear the flag?
@@ -24,13 +28,13 @@ The rough idea for how to do this (given current VB and C\# namespace and scope 
 
 Add a SourceMetadata type with:
 
-- Names -&gt; Dictionary&lt;string, Type&gt; (ok to use Type since it would have to be loaded in both app domains if doing remote hosting)
+- Names -\> Dictionary\<string, Type\> (ok to use Type since it would have to be loaded in both app domains if doing remote hosting)
 
-- ReferenceDlls -&gt; string\[\]
+- ReferenceDlls -\> string\[\]
 
-- ImportedNamespaces -&gt; string\[\]
+- ImportedNamespaces -\> string\[\]
 
-- Parent -&gt; SourceMetadata
+- Parent -\> SourceMetadata
 
 Add to ScriptSource:
 
@@ -42,9 +46,9 @@ Add to CompiledCode (if we follow through on supporting this, we might still add
 
 Add to ScriptScope
 
-- .Parent -&gt; ScriptScope (returns null by default, must be set in constructor)
+- .Parent -\> ScriptScope (returns null by default, must be set in constructor)
 
-**GetMembersVerbose.** This would return something like IList&lt;Tuple&lt;string,flags&gt;&gt;, but it would support poor man tooling for objects or languages that wanted to report value namespaces or categorize names somehow.
+**GetMembersVerbose.** This would return something like IList\<Tuple\<string,flags\>\>, but it would support poor man tooling for objects or languages that wanted to report value namespaces or categorize names somehow.
 
 **Compiler options between REPL inputs.** Ipy.exe compiles the input "from future import truedivision", and then on the next line compile the input "3/2". How does the scope/compiler context flow from the first to the second? Maybe we can unify the VB SrcMetadata request with this to capture compiler options and let them be updated across compilation.
 
@@ -77,4 +81,4 @@ TypeLibrary and TypeLibraryName types don’t exist yet. Also consider consolida
 
 **Spec HostingHelpers and think about how it fits the general model**.
 
-**ScriptScope doesn't offer a case insensitive variable lookup even if languages support it**. Since we never fully build the case-insensitive symbol design, and since we intend to go to dict&lt;str,obj&gt; over IAttrColl, we have no model for langs that want to do case-insensitive lookups without O(n) searching the table.
+**ScriptScope doesn't offer a case insensitive variable lookup even if languages support it**. Since we never fully build the case-insensitive symbol design, and since we intend to go to dict\<str,obj\> over IAttrColl, we have no model for langs that want to do case-insensitive lookups without O(n) searching the table.

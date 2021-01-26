@@ -1,3 +1,7 @@
+---
+sort: 10
+---
+
 # 10 Type instantiation
 
 Sympl has a **new** keyword form. It takes as its first argument an expression that results in a type. Sympl code can get types in one of two ways, importing them from the hosting globals table in the Sympl runtime instance or from the result of a .NET call. One code path has to bind Sympl's TypeModel objects to constructors (TypeModelMetaObject.BindCreateInstance), and the other handles more direct .NET binding (SymplCreateInstanceBinder's FallbackCreateInstance method). The rest of the arguments to the **new** keyword form are used to find an appropriate constructor to call.

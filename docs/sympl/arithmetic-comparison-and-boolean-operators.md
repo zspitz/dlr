@@ -1,3 +1,7 @@
+---
+sort: 17
+---
+
 # 17 Arithmetic, Comparison, and Boolean Operators
 
 Sympl supports addition, subtraction, multiplication, division, less than, greater than, equals, and not equal as the obvious corresponding Expression Tree nodes. It support **and**, **or**, and **not** logical operators (see section 21.5 for their semantics). Here are example Sympl expressions:

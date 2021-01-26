@@ -1,3 +1,7 @@
+---
+sort: 0
+---
+
 **Bill Chiles**
 
 **This document specifies ETs v2 for CLR 4.0.**
@@ -772,7 +776,7 @@
 
 4.42.10 Factory Methods 155
 
-4.43 Expression&lt;TDelegate&gt; Class 157
+4.43 Expression\<TDelegate\> Class 157
 
 4.43.1 Class Summary 157
 
@@ -846,11 +850,11 @@
 
 4.50.2 Class Summary 166
 
-4.50.3 Visit&lt;T&gt; Method 168
+4.50.3 Visit\<T\> Method 168
 
-4.50.4 VisitLambda&lt;T&gt; Method 168
+4.50.4 VisitLambda\<T\> Method 168
 
-4.50.5 VisitAndConvert&lt;T&gt; Method 168
+4.50.5 VisitAndConvert\<T\> Method 168
 
 4.50.6 VisitConstant Method 168
 
@@ -898,12 +902,12 @@
 
 ~~4.54.2~~ ~~Empty Field~~ 172
 
-~~4.54.3~~ ~~Add&lt;T&gt; Method~~ 172
+~~4.54.3~~ ~~Add\<T\> Method~~ 172
 
-~~4.54.4~~ ~~Contains&lt;T&gt; Method~~ 172
+~~4.54.4~~ ~~Contains\<T\> Method~~ 172
 
-~~4.54.5~~ ~~Get&lt;T&gt; Method~~ 173
+~~4.54.5~~ ~~Get\<T\> Method~~ 173
 
-~~4.54.6~~ ~~TryGet&lt;T&gt; Method~~ 173
+~~4.54.6~~ ~~TryGet\<T\> Method~~ 173
 
-~~4.54.7~~ ~~Remove&lt;T&gt; Method~~ 173
+~~4.54.7~~ ~~Remove\<T\> Method~~ 173

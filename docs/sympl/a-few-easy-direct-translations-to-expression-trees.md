@@ -1,3 +1,7 @@
+---
+sort: 7
+---
+
 # 7 A Few Easy, Direct Translations to Expression Trees
 
 Next the Sympl implementation gained some easy constructs that are either direct translations to Expression Trees or features that leverage code already written for Sympl.

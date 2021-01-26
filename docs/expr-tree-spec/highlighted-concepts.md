@@ -1,3 +1,7 @@
+---
+sort: 2
+---
+
 # 2 Highlighted Concepts
 
 There are several high-level ideas or characteristics about the ET v2 design that are worth calling out. Think of these as high-order bit calls to make or top ten questions language implementers will be thinking as they approach a semantic model of code.
@@ -40,7 +44,7 @@ Common ET nodes with a given node kind are either reducible always, or never. Th
 
 <h2 id="bound-unbound-and-dynamic-nodes">2.3 Bound, Unbound, and Dynamic Nodes</h2>
 
-There are three categories or states of being bound for modeling expressions. More commonly mathematicians or computer scientists think of only two, bound and unbound. For example, in the expression "for all x such that 0 &lt; x + y &lt; 10", 'x' is a bound variable while 'y' is a free reference or unbound variable. If 'y' were not present in the expression, the expression would be fully statically bound such that we could evaluate it. However, to evaluate the expression, we need to first bind 'y' to some value.
+There are three categories or states of being bound for modeling expressions. More commonly mathematicians or computer scientists think of only two, bound and unbound. For example, in the expression "for all x such that 0 \< x + y \< 10", 'x' is a bound variable while 'y' is a free reference or unbound variable. If 'y' were not present in the expression, the expression would be fully statically bound such that we could evaluate it. However, to evaluate the expression, we need to first bind 'y' to some value.
 
 **An unbound ET node:**
 
@@ -56,7 +60,7 @@ Consider a language that supported LINQ-like expression and that also had late-b
 o.Where( lambda (x) => x > 0 )   #o had late bound semantics
 ```
 
-To be able to execute an ET modeling this code, you would need to inspect the runtime type of 'o', search its 'Where' overloads, and pattern match for one that can take a delegate. Furthermore, you would need to match lambda expression to the delegate. The delegate needs take an argument and returns a value with some type. The delegate's type for 'x' needs to make sense to bind '&gt;' to an implementation taking the type of 'x', an operand assignable from integer, and returning the type of the delegate.
+To be able to execute an ET modeling this code, you would need to inspect the runtime type of 'o', search its 'Where' overloads, and pattern match for one that can take a delegate. Furthermore, you would need to match lambda expression to the delegate. The delegate needs take an argument and returns a value with some type. The delegate's type for 'x' needs to make sense to bind '\>' to an implementation taking the type of 'x', an operand assignable from integer, and returning the type of the delegate.
 
 A key observation in this situation is that the late-bound node representing the call to 'Where' necessarily has language-specific binding information representing the lambda. The representation cannot be language-neutral semantically. It also can't even be just syntax in any common representation because you need the language that produced the ET to process the lambda representation in the presence of runtime type information while binding. Support for unbound ETs may not be a good solution or one worth trying to share across languages.
 
@@ -68,7 +72,7 @@ A key observation in this situation is that the late-bound node representing the
 
 - could be dynamic expression
 
-A dynamic expression often has a Type property that is Object, but its Type that is not null. It might not be Object as well. For example, in "`if x`` > y`" the ET node for '&gt;' could be typed Boolean even if it is a dynamic node.
+A dynamic expression often has a Type property that is Object, but its Type that is not null. It might not be Object as well. For example, in "`if x`` > y`" the ET node for '\>' could be typed Boolean even if it is a dynamic node.
 
 **The ET v2 model includes dynamically bound nodes that:**
 
@@ -132,7 +136,7 @@ One quirk in the design is how to handle LabelExpression which has a LabelTarget
 
 <h3 id="gotoexpression-capabilities">2.4.3 GotoExpression Capabilities</h3>
 
-As stated, we expanded Goto capabilities beyond C\#'s. VB is not fully using the DLR yet, but when it does, we will need a more flexible Goto. If we do not allow more cases for GotoExpression, VB would need to produce a VBBlockExpression and their own VBGotoExpression that reduced to a complicated rewriting of the ET. It seems useful to provide the more general GotoExpression. However, VB would still need a special VBBlock to model their on\_error\_goto semantics, which seems too specific to a single language to generally model in common ET nodes.
+As stated, we expanded Goto capabilities beyond C\#'s. VB is not fully using the DLR yet, but when it does, we will need a more flexible Goto. If we do not allow more cases for GotoExpression, VB would need to produce a VBBlockExpression and their own VBGotoExpression that reduced to a complicated rewriting of the ET. It seems useful to provide the more general GotoExpression. However, VB would still need a special VBBlock to model their on_error_goto semantics, which seems too specific to a single language to generally model in common ET nodes.
 
 ETs v2 limit Goto lexically within a function. ETs allow jumping into and out of the following:
 
@@ -222,7 +226,7 @@ ETs v2 also supports explicit lifting of variables to support languages that pro
 
 <h2 id="lambdas">2.8 Lambdas</h2>
 
-Lambdas are modeled with LambdaExpression and Expression&lt;T&gt;. The latter derives from the former, and the T is a delegate type. LambdaExpression.Type holds the same T, and there is a ReturnType property that holds the type of value the T delegate would return. All lambdas created by the factory methods are actually Expression&lt;T&gt;. LambdaExpression provides the general base type for code that needs to process any lambda, or if you need to make a lambda with a computed delegate type at runtime. LambdaExpression supports two Compile methods that return a delegate of type LambdaExpression.Type, which can be invoked dynamically at run time.
+Lambdas are modeled with LambdaExpression and Expression\<T\>. The latter derives from the former, and the T is a delegate type. LambdaExpression.Type holds the same T, and there is a ReturnType property that holds the type of value the T delegate would return. All lambdas created by the factory methods are actually Expression\<T\>. LambdaExpression provides the general base type for code that needs to process any lambda, or if you need to make a lambda with a computed delegate type at runtime. LambdaExpression supports two Compile methods that return a delegate of type LambdaExpression.Type, which can be invoked dynamically at run time.
 
 Handling arbitrary returns or exits from lambdas has some interesting issues. Returns from a lambda can be arbitrarily deep in control constructs and blocks. Lexical exits represent a sort of non-local exit from nested control constructs. The expression that is the body of a lambda might have a particular type from the last sub expression it contains. Execution of the ET may never reach this last sub expression because of a Goto node. Even though we've added these sorts of control flow to ETs v2, they still keep the constraints ETs v1 had regarding LambdaExpression.Type and .Body.Type.
 
@@ -274,7 +278,7 @@ When we do add support for rich static call sites, we cannot add an ArgumentsInf
 
 These nodes would have two arrays, .ArgumentEvaluationOrder and . ArgumentDescriptions. The would have parallel elements. The first just contains the supplied expression in the appropriate order to evaluate them. It contains only as many expression as the number that appeared at the call site. The descriptions array contains ArgumentDescriptions, and each element describes the argument in the corresponding element of the first array. The descriptions detail whether the argument was positional or named, as well as in what position it was supplied. For example, in the expression (however kooky) "foo(,,3,x=5)", the arrays would be of length two, and the descriptions would describe the arguments in positions 2 and 3.
 
-We will NOT model 'ref' and 'out' arguments in the ArgumentDescription objects for ComplexMethodCallExpression. You do not need these for correctness in producing an ET or for compiling it. If you parse a 'ref' argument in source at a call site, you can bake that information into the delegate type that is the T in the resulting dynamic CallSite&lt;T&gt; (see spec for "Sites, Binders, and Dynamic Object Interop"). If you do not parse 'ref', but your language's binder on sees an appropriate method at runtime with a 'ref' parameter, then you know to throw an exception. You only need the 'ref' and 'out' modeling for meta-programming convenience. Since 'out' is a single language oddity, and adding 'ref' for convenience only would require MethodCallExpression to have an Argument Description array and sometimes to be reducible, we will not model 'ref' and 'out' in ArgumentDescriptions.
+We will NOT model 'ref' and 'out' arguments in the ArgumentDescription objects for ComplexMethodCallExpression. You do not need these for correctness in producing an ET or for compiling it. If you parse a 'ref' argument in source at a call site, you can bake that information into the delegate type that is the T in the resulting dynamic CallSite\<T\> (see spec for "Sites, Binders, and Dynamic Object Interop"). If you do not parse 'ref', but your language's binder on sees an appropriate method at runtime with a 'ref' parameter, then you know to throw an exception. You only need the 'ref' and 'out' modeling for meta-programming convenience. Since 'out' is a single language oddity, and adding 'ref' for convenience only would require MethodCallExpression to have an Argument Description array and sometimes to be reducible, we will not model 'ref' and 'out' in ArgumentDescriptions.
 
 <h2 id="expression-tree-where-possible">2.11 Expression "Tree" Where Possible</h2>
 

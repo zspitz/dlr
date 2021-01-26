@@ -1,3 +1,7 @@
+---
+sort: 23
+---
+
 # 23 Appendixes
 
 These sections show using DLR APIs that are available on codeplex.com only for now. Some will move into CLR versions beyond 4.0. These APIs let you provide more features for your language more easily, such as generators (functions with yield expressions) or richer .NET binding logic by using the DefaultBinder. These APIs sometimes improve performance over the base Sympl implementation, such as using the namespace/type trackers that IronPython uses.

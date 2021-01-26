@@ -1,3 +1,7 @@
+---
+sort: 3
+---
+
 # 3 ET Runtime
 
 There are a few functions that are required by the code the ET compiler produces. When generating and compiling ETs for execution within the same process, there are no issues whatsoever. The following functions or any changes to them will be consistent within the version of the .NET Framework that you are using:

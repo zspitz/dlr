@@ -1,3 +1,7 @@
+---
+sort: 4
+---
+
 # 4 Runtime
 
 It is hard to separate language implementation concepts from the runtime concepts with dynamic languages. However, we try to do so by defining the runtime aspects of the DLR as DynamicSites, SiteBinders, and Rules for fast dynamic invocation. We include higher-level objects as helpers for library authors who want their objects to participate well in dynamic operations -- DynamicObject and ExpandoObject. We also include utilities, default binding helpers, and COM IDispatch interoperability.
@@ -109,9 +113,9 @@ It is entirely up to each language what compile-time information it chooses to e
 
 See the sites-binders-dynobj-interop.doc document for details on binders and API reference. See the section below on L2 Cache for high-level discussion of placing unique binder instances on multiple call sites when the binding metadata in the binders is equivalent.
 
-<h2 id="callsitet-and-caching">4.4 CallSite&lt;T&gt; and Caching</h2>
+<h2 id="callsitet-and-caching">4.4 CallSite\<T\> and Caching</h2>
 
-When a compiler emits a dynamic call site, it must first generate a **CallSite&lt;T&gt;** object by calling the static method CallSite&lt;T&gt;.Create. The compiler passes in the language-specific binder it wants this call site to use to bind operations at runtime. The T in the CallSite&lt;T&gt; is the delegate type that provides the signature for the site’s target delegate that holds the compiled rule cache. T’s delegate type often just takes Object as the type of each of its arguments and its return value, as a call site may encounter or return various types. However, further optimization is possible in more restricted situations by using more specific types. For example, in the expression `a > 3`, a compiler can encode in the delegate signature that the right argument is fixed as int, and the return type is fixed as bool, for any possible value of a.
+When a compiler emits a dynamic call site, it must first generate a **CallSite\<T\>** object by calling the static method CallSite\<T\>.Create. The compiler passes in the language-specific binder it wants this call site to use to bind operations at runtime. The T in the CallSite\<T\> is the delegate type that provides the signature for the site’s target delegate that holds the compiled rule cache. T’s delegate type often just takes Object as the type of each of its arguments and its return value, as a call site may encounter or return various types. However, further optimization is possible in more restricted situations by using more specific types. For example, in the expression `a > 3`, a compiler can encode in the delegate signature that the right argument is fixed as int, and the return type is fixed as bool, for any possible value of a.
 
 To allow for more advanced caching behavior at a given dynamic call site, as well as caching of rules across similar dynamic call sites, there are three distinct **caching levels** used, known as the L0, L1, and L2 caches. The code emitted at a dynamic site searches the L0 cache by invoking the site’s Target delegate, which will fall back to the L1 and L2 caches upon a cache miss. Only if all three caches miss will the site call the runtime binder to bind the operation.
 
@@ -194,7 +198,7 @@ In the full glory of the interoperability protocol, a dynamic object implements 
 
 The **ExpandoObject** class is an efficient implementation of a dynamic property bag provided for you by the DLR. It allows you to dynamically retrieve and set its member values, adding new members per instance as needed at runtime. Because ExpandoObject implements the standard DLR interface IDynamicMetaObjectProvider, it is portable between DLR-aware languages. You can create an instance of an ExpandoObject in C\#, give its members specific values and functions, and pass it on to an IronPython function, which can then evaluate and invoke its members as if it was a standard Python object. ExpandoObject is a useful library class when you need a reliable, plain-vanilla dynamic object.
 
-To allow easy enumeration of its values, ExpandoObject implements IDictionary&lt;String, Object&gt;. Casting an ExpandoObject to this interface will allow you to enumerate its Keys and Values collections as you could with a standard Dictionary&lt;String, Object&gt; object. This can be useful when your key value is specified in a string variable and thus you cannot specify the member name at compile-time.
+To allow easy enumeration of its values, ExpandoObject implements IDictionary\<String, Object\>. Casting an ExpandoObject to this interface will allow you to enumerate its Keys and Values collections as you could with a standard Dictionary\<String, Object\> object. This can be useful when your key value is specified in a string variable and thus you cannot specify the member name at compile-time.
 
 ExpandoObject also implements INotifyPropertyChanging, raising a PropertyChanging event whenever a member is modified. This allows ExpandoObject to work well with WPF data-binding and other environments that need to know when the contents of the ExpandoObject change.
 

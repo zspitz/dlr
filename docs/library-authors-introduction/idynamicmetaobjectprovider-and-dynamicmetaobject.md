@@ -1,3 +1,7 @@
+---
+sort: 4
+---
+
 # 4 IDynamicMetaObjectProvider and DynamicMetaObject
 
 **IDynamicMetaObjectProvider** and **DynamicMetaObject** are the core of the DLR's interoperability protocol. This is the level at which languages plug in for maximum power. For example, IronPython's PythonCallableObject or IronRuby's RubyMutableString implementation objects implement IDynamicMetaObjectProvider and produce their own DynamicMetaObjects for these runtime objects. Their DynamicMetaObjects have full control over how they participate in the interoperability protocol and the DLR's fast dynamic dispatch caching.

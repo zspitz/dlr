@@ -1,3 +1,7 @@
+---
+sort: 18
+---
+
 # 18 Canonical Binders or L2 Cache Sharing
 
 This section will briefly describe the DLR's caching for dynamic dispatch and explain the code that calls GetXBinder helpers rather than calling a SymplXBinder constructor. For a full discussion of caching, see sites-binders-dynobj-interop.doc on www.codeplex.com/dlr .

@@ -1,3 +1,7 @@
+---
+sort: 1
+---
+
 # 1 Introduction
 
 The Dynamic Language Runtime's (DLR) mission is to enable an ecosystem of dynamic languages on .NET and to support developing libraries that work well with dynamic language features. Dynamic languages have become very popular in the last several years, and static languages are adopting affordances for dynamic operations on objects. The DLR helps language implementers move languages to .NET and enhance existing languages with dynamic features. Library authors can engage easily in this space too.

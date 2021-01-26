@@ -1,3 +1,7 @@
+---
+sort: 20
+---
+
 # 20 Using Defer When MetaObjects Have No Value
 
 Binders should always protect themselves by checking whether all the DynamicMetaObjects passed to their FallbackX methods have values (see HasValue property). As a conservative implementation, if any meta-object is lacking a concrete value, then call the binder's Defer method on all the meta-objects passed in. The Defer method results in a DynamicMetaObject with an Expression that creates a nested CallSite. This allows the DynamicMetaObject expressions to be evaluated and to flow into the nested site with values. If binders did not protect themselves in this way, an infinite loop results as they produce a rule that fails when the CallSite executes it, which forces a binding update, which causes the same target DynamicMetaObject to fallback with no value, which causes the binder to produce a bad rule, and so on.

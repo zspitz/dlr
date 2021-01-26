@@ -1,3 +1,7 @@
+---
+sort: 8
+---
+
 # 8 Literal Expressions
 
 This section describes some Sympl features added along with **eq** before **IF** and **loop**. These features are quoted symbols, quoted lists, and literal keyword constants. They enable more testing of **IF** and **loop**. This section also describes integer and string literals which of course were added at the beginning along with the lexer. You could skip this section unless you're curious about the built-in list objects and their runtime helpers.

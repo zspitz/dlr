@@ -1,3 +1,7 @@
+---
+sort: 4
+---
+
 # 4 DynamicObject and ExpandoObject
 
 We make life much simpler for library authors who want to create objects in static languages so that the object can behave dynamically and participate in the interoperability and performance of dynamic call sites. Library authors can avoid the full power of DynamicMetaObjects, but they can also employ DynamicMetaObjects if they wish. The DLR provides two higher level abstractions over DynamicMetaObject: DynamicObject and ExpandoObject. For most APIs, these objects provide more than enough performance and flexibility to expose your functionality to dynamic hosts.

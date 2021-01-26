@@ -1,3 +1,7 @@
+---
+sort: 16
+---
+
 # 16 Generic Type Instantiation
 
 Instantiating .NET generic types in Sympl may not be obvious. It is similar to IronPython, but IronPython provides a bit of syntactic sugar to make it easier. Here are a couple of examples in Sympl:

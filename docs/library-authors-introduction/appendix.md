@@ -1,3 +1,7 @@
+---
+sort: 5
+---
+
 # 5 Appendix
 
 <h2 id="dynamicobject-virtual-methods">5.1 DynamicObject Virtual Methods</h2>

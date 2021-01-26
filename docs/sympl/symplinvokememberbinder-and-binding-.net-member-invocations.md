@@ -1,3 +1,7 @@
+---
+sort: 14
+---
+
 # 14 SymplInvokeMemberBinder and Binding .NET Member Invocations
 
 In Sympl member invocations look like this:

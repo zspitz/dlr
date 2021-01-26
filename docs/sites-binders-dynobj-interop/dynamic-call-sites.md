@@ -1,3 +1,7 @@
+---
+sort: 2
+---
+
 # 2 Dynamic Call Sites
 
 Dynamic expressions are those expressions a language defines that may only be fully bound at runtime, usually based on the runtime types of its operands or parameters. However, for most languages, the binding of such operations takes a non-trivial amount of time. If such an operation occurs in a loop, or inside a commonly invoked function, we wish to avoid calling into the language’s runtime binder every time this code path executes.
@@ -60,9 +64,9 @@ It is up to a language to decide the specific static information it will need at
 
 It is entirely up to each language what compile-time information it chooses to encode in its binder for a given operation. Languages should be sure to reuse canonical binder instances, however, taking care to avoid generating two binders of the same type with the same compile-time information. As described below in the L2 cache section, equivalent call sites that share a common binder instance may share rules and avoid rebinding operations already bound elsewhere in the program.
 
-<h2 id="callsitet">2.3 CallSite&lt;T&gt;</h2>
+<h2 id="callsitet">2.3 CallSite\<T\></h2>
 
-When a compiler emits a dynamic call site, it must first generate a **CallSite&lt;T&gt;** object by calling the static method CallSite&lt;T&gt;.Create. The compiler passes in the language-specific binder it wants this call site to use to bind operations at runtime. The T in the CallSite&lt;T&gt; is the delegate type that provides the signature for the site’s target delegate that holds the compiled rule cache. T’s delegate type often just takes Object as the type of each of its arguments and its return value, as a call site may encounter or return various types. However, further optimization is possible in more restricted situations by using more specific types. For example, in the expression `a > 3`, a compiler can encode in the delegate signature that the right argument is fixed as int, and the return type is fixed as bool, for any possible value of a.
+When a compiler emits a dynamic call site, it must first generate a **CallSite\<T\>** object by calling the static method CallSite\<T\>.Create. The compiler passes in the language-specific binder it wants this call site to use to bind operations at runtime. The T in the CallSite\<T\> is the delegate type that provides the signature for the site’s target delegate that holds the compiled rule cache. T’s delegate type often just takes Object as the type of each of its arguments and its return value, as a call site may encounter or return various types. However, further optimization is possible in more restricted situations by using more specific types. For example, in the expression `a > 3`, a compiler can encode in the delegate signature that the right argument is fixed as int, and the return type is fixed as bool, for any possible value of a.
 
 To allow for more advanced caching behavior at a given dynamic call site, as well as caching of rules across similar dynamic call sites, there are three distinct **caching levels** used, known as the L0, L1, and L2 caches. The code emitted at a dynamic site searches the L0 cache by invoking the site’s Target delegate, which will fall back to the L1 and L2 caches upon a cache miss. Only if all three caches miss will the site call the runtime binder to bind the operation.
 

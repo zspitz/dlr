@@ -1,3 +1,7 @@
+---
+sort: 6
+---
+
 # 6 CreateThrow Runtime Binding Helper
 
 As we noted in the high-level description of execution flow when searching for a binding rule, DynamicMetaObjects and binders should NEVER throw when they fail to bind an operation. Of course, they throw if there's some internal integrity error, but when they cannot produce a binding for an operation, they should return a DynamicMetaObject representing a Throw expression of an appropriate error so that the binding process finishes smoothly. The reason is that another DynamicMetaObject or binder down the chain of execution might handle the operation. There are situations described later where DynamicMetaObjects call on binders to get their rule or error meta-object to fold those into the result the DynamicMetaObject produces.

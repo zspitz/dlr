@@ -1,3 +1,7 @@
+---
+sort: 3
+---
+
 # 3 Hosts Requirements
 
 While the functional requirements are accurate here, the descriptions are a bit dated and many use old APIs (even PythonEngine APIs from pre 1.0 releases) for examples.
@@ -25,7 +29,7 @@ globals, false/*publishScope*/);
 
 ****Execute script as text in the context of an EE scope.****
 
-Currently, the code found in a page’s code behind file or in its &lt;script runat=”server”&gt; block is fed into the page’s IPy EngineScope:
+Currently, the code found in a page’s code behind file or in its \<script runat=”server”\> block is fed into the page’s IPy EngineScope:
 
 ``` csharp
 s_engine.Execute(scriptCode, engineScope);
@@ -54,13 +58,13 @@ Currently, MerlinWeb invokes function via Ops.Call().
 
 ****Compile code fragments.****
 
-Code snippets come from *&lt;% code %&gt;* and *&lt;%= expr %&gt;* elements in the HTML.
+Code snippets come from *\<% code %\>* and *\<%= expr %\>* elements in the HTML.
 
 Currently, MerlinWeb uses CreateMethod and CreateLambda, respectively. MerlinWeb likes the way these work now and wants something similar in DLR.
 
 ****Reference a special directory for access to language scopes.****
 
-MerlinWeb apps support an App\_Script directory containing script files that any code can reference. This is the logical equivalent of ASP.NET’s App\_Code directory, but for dynamic script files.
+MerlinWeb apps support an App_Script directory containing script files that any code can reference. This is the logical equivalent of ASP.NET’s App_Code directory, but for dynamic script files.
 
 ****Currently, the code does the following:****
 
@@ -87,7 +91,7 @@ MerlinWeb is also okay with throwing out the ScriptRuntime and creating a new in
 
 ****Provide “globals” and participate in name lookup****
 
-MerlinWeb needs to inject global as name-&gt;object mappings. Furthermore, MerlinWeb needs to be able to participate in name lookup, so that dynamically when a name’s value is fetched MerlinWeb can discover what that name should be bound to and provide an object when asked.
+MerlinWeb needs to inject global as name-\>object mappings. Furthermore, MerlinWeb needs to be able to participate in name lookup, so that dynamically when a name’s value is fetched MerlinWeb can discover what that name should be bound to and provide an object when asked.
 
 ****Inject members into pre-defined types with per instance values****
 
@@ -199,7 +203,7 @@ ISSUE: Unless we're forced to support it, resetting a scope does NOT address ali
 
 ****Fetch standard language debugger prompt.**** Again, we want to provide an interaction window experience that is similar to what a language community expects, so we want to be able to ask a script engine what its prompt looks like when it is in a debugging context.
 
-****Update the prompt.**** For languages where the prompt changes over time, or with different modes (for example, a number representing the stack frame to support frame\_goto commands), we should have something in our API for allowing the script engine to push “next prompt” text to the host. This could be as simple as all script engines have a property that can be fetched each time a prompt needs to be printed. Note, this does not mean a tool should be in a special input mode and have a multi-line input prompt like IronPython does today. We should auto-indent and just detect on enter whether input is ready for evaluation or not, allowing editing of previous lines and so on.
+****Update the prompt.**** For languages where the prompt changes over time, or with different modes (for example, a number representing the stack frame to support frame_goto commands), we should have something in our API for allowing the script engine to push “next prompt” text to the host. This could be as simple as all script engines have a property that can be fetched each time a prompt needs to be printed. Note, this does not mean a tool should be in a special input mode and have a multi-line input prompt like IronPython does today. We should auto-indent and just detect on enter whether input is ready for evaluation or not, allowing editing of previous lines and so on.
 
 ****Get token/coloring info for a language.****
 
@@ -273,7 +277,7 @@ These are somewhat raw notes from various conversations on hosting configuration
 
 Hosts need to have full control of config. (what langs are available, what versions, how code executes, etc.).
 
-Config and options representation has to be very pliable and extensible between host, DLR, and languages. (likely means Dict&lt;str,obj&gt;).
+Config and options representation has to be very pliable and extensible between host, DLR, and languages. (likely means Dict\<str,obj\>).
 
 There needs to be two levels of config (one for engine IDs, names, and LCs, and then one for per engine opts).
 

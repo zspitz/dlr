@@ -1,3 +1,7 @@
+---
+sort: 2
+---
+
 # 2 Architecture Introduction
 
 Microsoft is building the Dynamic Language Runtime (DLR), which adds to the CLR a set of services designed specifically for the needs of dynamic languages. The CLR has good support for dynamic languages already, and IronPython-1.0 is a good example (www.codeplex.com/ironpython). The DLR adds functionality to make it easier to port and use dynamic languages on the CLR. The DLR key pieces are:
@@ -18,7 +22,7 @@ Let's take a look at 1000 words using picture compression. Here is a conceptual 
 
 In CLR 4.0, the parts of the DLR shipping are depicted here (pink boxes), squeezing some boxes together:
 
-![](media/image1.png)
+<img src="media/image1.png" style="width:6in;height:3.51042in" />
 
 The following sub sections contain a very brief overview of the architectural pieces depicted above.
 
@@ -64,6 +68,6 @@ IDynamicMetaObjectProvider -- This is the type implemented by languages and libr
 
 **DynamicMetaObject** -- This type is implemented by languages and library authors to represent an object in an abstract operation and how to perform binding for that object. A DynamicMetaObject has several methods representing the abstract operations such as fetching members, setting members, invoking a member, invoking the object itself, instantiating the object, or performing standard operations (addition, multiplication, etc.).
 
-**Compiler** -- The DLR ships an Expression Tree compiler, Expression&lt;T&gt;.Compile that returns a delegate for invoking the code represented by the tree.
+**Compiler** -- The DLR ships an Expression Tree compiler, Expression\<T\>.Compile that returns a delegate for invoking the code represented by the tree.
 
 **Utilities** -- There are some helper classes for implementing languages. The DLR has a GeneratorExpression that can be used in a LambdaExpression for creating what C\# calls iterators. The DLR rewrites the expression tree, which contains YieldExpressions, to a new tree that open codes the state machine for re-entering the iteration and re-establishing any dynamic state (for example, try-catch's). There are math helpers such as BigInteger, Complex, and Tuples. There is a GlobalVariableExpression and optimized module support for creating supporting the DLR hosting model and having faster ScriptScopes behind CompiledCode.

@@ -1,3 +1,7 @@
+---
+sort: 9
+---
+
 # 9 Importing Sympl Libraries and Accessing and Invoking Their Globals
 
 Most of the ground work for importing libraries and accessing other file module's globals has been done. Section 3.3 on Import code generation discusses some of how this works too. Since file scopes are ExpandoObjects, their DynamicMetaObjects handle the member accesses. When Sympl imports another file of Sympl code, Sympl stores into the importing file's globals scope the name of the file (no directory or extension) using the imported file's module object (an ExpandoObject) as the value. Sympl code can then just dot into these like any other object with members.

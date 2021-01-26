@@ -1,3 +1,7 @@
+---
+sort: 22
+---
+
 # 22 Runtime and Hosting
 
 Sympl provides very basic hosting, essentially execute file and execute string. You can instantiate a Sympl runtime with a list of assemblies whose namespaces and types will be available to Sympl code. You can execute files in a host-provided scope or module, or let Sympl create a new scope for each execution. You can execute strings with Sympl expressions in a host-provided scope, or one previously obtained from executing a file.

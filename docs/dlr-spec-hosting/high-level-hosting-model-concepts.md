@@ -1,3 +1,7 @@
+---
+sort: 2
+---
+
 # 2 High-level Hosting Model Concepts
 
 The hosting APIs can be grouped by levels of engagement. Level One uses a couple of types for executing code in scopes and working with variable bindings in those scopes. Level Two involves a few more types and supports more control over how code executes, using compiled code in various scopes, and using various sources of code. Level Three opens up to several advanced concepts such as overriding how filenames are resolved, providing custom source content readers, reflecting over objects for design-time tool support, providing late bound variable values from the host, and using remote ScriptRuntimes.
@@ -24,7 +28,7 @@ There are a lot of members on these types because they are also used for Level T
 
 These types are shown in the diagram:
 
-![](media/image3.png)
+<img src="media/image3.png" style="width:5.63542in;height:5.22917in" />
 
 The ScriptRuntime.GetEngine and ScriptScope.Engine are bridges to more advanced hosting functionality. In Level Two and Level Three scenarios, the other members of ScriptRuntime and ScriptScope will be useful along with ScriptEngine.
 
@@ -98,7 +102,7 @@ ObjectOperations provide a large catalogue of object operations such as member a
 
 These are the main types of level two:
 
-![](media/image4.png)
+<img src="media/image4.png" style="width:6.78125in;height:6.16667in" />
 
 <h3 id="code-sample----repl-and-merlin-web">2.2.1 Code Sample -- REPL and Merlin Web</h3>
 
@@ -174,7 +178,7 @@ With level three support, you can create a ScriptRuntimeSetup object to control 
 
 Another simple mechanism in level three is deriving from ScriptHost. This lets you provide a custom PlatformAdaptationLayer object to override file name resolution. For example, you might only load files from a particular directory or go to a web server for files. A host communicates its sub type of ScriptHost to the DLR when it creates a ScriptRuntime. Many hosts can just use the DLR’s default ScriptHost. ScriptHost looks like:
 
-![](media/image5.png)
+<img src="media/image5.png" style="width:2.6875in;height:2.42708in" />
 
 The ObjectOperations class provides language-specific operations on objects, including some tool building support. ObjectOperations includes introspection of objects via members such as GetMemberNames, IsCallable, GetCallSignatures, GetDocumentation, and GetCodeRepresentation. These give you a language-specific view in that you see members of objects and signatures from the flavor of a specific language. For example, you would see the Python meta-programming members of objects that Python manifests on objects. ObjectOperations enables you to build tool support for dynamic languages on the DLR, but you need another set of objects for parsing code.
 
@@ -182,11 +186,11 @@ Hosts can get parsing support for providing colorization in editors and interpre
 
 This will definitely change in the future. When we finalize this after CLR 4.0, it will be in another spec and removed from here. For now, it is a place holder and represents some prototyping we did.
 
-![](media/image6.png)
+<img src="media/image6.png" style="width:5.625in;height:3.16667in" />
 
 Hosts that implement tools for programmers will likely also create ScriptSources and implement TextContentProviders so that tokenizers can read input directly from the host's data structures. For example, an editor with a file in memory (in an editor buffer) could implement a TextContentProviders that reads input directly from the buffer's data structure. The types relating to sources are:
 
-![](media/image7.png)
+<img src="media/image7.png" style="width:6in;height:3.83333in" />
 
 Advanced hosts can also provide late-bound values for variables that dynamic languages access. Each time the variable’s value is fetched the host can compute a new value or deliver one that’s cached in its data structures. Hosts do this by being the implementer of an IDynamicMetaObjectProvider that the hosts supply when creating a ScriptScope. A simple way to implement this interface is to derive from DynamicObject which implements the interface. Then just override methods such as TryGetMember and TrySetMember. If you don't need to do fancy late binding of names, you could use a ScriptScope or ExpandoObject as a fast property bag.
 

@@ -1,3 +1,7 @@
+---
+sort: 15
+---
+
 # 15 Indexing Expressions: GetIndex and SetIndex
 
 Sympl supports indexing its built-in lists, arrays, and indexers/indexed properties. Expression Trees v1 had an ArrayIndex factory that would return either a BinaryExpression for single-dimensional arrays or a MethodCallExpression for multi-dimensional arrays. These now exist only for LINQ backward compatibility. All new code should use the ArrayAccess or MakeIndex factories that return IndexExpressions. Expression Trees v2 support IndexExpressions everywhere, including the left hand side of assignments and as byref arguments.

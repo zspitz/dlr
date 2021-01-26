@@ -1,3 +1,7 @@
+---
+sort: 0
+---
+
 **Bill Chiles and Alex Turner**
 
 ***Reading this Document:***
@@ -48,7 +52,7 @@
 
 4.3 Binders and CallSiteBinder 21
 
-4.4 CallSite&lt;T&gt; and Caching 21
+4.4 CallSite\<T\> and Caching 21
 
 4.4.1 L0 Cache: CallSite’s Target Delegate 22
 

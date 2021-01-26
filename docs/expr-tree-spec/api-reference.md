@@ -1,3 +1,7 @@
+---
+sort: 4
+---
+
 # 4 API Reference
 
 This section contains sub sections for each type of ET node, and they have sub sections for each member. While all factories are on the Expression type, this document describes them in a sub section for the type of ET node that the factories create. All factory methods return new objects each time you call them. They return fresh objects so that you can associate them with unique annotations when that's needed. If you need caching for working set pressure or other performance turning (for example, re-using all Expression.Constant(1) nodes), then you need to provide that.
@@ -24,7 +28,7 @@ A type T1 is assignable to another T2 only if one of the following criteria hold
 
 - T1 and T2 are interfaces and T1 directly or indirectly inherits from T2
 
-- T1 is an array type T\[\] and T2 is IList&lt;T&gt; or one of the interfaces it derives from
+- T1 is an array type T\[\] and T2 is IList\<T\> or one of the interfaces it derives from
 
 Note that a value type is only assignable to itself. Assignability does not include notions of boxing, conversions, etc., so while a value in some languages may be allowed to be assigned to type Object, in an ET, you would need an explicit conversion to Object.
 
@@ -40,7 +44,7 @@ Silverlight has a high bar for compatibility between its releases. Due to code s
 
 - When passing get\_... and set\_... MemberInfos to factory methods, we do not map them in some cases to PropertyInfos in Quirks Mode.
 
-- If you pass a ReadOnlyCollection&lt;T&gt; to some factory method in Quirks Mode, you will be able to mutate the underlying data and effectively undermind the immutability of ET nodes.
+- If you pass a ReadOnlyCollection\<T\> to some factory method in Quirks Mode, you will be able to mutate the underlying data and effectively undermind the immutability of ET nodes.
 
 <h2 id="expression-abstract-class">4.3 Expression Abstract Class</h2>
 
@@ -797,7 +801,7 @@ public void DumpExpression(string descr, TextWriter writer) {
 
 <h3 id="getfunctype-method">4.3.10 GetFuncType Method</h3>
 
-This helper method creates Type objects for delegate types with non-void return values. This method constructs the Func&lt;...&gt; types from the generic System.Linq.Func delegates using the supplied types.
+This helper method creates Type objects for delegate types with non-void return values. This method constructs the Func\<...\> types from the generic System.Linq.Func delegates using the supplied types.
 
 Signature:
 
@@ -805,7 +809,7 @@ Signature:
 public static Type GetFuncType(params Type[] typeArgs);
 ```
 
-TypeArgs must contain at least one argument and at most 17 elements. If the elements of typeArgs represent the types T1…Tn, the resulting Type object represents the constructed delegate type System.Linq.Func&lt;T1,…,Tn&gt;. The last argument must be the return type.
+TypeArgs must contain at least one argument and at most 17 elements. If the elements of typeArgs represent the types T1…Tn, the resulting Type object represents the constructed delegate type System.Linq.Func\<T1,…,Tn\>. The last argument must be the return type.
 
 <h3 id="trygetfunctype-method">4.3.11 TryGetFuncType Method</h3>
 
@@ -820,7 +824,7 @@ public static bool TryGetFuncType(Type[] typeArgs,
 
 <h3 id="getactiontype-method">4.3.12 GetActionType Method</h3>
 
-This helper method creates Type objects for delegate types with void return type. This method constructs the Action&lt;...&gt; types from the generic System.Linq.Action delegates using the supplied types.
+This helper method creates Type objects for delegate types with void return type. This method constructs the Action\<...\> types from the generic System.Linq.Action delegates using the supplied types.
 
 Signature:
 
@@ -828,7 +832,7 @@ Signature:
 public static Type GetActionType(params Type[] typeArgs);
 ```
 
-TypeArgs must contain at least one argument and at most 16 elements. If the elements of typeArgs represent the types T1…Tn, the resulting Type object represents the constructed delegate type System.Linq.Action&lt;T1,…,Tn&gt;.
+TypeArgs must contain at least one argument and at most 16 elements. If the elements of typeArgs represent the types T1…Tn, the resulting Type object represents the constructed delegate type System.Linq.Action\<T1,…,Tn\>.
 
 <h3 id="trygetactiontype-method">4.3.13 TryGetActionType Method</h3>
 
@@ -1113,13 +1117,13 @@ Use this in a DynamicExpression to represent a binary operator for asking the fi
 
 <h3 id="greaterthan">4.4.17 GreaterThan</h3>
 
-Use GreaterThan in BinaryExpression nodes to represent a numeric comparison. Given a GreaterThan node, exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is (e1) &gt; (e2), including evaluation order.
+Use GreaterThan in BinaryExpression nodes to represent a numeric comparison. Given a GreaterThan node, exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is (e1) \> (e2), including evaluation order.
 
 Use this in DynamicExpression to ask the first object to return whether it is greater than the second object. The expectation is that this operator is a comparison returning a Boolean value, but it could be a composition, I/O, or any kind of operator returning any type of value.
 
 <h3 id="greaterthanorequal">4.4.18 GreaterThanOrEqual</h3>
 
-Use GreaterThanOrEqual in BinaryExpression nodes to represent a numeric comparison. Given a GreaterThanOrEqual node, exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is (e1) &gt;= (e2), including evaluation order.
+Use GreaterThanOrEqual in BinaryExpression nodes to represent a numeric comparison. Given a GreaterThanOrEqual node, exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is (e1) \>= (e2), including evaluation order.
 
 Use this in DynamicExpression to ask the first object to return whether it is greater than or equal to the second object. The equality test is a deep structural equality, not object identity or first level aggregation equality. The expectation is that this operator is a comparison returning a Boolean value, but it could be a composition, I/O, or any kind of operator returning any type of value.
 
@@ -1127,31 +1131,31 @@ Use this in DynamicExpression to ask the first object to return whether it is gr
 
 InvocationExpression nodes use this node kind. It represents invoking a delegate or lambda expression on a list of argument expressions. Given an Invoke node, exp, let e0 be the C\# equivalent of exp.Expression, and let e1…en be the comma-separated list of C\# expressions equivalent to the corresponding nodes in exp.Arguments. Then the C\# equivalent of exp is (e0)(e1…en), including evaluation order.
 
-If e0 evaluates to a value of type Expression&lt;T&gt;, the DLR compiles the lambda and then invokes it. C\# does not allow this, but ETs do.
+If e0 evaluates to a value of type Expression\<T\>, the DLR compiles the lambda and then invokes it. C\# does not allow this, but ETs do.
 
 There is no use for this node kind in DynamicExpressions because they use InvokeBinder objects to indicate the semantics, and they don't use node kinds.
 
 <h3 id="lambda">4.4.20 Lambda</h3>
 
-LambdaExpressions use the Lambda node kind. They represent a lambda expression with a delegate type. Given a Lambda node, exp, let e be the C\# equivalent of exp.Body, and let p1…pn be the comma separated list of C\# parameters corresponding to each of the elements in exp.Parameters. Finally, let T be a type expression in C\# for the type represented by exp.Type. Then the C\# equivalent of exp is primarily "((T)((p1…pn) =&gt; e))", but there are some flags and features ET Lambda nodes support that C\# does not.
+LambdaExpressions use the Lambda node kind. They represent a lambda expression with a delegate type. Given a Lambda node, exp, let e be the C\# equivalent of exp.Body, and let p1…pn be the comma separated list of C\# parameters corresponding to each of the elements in exp.Parameters. Finally, let T be a type expression in C\# for the type represented by exp.Type. Then the C\# equivalent of exp is primarily "((T)((p1…pn) =\> e))", but there are some flags and features ET Lambda nodes support that C\# does not.
 
 There is no use for this node kind in DynamicExpressions.
 
 <h3 id="leftshift">4.4.21 LeftShift</h3>
 
-Use LeftShift in BinaryExpression nodes to represent a bitwise left shift operation. Given a LeftShift node, exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is "(e1) &lt;&lt; (e2)", including evaluation order.
+Use LeftShift in BinaryExpression nodes to represent a bitwise left shift operation. Given a LeftShift node, exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is "(e1) \<\< (e2)", including evaluation order.
 
 Use this node kind in DynamicExpressions to ask the first object to shift its contents left by the number of positions indicated by the second object. Neither object is modified. Any vacant locations created on the right side of object one are filled by a default value appropriate to the first object and language that owns the object and shift semantics.
 
 <h3 id="lessthan">4.4.22 LessThan</h3>
 
-Use LessThan in BinaryExpression nodes to represent a numeric comparison. Given a LessThan node, exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is "(e1) &lt; (e2)", including evaluation order.
+Use LessThan in BinaryExpression nodes to represent a numeric comparison. Given a LessThan node, exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is "(e1) \< (e2)", including evaluation order.
 
 Use this in DynamicExpression to ask the first object to return whether it is less than the second object. The expectation is that this operator is a comparison returning a Boolean value, but it could be a composition, I/O, or any kind of operator returning any type of value.
 
 <h3 id="lessthanorequal">4.4.23 LessThanOrEqual</h3>
 
-Use LessThanOrEqual in BinaryExpression nodes to represent a numeric comparison. Given a LessThanOrEqual node exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is "(e1) &lt;= (e2)", including evaluation order.
+Use LessThanOrEqual in BinaryExpression nodes to represent a numeric comparison. Given a LessThanOrEqual node exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is "(e1) \<= (e2)", including evaluation order.
 
 Use this in DynamicExpression to ask the first object to return whether it is less than or equal to the second object. The expectation is that this operator is a comparison returning a Boolean value, but it could be a composition, I/O, or any kind of operator returning any type of value.
 
@@ -1324,7 +1328,7 @@ Console.WriteLine("a: {0}, b: {1}, c: {2}", a, b, c);
 // a: 234, b: 345, c: 456
 ```
 
-Note, the next two examples throw errors in ETs v2 in the Quote factory since it only accepts nodes with Type Expession&lt;T&gt; (that is, lambdas).
+Note, the next two examples throw errors in ETs v2 in the Quote factory since it only accepts nodes with Type Expession\<T\> (that is, lambdas).
 
 Here's an example from v1 that does NOT work as you might expect:
 
@@ -1361,7 +1365,7 @@ LINQ tries to convert the quoted expression as its actual type in case it gets p
 
 <h3 id="rightshift">4.4.43 RightShift</h3>
 
-Use RightShift in BianryExpression nodes to represent a bitwise right shift operation. Given a RightShift node, exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is "(e1) &gt;&gt; (e2)".
+Use RightShift in BianryExpression nodes to represent a bitwise right shift operation. Given a RightShift node, exp, let e1 and e2 be the C\# equivalent of exp.Left and exp.Right. Then the C\# equivalent of exp is "(e1) \>\> (e2)".
 
 Use this node kind in DynamicExpressions to ask the first object to shift its contents right by the number of positions indicated by the second object. Neither object is modified. Any vacant locations created on the left side of object one are filled by a default value appropriate to the first object and language that owns the object and shift semantics.
 
@@ -1594,7 +1598,7 @@ C\# emits IL to pass the address to the r value in the CLR box object, so it wor
 
 Use this AddAssign node kind in BinaryExpression nodes to represent an Add compound assignment operation, without overflow checking. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the AddAssign node is the result of performing the Add opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL addition. Otherwise, the node searches for and applies a user-defined op\_Addition method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL addition. Otherwise, the node searches for and applies a user-defined op_Addition method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1604,7 +1608,7 @@ Use this in a DynamicExpression to represent a binary operator for asking the fi
 
 Use the AddAssignChecked node kind in BinaryExpression nodes to represent an Add compound assignment operation, with overflow checking. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL addition. Otherwise, the node searches for and applies a user-defined op\_Addition method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL addition. Otherwise, the node searches for and applies a user-defined op_Addition method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1614,7 +1618,7 @@ There is no use for this in a DynamicExpression.
 
 Use the DivideAssign node kind in BinaryExpression nodes to represent a Divide compound assignment operation, with overflow checking. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the DivideAssign node is the result of performing the Divide opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL div. Otherwise, the node searches for and applies a user-defined op\_Division method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL div. Otherwise, the node searches for and applies a user-defined op_Division method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1624,7 +1628,7 @@ Use this in a DynamicExpression to represent a binary operator for asking the fi
 
 Use the ExclusiveOrAssign node kind in BinaryExpression nodes to represent an ExclusiveOr compound assignment operation. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the ExclusiveOrAssign node is the result of performing the ExclusiveOr opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same integer or boolean type, the node has the semantics of IL xor. Otherwise, the node searches for and applies a user-defined op\_ExclusiveOr method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same integer or boolean type, the node has the semantics of IL xor. Otherwise, the node searches for and applies a user-defined op_ExclusiveOr method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1634,7 +1638,7 @@ Use this in a DynamicExpression to represent a binary operator for asking the fi
 
 Use the LeftShiftAssign node kind in BinaryExpression nodes to represent a LeftShift compound assignment operation. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the LeftShiftAssign node is the result of performing the LeftShift opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the type integer, the node has the semantics of IL LeftShift. Otherwise, the node searches for and applies a user-defined op\_LeftShift method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the type integer, the node has the semantics of IL LeftShift. Otherwise, the node searches for and applies a user-defined op_LeftShift method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1644,7 +1648,7 @@ Use this in a DynamicExpression to represent a binary operator for asking the fi
 
 Use the ModuloAssign node kind in BinaryExpression nodes to represent an Modulo compound assignment operation. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the ModuloAssign node is the result of performing the Modulo opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL rem. For example, -10 mod 3 is -1, and 10 mod -3 is 1. Otherwise, the node searches for and applies a user-defined op\_Modulus method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL rem. For example, -10 mod 3 is -1, and 10 mod -3 is 1. Otherwise, the node searches for and applies a user-defined op_Modulus method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1654,7 +1658,7 @@ Use this node kind in Dynamic Expression to ask the first object to divide itsel
 
 Use the MultipleAssign node kind in BinaryExpression nodes to represent an Multiply compound assignment operation, without overflow checking. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the MultiplyAssign node is the result of performing the Multiply opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL multiplication. Otherwise, the node searches for and applies a user-defined op\_Multiply method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL multiplication. Otherwise, the node searches for and applies a user-defined op_Multiply method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1664,7 +1668,7 @@ Use this in a DynamicExpression to represent a binary operator for asking the fi
 
 Use the MultiplyAssignChecked node kind in BinaryExpression nodes to represent an Multiply compound assignment operation, with overflow checking. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the MultiplyAssign node is the result of performing the Multiply opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL multiplication. Otherwise, the node searches for and applies a user-defined op\_Multiply method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL multiplication. Otherwise, the node searches for and applies a user-defined op_Multiply method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1674,7 +1678,7 @@ There is no use for this node kind a DynamicExpression.
 
 Use the OrAssign node kind in BinaryExpression nodes to represent an Or compound assignment operation. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the OrAssign node is the result of performing the Or opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same integer or boolean type, the node has the semantics of IL or. Otherwise, the node searches for and applies a user-defined op\_BitwiseOr method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same integer or boolean type, the node has the semantics of IL or. Otherwise, the node searches for and applies a user-defined op_BitwiseOr method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1694,7 +1698,7 @@ Use this in DynamicExpressions to request that the first object raise itself to 
 
 Use the RightShfitAssign node kind in BinaryExpression nodes to represent a RightShift compound assignment operation. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the RightShiftAssign node is the result of performing the RightShift opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the type integer, the node has the semantics of IL RightShift. Otherwise, the node searches for and applies a user-defined op\_RightShift method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the type integer, the node has the semantics of IL RightShift. Otherwise, the node searches for and applies a user-defined op_RightShift method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1704,7 +1708,7 @@ Use this in a DynamicExpression to represent a binary operator for asking the fi
 
 Use SubtractAssign node kind in BinaryExpression nodes to represent an Subtract compound assignment operation, without overflow checking. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the SubtractAssign node is the result of performing the Subtract opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL subtraction. Otherwise, the node searches for and applies a user-defined op\_Subtraction method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL subtraction. Otherwise, the node searches for and applies a user-defined op_Subtraction method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1714,7 +1718,7 @@ Use this in a DynamicExpression to represent a binary operator for asking the fi
 
 Use SubtractAssignCheced node kind in BinaryExpression nodes to represent an Subtract compound assignment operation, with overflow checking. The Left expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the SubtractAssign node is the result of performing the Subtract opreration on the operands.
 
-The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL subtraction. Otherwise, the node searches for and applies a user-defined op\_Subtraction method.
+The node's methodinfo performs only the basic binary operation (Add, Subtract, etc.). The resulting value is stored in the location represented by Left. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL subtraction. Otherwise, the node searches for and applies a user-defined op_Subtraction method.
 
 If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location.
 
@@ -1724,7 +1728,7 @@ There is no use for this node kind a DynamicExpression.
 
 Use the PreIncrementAssign node kind in UnaryExpression nodes to represent incrementing a value in-place by one unit. The result is stored to the operand's location. The operand expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the PreIncrementAssign node is the result of performing the increment opreration on the operand.
 
-The node's methodinfo performs only the basic unary operation (Add, Subtract, etc.). If methodinfo is null, and the operand's Type property represents a numeric type, the node has the semantics of IL addition of one, with the result stored in the location indicated by the operand. Otherwise, the node searches for and applies a user-defined op\_Increment method.
+The node's methodinfo performs only the basic unary operation (Add, Subtract, etc.). If methodinfo is null, and the operand's Type property represents a numeric type, the node has the semantics of IL addition of one, with the result stored in the location indicated by the operand. Otherwise, the node searches for and applies a user-defined op_Increment method.
 
 There is no use for this in a DynamicExpression.
 
@@ -1732,7 +1736,7 @@ There is no use for this in a DynamicExpression.
 
 Use the PreDecrementAssign node kind in UnaryExpression nodes to represent decrementing a value in-place by one unit. The result is stored to the operand's location. The operand expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the PreDecrementAssign node is the result of performing the decrement opreration on the operand.
 
-The node's methodinfo performs only the basic unary operation (Add, Subtract, etc.). If methodinfo is null, and the operand's Type property represents a numeric type, the node has the semantics of IL subtraction of one, with the result stored in the location indicated by the operand. Otherwise, the node searches for and applies a user-defined op\_Decrement method.
+The node's methodinfo performs only the basic unary operation (Add, Subtract, etc.). If methodinfo is null, and the operand's Type property represents a numeric type, the node has the semantics of IL subtraction of one, with the result stored in the location indicated by the operand. Otherwise, the node searches for and applies a user-defined op_Decrement method.
 
 There is no use for this in a DynamicExpression.
 
@@ -1740,7 +1744,7 @@ There is no use for this in a DynamicExpression.
 
 Use the PostIncrementAssign node kind in UnaryExpression nodes to represent incrementing a value in-place by one unit. The result is stored to the operand's location. The operand expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the PostIncrementAssign node is the the operand's value before performing the operation.
 
-The node's methodinfo performs only the basic unary operation (Add, Subtract, etc.). If methodinfo is null, and the operand's Type property represents a numeric type, the node has the semantics of IL addition of one, with the result stored in the location indicated by the operand. Otherwise, the node searches for and applies a user-defined op\_Increment method.
+The node's methodinfo performs only the basic unary operation (Add, Subtract, etc.). If methodinfo is null, and the operand's Type property represents a numeric type, the node has the semantics of IL addition of one, with the result stored in the location indicated by the operand. Otherwise, the node searches for and applies a user-defined op_Increment method.
 
 There is no use for this in a DynamicExpression.
 
@@ -1748,7 +1752,7 @@ There is no use for this in a DynamicExpression.
 
 Use the PreDecrementAssign node kind in UnaryExpression nodes to represent decrementing a value in-place by one unit. The result is stored to the operand's location. The operand expression must be one of the node types: ParameterExpression, MemberExpression, or IndexExpression. The result of the PreDecrementAssign node is the result of the operand before performing the operation.
 
-The node's methodinfo performs only the basic unary operation (Add, Subtract, etc.). If methodinfo is null, and the operand's Type property represents a numeric type, the node has the semantics of IL subtraction of one, with the result stored in the location indicated by the operand. Otherwise, the node searches for and applies a user-defined op\_Decrement method.
+The node's methodinfo performs only the basic unary operation (Add, Subtract, etc.). If methodinfo is null, and the operand's Type property represents a numeric type, the node has the semantics of IL subtraction of one, with the result stored in the location indicated by the operand. Otherwise, the node searches for and applies a user-defined op_Decrement method.
 
 There is no use for this in a DynamicExpression.
 
@@ -1762,13 +1766,13 @@ Use OnesComplement in a DynamicExpression to ask an object to returns its bitwis
 
 <h3 id="istrue">4.4.84 IsTrue</h3>
 
-Use the IsTrue node kind in UnaryExpression nodes to represent an expression whose value is true if the argument expression represents a true value. The semantics is the same as an expression usable in C\# statements such as 'if', 'while', 'for', etc.: if the argument value is not implicitly convertible to bool, then it must implement the op\_true operator method.
+Use the IsTrue node kind in UnaryExpression nodes to represent an expression whose value is true if the argument expression represents a true value. The semantics is the same as an expression usable in C\# statements such as 'if', 'while', 'for', etc.: if the argument value is not implicitly convertible to bool, then it must implement the op_true operator method.
 
 Use this operator in DynamicExpressions (actually need two) to create ETs for conditional-or. For example, you could have a DynamicExpression using IsTrue to test if a left operand is true. If it is, return the operand value, but if it is not IsTrue, use another DynamicExpression to Or the left with the right operand to produce the result.
 
 <h3 id="isfalse">4.4.85 IsFalse</h3>
 
-Use the IsFalse node kind in UnaryExpression nodes to represent an expression whose value is true if the argument expression represents a false value. The semantics is the same as an expression usable in C\# statements such as 'if', 'while', 'for', etc.: if the argument value is not implicitly convertible to bool, then it must implement the op\_false operator method.
+Use the IsFalse node kind in UnaryExpression nodes to represent an expression whose value is true if the argument expression represents a false value. The semantics is the same as an expression usable in C\# statements such as 'if', 'while', 'for', etc.: if the argument value is not implicitly convertible to bool, then it must implement the op_false operator method.
 
 Use this operator in DynamicExpressions (actually need two) to create ETs for conditional-and. For example, you could have a DynamicExpression using IsFalse to test if a left operand is false. If it is, return the operand value, but if it is not IsFalse, use another DynamicExpression to And the left with the right operand to produce the result.
 
@@ -2114,7 +2118,7 @@ If the implementing method is null, then left.Type and right.Type are numeric or
 
 - Otherwise an exception occurs.
 
-The ...Assign factories require the left argument expression to be one of the node types ParameterExpression, MemberExpression, or IndexExpression. They use the method argument only for the basic binary operation (Add, Subtract, etc.) and then assign the result to the location specified by the left argument. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL addition. Otherwise, the node searches for and applies a user-defined op\_Addition method. If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location. If the conversion lambda is non-null, and the Left.Type and Right.Type properties represent numeric types, then the factories throw and exception.
+The ...Assign factories require the left argument expression to be one of the node types ParameterExpression, MemberExpression, or IndexExpression. They use the method argument only for the basic binary operation (Add, Subtract, etc.) and then assign the result to the location specified by the left argument. If methodinfo is null, and the Left.Type and Right.Type properties represent the same numeric type, the node has the semantics of IL addition. Otherwise, the node searches for and applies a user-defined op_Addition method. If the node's conversion lambda is non-null, then the semantics is to pass the result of the basic binary operation to the lambda. The result of the conversion lambda is then stored in the Left location. If the conversion lambda is non-null, and the Left.Type and Right.Type properties represent numeric types, then the factories throw and exception.
 
 The resulting BinaryExpression has:
 
@@ -2338,7 +2342,7 @@ All the requirements and guarantees of the called factory method apply.
 
 <h2 id="typebinaryexpression-class">4.7 TypeBinaryExpression Class</h2>
 
-This class represents type tests. It can have node kinds TypeIs or TypeEqual. The former has the semantics of the IsInst CLR instruction (example below of how that is different than C\#'s semantics), and it tests the Expression value for having a sub type of the TypeOperand value. TypeEqual tests for an exact type match in essence; for example, a boxed int will equal Int32 and Nullable&lt;Int32&gt; because both are valid types for a boxed int.
+This class represents type tests. It can have node kinds TypeIs or TypeEqual. The former has the semantics of the IsInst CLR instruction (example below of how that is different than C\#'s semantics), and it tests the Expression value for having a sub type of the TypeOperand value. TypeEqual tests for an exact type match in essence; for example, a boxed int will equal Int32 and Nullable\<Int32\> because both are valid types for a boxed int.
 
 Example distinction between TypeIs node kind and C\#'s 'is' operator:
 
@@ -2537,7 +2541,7 @@ The following is derived from the v1 spec ... with updates for correctness or ne
 
 Expression and type must be non-null. If a non-null method is supplied, that becomes the implementing method for this node. It must represent a non-void static method with one argument, or an exception occurs.
 
-If method is null, the factories essentially prefer primitive type convert first, then implicit conversions (order determined by order reflection gives them and searching the list for the first one), then explicit conversions last. If either expression.Type or type contains a user definition of the implicit or explicit conversion operator (in the form of a static non-void op\_Implicit or op\_Explicit method with one argument), the MethodInfo representing that becomes the implementing method. ~~If more than one such method exists, an exception occurs~~. Otherwise,
+If method is null, the factories essentially prefer primitive type convert first, then implicit conversions (order determined by order reflection gives them and searching the list for the first one), then explicit conversions last. If either expression.Type or type contains a user definition of the implicit or explicit conversion operator (in the form of a static non-void op_Implicit or op_Explicit method with one argument), the MethodInfo representing that becomes the implementing method. ~~If more than one such method exists, an exception occurs~~. Otherwise,
 
 - If both expression.Type and type represent value types, and both are numeric, Boolean, nullable, or non-nullable enumeration types, the implementing method is null.
 
@@ -2582,7 +2586,7 @@ public static UnaryExpression Increment(Expression expression,
 public static UnaryExpression Increment(Expression expression);
 ```
 
-If method is null, and the expression's Type property represents a numeric type, then the node uses .NET primitives for adding or subtracting one. If the expression's Type is not numeric, then the factory searches for a user defined op\_Decrement or op\_Increment implementation on the type.
+If method is null, and the expression's Type property represents a numeric type, then the node uses .NET primitives for adding or subtracting one. If the expression's Type is not numeric, then the factory searches for a user defined op_Decrement or op_Increment implementation on the type.
 
 <h3 id="side-effecting-pre--and-post--increment-and-decrement-factory-methods">4.8.10 Side-effecting Pre- and Post- Increment and Decrement Factory Methods</h3>
 
@@ -2611,7 +2615,7 @@ See section 4.4 for more information.
 
 <h3 id="numeric-negation-and-plus-factory-methods">4.8.11 Numeric Negation and Plus Factory Methods</h3>
 
-Expression has the following factory methods for UnaryExpressions representing numeric negation and "plus" (CLR op\_UnaryPlus methods) operations:
+Expression has the following factory methods for UnaryExpressions representing numeric negation and "plus" (CLR op_UnaryPlus methods) operations:
 
 ``` csharp
 public static UnaryExpression Negate(Expression expression);
@@ -2630,7 +2634,7 @@ The following is derived from the v1 spec ... with updates for correctness or ne
 
 Expression must be non-null. If a non-null method is supplied, that becomes the implementing method for this node. It must represent a non-void static method with one argument, or an exception occurs.
 
-Otherwise, if expression.Type contains a user definition of the unary plus or minus operator respectively (in the form of a static one-argument non-void op\_UnaryPlus or op\_UnaryNegation method), the MethodInfo representing that becomes the implementing method. Otherwise, if expression.Type is a numeric type, the implementing method is null. Otherwise, an exception occurs.
+Otherwise, if expression.Type contains a user definition of the unary plus or minus operator respectively (in the form of a static one-argument non-void op_UnaryPlus or op_UnaryNegation method), the MethodInfo representing that becomes the implementing method. Otherwise, if expression.Type is a numeric type, the implementing method is null. Otherwise, an exception occurs.
 
 If the implementing method is non-null, then
 
@@ -2684,7 +2688,7 @@ The following is derived from the v1 spec ... with updates for correctness or ne
 
 Expression must be non-null. If a non-null method is supplied, that becomes the implementing method for this node. The method must represent a non-void static method with one argument, or an exception occurs.
 
-Otherwise, if expression.Type contains a user definition of a unary not operator (in the form of a static non-void op\_LogicalNot or op\_OnesComplement method with one argument), the MethodInfo representing that method becomes the implementing method. The factories look first for logical then for bitwise op\_... methods. Otherwise, if expression.Type is a numeric or boolean type, the implementing method is null. Otherwise, an exception occurs.
+Otherwise, if expression.Type contains a user definition of a unary not operator (in the form of a static non-void op_LogicalNot or op_OnesComplement method with one argument), the MethodInfo representing that method becomes the implementing method. The factories look first for logical then for bitwise op\_... methods. Otherwise, if expression.Type is a numeric or boolean type, the implementing method is null. Otherwise, an exception occurs.
 
 For legacy purposes, the Not factory still uses the Not node kind for a bitwise negation. The OneComplement factory uses the OnesComplement node kind. We introduced the new node kind for DLR interoperability in the DynamicMetaObject protocol, and for meta-programming scenarios where the node's intent is readily manifest.
 
@@ -2737,7 +2741,7 @@ public static UnaryExpression IsTrue(Expression expression,
 
 Expression must be non-null. If a non-null method is supplied, that becomes the implementing method for this node. The method must represent a non-void static method with one argument, or an exception occurs.
 
-Otherwise, if expression.Type contains a user definition of a unary op\_false or op\_true operator, respectively, the MethodInfo representing that method becomes the implementing method. The user-defined type must also implement the op\_BitwiseAnd operator method if it implements op\_False, and op\_BitwiseOr if it implements op\_True. Otherwise, if expression.Type implicitly converts to boolean, the implementing method is null. Otherwise, an exception occurs.
+Otherwise, if expression.Type contains a user definition of a unary op_false or op_true operator, respectively, the MethodInfo representing that method becomes the implementing method. The user-defined type must also implement the op_BitwiseAnd operator method if it implements op_False, and op_BitwiseOr if it implements op_True. Otherwise, if expression.Type implicitly converts to boolean, the implementing method is null. Otherwise, an exception occurs.
 
 If the implementing method is non-null, then
 
@@ -2781,7 +2785,7 @@ The following is derived from the v1 spec ... with a correction to the constrain
 
 It would be rare that an ET producer would need to use this factory or node kind. It exists with special semantics for use in LINQ v1 language features. In v-next+1 we'll consider a complete quasi-quoting model. See section 4.4.42 for more information.
 
-Expression must be non-null. Expression.Type must be Expression&lt;T&gt;, where T is a delegate type.
+Expression must be non-null. Expression.Type must be Expression\<T\>, where T is a delegate type.
 
 The resulting UnaryExpression has:
 
@@ -3191,7 +3195,7 @@ public CallSiteBinder Binder { get; }
 
 <h3 id="delegatetype">4.12.4 DelegateType</h3>
 
-This property returns the delegate used to construct the CallSite&lt;T&gt; that manages the caching of dispatch rules for this operation. The first argument of the delegate type's Invoke method must be of type CallSite.
+This property returns the delegate used to construct the CallSite\<T\> that manages the caching of dispatch rules for this operation. The first argument of the delegate type's Invoke method must be of type CallSite.
 
 Signature:
 
@@ -3752,7 +3756,7 @@ The following is derived from the v1 spec ... with updates for correctness or ne
 
 Method must be non-null. If method is an instance method, instance must be supplied as non-null. Instance's Type property must be assignable to the declaring type of the member represented by method. If the method is a static method, instance must be null (breaking bug fix from v1); otherwise, the factories throw an ArgumentException.
 
-If arguments is omitted or null, there are no arguments. If provided, arguments must have the same number of elements as the number of parameters for the method. Each of the elements of arguments must be non-null, and the types of the values they represent must be assignable to the type of the corresponding parameter of method. There is a special case the factory handles when an element of arguments has a Type property representing a type that is not assignable to the corresponding parameter type. If the parameter's type is a sub type of LambdaExpression, and the argument Expression object itself (that is, the Expression node) is of a type that is assignable to the parameter's type, then the argument Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression&lt;Func&lt;...&gt;&gt; = (...) =&gt; ...".
+If arguments is omitted or null, there are no arguments. If provided, arguments must have the same number of elements as the number of parameters for the method. Each of the elements of arguments must be non-null, and the types of the values they represent must be assignable to the type of the corresponding parameter of method. There is a special case the factory handles when an element of arguments has a Type property representing a type that is not assignable to the corresponding parameter type. If the parameter's type is a sub type of LambdaExpression, and the argument Expression object itself (that is, the Expression node) is of a type that is assignable to the parameter's type, then the argument Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression\<Func\<...\>\> = (...) =\> ...".
 
 Two overloads take methodName and resolve the MethodInfo for you. Language implementers or DLR CallSiteBinder implementers should never use these overloads since they may not have the same semantics of method resolution as your language. When using these overloads, instance, type, and methodName must not be null. These overloads search instance.Type (or type if you used that overload) and base types for methodName, case-INsensitively. Type parameters must match typeArguments, and parameter types must match argument expression types. If no method or more than one compatible method is found, these overloads throw an exception. Otherwise these overloads invoke Call with the instance (if supplied), the MethodInfo for the found method, and arguments to return a result.
 
@@ -3855,7 +3859,7 @@ public static InvocationExpression Invoke
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
-Expression must be non-null. Expression.Type must represent a delegate type D or a type Expression&lt;D&gt; where D is a delegate type. The list of parameters for D must have the same length as arguments, or 0 if arguments is null. Each of the elements of arguments must be non-null, and the types of the values they represent must be assignable to the type of the corresponding parameter of D. There is a special case the factory handles when an element of arguments has a Type property representing a type that is not assignable to the corresponding parameter type. If the parameter's type is a sub type of LambdaExpression, and the argument Expression object itself (that is, the Expression node) is of a type that is assignable to the parameter's type, then the argument Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression&lt;Func&lt;...&gt;&gt; = (...) =&gt; ...".
+Expression must be non-null. Expression.Type must represent a delegate type D or a type Expression\<D\> where D is a delegate type. The list of parameters for D must have the same length as arguments, or 0 if arguments is null. Each of the elements of arguments must be non-null, and the types of the values they represent must be assignable to the type of the corresponding parameter of D. There is a special case the factory handles when an element of arguments has a Type property representing a type that is not assignable to the corresponding parameter type. If the parameter's type is a sub type of LambdaExpression, and the argument Expression object itself (that is, the Expression node) is of a type that is assignable to the parameter's type, then the argument Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression\<Func\<...\>\> = (...) =\> ...".
 
 The resulting InvocationExpression has the Expression property equal to expression. The Arguments property has the same elements as arguments, except that some elements may be wrapped in Quote nodes as described above. The Type property represents the return type of D.
 
@@ -3940,7 +3944,7 @@ Array must be an expression with a Type property representing an array (array.Ty
 
 Indexer must not be null. Its PropertyType must not be a ByRef type, and it must not represent the void type. If Indexer represents as static property, then instance must be null, and vice versa.
 
-Arguments must not be null, and it must not be empty. Arguments must have the same number of elements as the number of parameters for the property. Each of the elements of arguments must be non-null, and the types of the values they represent must be assignable to the type of the corresponding parameter of property. There is a special case the factory handles when an element of arguments has a Type property representing a type that is not assignable to the corresponding parameter type. If the parameter's type is a sub type of LambdaExpression, and the argument Expression object itself (that is, the Expression node) is of a type that is assignable to the parameter's type, then the argument Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression&lt;Func&lt;...&gt;&gt; = (...) =&gt; ...".
+Arguments must not be null, and it must not be empty. Arguments must have the same number of elements as the number of parameters for the property. Each of the elements of arguments must be non-null, and the types of the values they represent must be assignable to the type of the corresponding parameter of property. There is a special case the factory handles when an element of arguments has a Type property representing a type that is not assignable to the corresponding parameter type. If the parameter's type is a sub type of LambdaExpression, and the argument Expression object itself (that is, the Expression node) is of a type that is assignable to the parameter's type, then the argument Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression\<Func\<...\>\> = (...) =\> ...".
 
 One overload takes propertyName and resolves the PropertyInfo for you. Language implementers or DLR CallSiteBinder implementers should never use this overload since it may not have the same semantics of resolution as your language. Instance and propertyName must not be null. This overload searches instance.Type and base types for propertyName, case-INsensitively. Parameter types must be reference assignable from corresponding argument expression types. If no method or more than one compatible method is found, this overload throws an exception.
 
@@ -4318,9 +4322,9 @@ SIDENOTE
 
 IPy will need to build a PythonWhileExpression to handle the Python Else clause if IPy wants to support meta-programming via ETs that is closer to the programs users write. The IPy-specific ET node could reduce to a WhileExpr:
 
-PythonWhile &lt;cond&gt;: &lt;whilebody&gt; else: &lt;elsebody&gt; --&gt;
+PythonWhile \<cond\>: \<whilebody\> else: \<elsebody\> --\>
 
-While (&lt;cond&gt; ? true : Block { &lt;elsebody&gt;; false }) &lt;whilebody&gt;
+While (\<cond\> ? true : Block { \<elsebody\>; false }) \<whilebody\>
 
 <h3 id="class-summary-21">4.25.1 Class Summary</h3>
 
@@ -4444,7 +4448,7 @@ Target must be the target of some LabelExpression lexically within the same Lamb
 
 Value, if supplied is an expression to execute, and its value is delivered to the target location (that is, the value remains on the IL stack upon transferring control to the new location). The Expression's Type property must represent a type that is reference-assignable to the type represented by the target's Type property.
 
-There are two special cases the factory handles when value's Type property represents a type that is not assignable to the type represented by target.Type. First, if Target.Type is void, the GotoExpression.Expression.Type can represent anything since the ET compiler will automatically convert the result to void or squelch the value. Second, if target's type is a sub type of LambdaExpression, and the value Expression object itself (that is, the Expression node) is of a type that is assignable to the target's type, then the value Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression&lt;Func&lt;...&gt;&gt; = (...) =&gt; ...".
+There are two special cases the factory handles when value's Type property represents a type that is not assignable to the type represented by target.Type. First, if Target.Type is void, the GotoExpression.Expression.Type can represent anything since the ET compiler will automatically convert the result to void or squelch the value. Second, if target's type is a sub type of LambdaExpression, and the value Expression object itself (that is, the Expression node) is of a type that is assignable to the target's type, then the value Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression\<Func\<...\>\> = (...) =\> ...".
 
 <h2 id="gotoexpressionkind-enum">4.28 GotoExpressionKind Enum</h2>
 
@@ -4581,7 +4585,7 @@ Target identifies the LabelExpression so that a GotoExpressions can refer to the
 
 DefaultValue, if supplied is an expression to execute, and its value is the result of the LabelExpression if execution reaches the label without jumping. The defaultValue's Type property must represent a type that is reference-assignable to the type represented by the target's Type property.
 
-There are two special cases the factory handles when defaultValue's Type property represents a type that is not assignable to the type represented by target.Type. First, if Target.Type is void, the defaultValue.Type can represent anything since the ET compiler will automatically convert the result to void or squelch the value. Second, if target's type is a sub type of LambdaExpression, and the defaultValue Expression object itself (that is, the Expression node) is of a type that is assignable to the target's type, then the value Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression&lt;Func&lt;...&gt;&gt; = (...) =&gt; ...".
+There are two special cases the factory handles when defaultValue's Type property represents a type that is not assignable to the type represented by target.Type. First, if Target.Type is void, the defaultValue.Type can represent anything since the ET compiler will automatically convert the result to void or squelch the value. Second, if target's type is a sub type of LambdaExpression, and the defaultValue Expression object itself (that is, the Expression node) is of a type that is assignable to the target's type, then the value Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression\<Func\<...\>\> = (...) =\> ...".
 
 <h2 id="labeltarget-class">4.30 LabelTarget Class</h2>
 
@@ -5195,11 +5199,11 @@ The resulting ListInitExpression has:
 
 - Type set to newExpression.Type
 
-- If initializers is given as an IEnumerable&lt;ElementInit&gt; or an ElementInit\[\], then the Initializers property is simply equal to initializers. Otherwise, this factory determines an addMethod to use and creates ElementInit objects for a collection of initializers as specified below.
+- If initializers is given as an IEnumerable\<ElementInit\> or an ElementInit\[\], then the Initializers property is simply equal to initializers. Otherwise, this factory determines an addMethod to use and creates ElementInit objects for a collection of initializers as specified below.
 
 If you supply a non-null addMethod, then that is the add method of the ListInitExpression. Otherwise, this factory searches for a single-argument instance method with a name equal to “Add” (ignoring case) on newExpression.Type and its base type. If exactly one method is found, that is the add method; otherwise, this factory throws an exception.
 
-The Initializer property is then a list of ElementInit objects, one for each element of initializers, with the AddMethod property being the add method, and the Arguments property being a ReadOnlyCollection&lt;Expression&gt; containing the corresponding element of initializers as its single element.
+The Initializer property is then a list of ElementInit objects, one for each element of initializers, with the AddMethod property being the add method, and the Arguments property being a ReadOnlyCollection\<Expression\> containing the corresponding element of initializers as its single element.
 
 <h2 id="elementinit-class">4.39 ElementInit Class</h2>
 
@@ -5258,7 +5262,7 @@ public static ElementInit ElementInit
 
 The following is derived from the v1 spec ... with updates for correctness or new behaviors
 
-AddMethod and arguments must be non-null. AddMethod must represent an instance method named “Add” (ignoring case). Arguments must have the same number of elements as the number of parameters the method represented by addMethod takes. Each of the elements of arguments must be non-null, and the types of the values they represent must be assignable to the type of the corresponding parameter of addMethod. There is a special case the factory handles when an element of arguments has a Type property representing a type that is not assignable to the corresponding parameter type. If the parameter's type is a sub type of LambdaExpression, and the argument Expression object itself (that is, the Expression node) is of a type that is assignable to the parameter's type, then the argument Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression&lt;Func&lt;...&gt;&gt; = (...) =&gt; ...".
+AddMethod and arguments must be non-null. AddMethod must represent an instance method named “Add” (ignoring case). Arguments must have the same number of elements as the number of parameters the method represented by addMethod takes. Each of the elements of arguments must be non-null, and the types of the values they represent must be assignable to the type of the corresponding parameter of addMethod. There is a special case the factory handles when an element of arguments has a Type property representing a type that is not assignable to the corresponding parameter type. If the parameter's type is a sub type of LambdaExpression, and the argument Expression object itself (that is, the Expression node) is of a type that is assignable to the parameter's type, then the argument Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression\<Func\<...\>\> = (...) =\> ...".
 
 The resulting ElementInit has the AddMethod property equal to addMethod and the Arguments property equal to arguments.
 
@@ -5350,7 +5354,7 @@ The following is derived from the v1 spec ... with updates for correctness or ne
 
 Constructor and type must be non-null. Type must represent a type that has a constructor that takes no arguments.
 
-If arguments is omitted or null, the factory stores an empty collection. If provided, arguments must have the same number of elements as the number of parameters for the constructor. Each of the elements of arguments must be non-null, and the types of the values they represent must be assignable to the type of the corresponding parameter of addMethod. There is a special case the factory handles when an element of arguments has a Type property representing a type that is not assignable to the corresponding parameter type. If the parameter's type is a sub type of LambdaExpression, and the argument Expression object itself (that is, the Expression node) is of a type that is assignable to the parameter's type, then the argument Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression&lt;Func&lt;...&gt;&gt; = (...) =&gt; ...".
+If arguments is omitted or null, the factory stores an empty collection. If provided, arguments must have the same number of elements as the number of parameters for the constructor. Each of the elements of arguments must be non-null, and the types of the values they represent must be assignable to the type of the corresponding parameter of addMethod. There is a special case the factory handles when an element of arguments has a Type property representing a type that is not assignable to the corresponding parameter type. If the parameter's type is a sub type of LambdaExpression, and the argument Expression object itself (that is, the Expression node) is of a type that is assignable to the parameter's type, then the argument Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression\<Func\<...\>\> = (...) =\> ...".
 
 If provided, members must have the same number of elements as arguments. Each of the elements of members must be non-null. Each must be a gettable instance PropertyInfo, FieldInfo, or MethodInfo that is available on the declaring type of constructor. You might expect the members to be setters, but these exist purely to capture the names of members, for pretty printing, or for debugging uses. They do not affect the semantics or results of NewExpression nodes. The corresponding element of arguments for a particular members element must have a type assignable to the type of the member.
 
@@ -5425,13 +5429,13 @@ The following is derived from the v1 spec ... with updates for correctness or ne
 
 For the ...Bounds factories Type and bounds must be non-null. Type represents the element type. Each element of bounds must be non-null, and its Type property must represent an integral type. The resulting NewArrayExpression has node kind NewArrayBounds. The Type property represents an array type with rank equal to the length of bounds and the element type represented by type. The Expressions property has the same elements as bounds.
 
-For the ...Init factories type and initializers must be non-null. Type represents the element type. Each element of initializers must be non-null and have a Type property that represents a type assignable to the type represented by type. There is a special case the factory handles when an element of initializers has a Type property representing a type that is not assignable to type. If the initializer's type is a sub type of LambdaExpression, and the element Expression object itself (that is, the Expression node) is of a type that is assignable to type, then the element Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression&lt;Func&lt;...&gt;&gt; = (...) =&gt; ...".
+For the ...Init factories type and initializers must be non-null. Type represents the element type. Each element of initializers must be non-null and have a Type property that represents a type assignable to the type represented by type. There is a special case the factory handles when an element of initializers has a Type property representing a type that is not assignable to type. If the initializer's type is a sub type of LambdaExpression, and the element Expression object itself (that is, the Expression node) is of a type that is assignable to type, then the element Expression node is wrapped in a Quote node. This supports a legacy ETs v1 behavior for how C\# chose to implement expression such as "Expression\<Func\<...\>\> = (...) =\> ...".
 
 The resulting NewArrayExpression has node kind NewArrayInit. The Type property represents an array type with rank 1 and the element type represented by type. The Expressions property has the same elements as initializers.
 
 <h2 id="lambdaexpression-class">4.42 LambdaExpression Class</h2>
 
-This abstract class represents a function definition, and it always manifests as Expression&lt;T&gt;. Evaluating a LambdaExpression produces a delegate. It has node kind Lambda.
+This abstract class represents a function definition, and it always manifests as Expression\<T\>. Evaluating a LambdaExpression produces a delegate. It has node kind Lambda.
 
 The LambdaExpression may be in the context of (that is, it is a sub ET of) other lambdas or BlockExpressions. When this occurs, and the inner LambdaExpression contains ParameterExpression nodes that refer to variables defined by outer lambdas or blocks, the expression compiler creates closure environments when needed, lifting variables.
 
@@ -5615,7 +5619,7 @@ These methods compile the LambdaExpression instance. Compile returns a delegate 
 
 DebugInfoGenerator, if supplied, indicates the compiler should emit sequence point and local variable information. It also implements members the compiler uses to emit this information.
 
-Compiling an Expression&lt;D&gt; which contains calls of unsafe code may cause an exception to get thrown.
+Compiling an Expression\<D\> which contains calls of unsafe code may cause an exception to get thrown.
 
 CompileToMethod is useful for hosted languages that want to provide some pre-compilation support so that their host applications do not have to read source code and compile it on each start up. It is up to the language using this method to prepare the assembly and write it to disk.
 
@@ -5724,7 +5728,7 @@ If tailcall is unsupplied, it defaults to False. When true, this parameter indic
 
 Name, if not null, is used for debugging or pretty printing only. It has no semantic value. If you need to detect internal helper frames used by the DLR (for example, CallSite cache delegates), see System.Runtime.CompilerServices.IsInternalFrame.
 
-The resulting object is always an Expression&lt;Tdelegate&gt; with:
+The resulting object is always an Expression\<Tdelegate\> with:
 
 - Node kind Lambda
 
@@ -5734,7 +5738,7 @@ The resulting object is always an Expression&lt;Tdelegate&gt; with:
 
 - Type property set to the delegate type
 
-<h2 id="expressiontdelegate-class">4.43 Expression&lt;TDelegate&gt; Class</h2>
+<h2 id="expressiontdelegate-class">4.43 Expression\<TDelegate\> Class</h2>
 
 This class is the concrete type instantiated for LambdaExpressions. See that type for more information.
 
@@ -5862,7 +5866,7 @@ Type must be non-null. The resulting node has Type and Name set to the factory a
 
 This class represents variables that need to be accessed for getting/setting as lifted closure variables. This class uses the RuntimeVariables node kind.
 
-The Type property of this expression kind is IRuntimeVariables. This could have been IList&lt;IStrongBox&gt;, but having IRuntimeVariables enables the implementation of the closure environment to change over time.
+The Type property of this expression kind is IRuntimeVariables. This could have been IList\<IStrongBox\>, but having IRuntimeVariables enables the implementation of the closure environment to change over time.
 
 <h3 id="class-summary-40">4.46.1 Class Summary</h3>
 
@@ -6121,7 +6125,7 @@ The following subsections only spec the members that have design motivation or s
 
 <h3 id="rebinding-when-children-nodes-type-properties-change">4.50.1 Rebinding When Children Nodes' Type Properties Change</h3>
 
-There are constraints in the default visitor methods regarding Type property changes when children get rewritten. Changing the types of children can cause the parent node to rebind its semantics when it creates a new instance of itself. For example, an Add node of two integers could become an Add node of a user-defined integer wrapper and an integer, where the user-defined op\_Add method adversely affects the original ET's semantics. Since accidental semantics changes are more likely programmer errors, the default visitor methods resist these changes.
+There are constraints in the default visitor methods regarding Type property changes when children get rewritten. Changing the types of children can cause the parent node to rebind its semantics when it creates a new instance of itself. For example, an Add node of two integers could become an Add node of a user-defined integer wrapper and an integer, where the user-defined op_Add method adversely affects the original ET's semantics. Since accidental semantics changes are more likely programmer errors, the default visitor methods resist these changes.
 
 If you intend to rewrite children node Type properties and cause rebinding in parent nodes, you'll need to explicitly override the parent node visitor method to control the rewriting and rebinding of the parent node's semantics. This should not mean you'll need to override all methods. Most likely you'll only need to override BinaryExpression and UnaryExpression, maybe a couple of others.
 
@@ -6227,9 +6231,9 @@ public abstract class ExpressionVisitor {
         (UnaryExpression node);
 ```
 
-<h3 id="visitt-method">4.50.3 Visit&lt;T&gt; Method</h3>
+<h3 id="visitt-method">4.50.3 Visit\<T\> Method</h3>
 
-This method iterates over nodes invoking elementVisitor on each. If any invocation returns a new instance of the T, then Visit&lt;T&gt; copies the collection, aliasing unchanged elements and point to the new ones elementVisitor created.
+This method iterates over nodes invoking elementVisitor on each. If any invocation returns a new instance of the T, then Visit\<T\> copies the collection, aliasing unchanged elements and point to the new ones elementVisitor created.
 
 This method is for convenience, and it is used in the default implementations of several methods to walk children (for example, SwitchCases, CatchBlocks, MemberBindings, etc.). It is protected so that you can use it as well.
 
@@ -6240,7 +6244,7 @@ protected static ReadOnlyCollection<T> Visit<T>
     (ReadOnlyCollection<T> nodes, Func<T,T> elementVisitor);
 ```
 
-<h3 id="visitlambdat-method">4.50.4 VisitLambda&lt;T&gt; Method</h3>
+<h3 id="visitlambdat-method">4.50.4 VisitLambda\<T\> Method</h3>
 
 This method visits the parameters and the body of a LambdaExpression. It requires the generic parameter to solve a couple of rewriting issues. While the T is the same delegate type as LambdaExpression.Type, in some cases it isn't possible to pass the delegate type to the factories for constructing new LambdaExpressions. When some code, A, is rewriting a Lambda node from other code, B, that has a private delegate type, A cannot always invoke the factories with the delegate type (for example, in partial trust). Due to how access works in .NET, when the delegate type flow in via the T parameter, you can call the factories with the private delegate type.
 
@@ -6251,7 +6255,7 @@ protected virtual Expression VisitLambda<T>
     (Expression<T> node);
 ```
 
-<h3 id="visitandconvertt-method">4.50.5 VisitAndConvert&lt;T&gt; Method</h3>
+<h3 id="visitandconvertt-method">4.50.5 VisitAndConvert\<T\> Method</h3>
 
 This method effectively calls Visit on all the nodes, and if any node gets changed by the visitor, this method ensures the new node is the same type as the old node.
 
@@ -6483,7 +6487,7 @@ public sealed class Annotations : IEnumerable<System.Object>,
 public static readonly Annotations Empty;
 ```
 
-<h3 id="addt-method">4.54.3 ~~Add&lt;T&gt; Method~~</h3>
+<h3 id="addt-method">4.54.3 ~~Add\<T\> Method~~</h3>
 
 ~~This method returns a copy of the Annotations object with the argument added.~~
 
@@ -6495,7 +6499,7 @@ public static readonly Annotations Empty;
 public Annotations Add<T>(T annotation);
 ```
 
-<h3 id="containst-method">4.54.4 ~~Contains&lt;T&gt; Method~~</h3>
+<h3 id="containst-method">4.54.4 ~~Contains\<T\> Method~~</h3>
 
 ~~This method returns true if there are any elements of type T, otherwise it returns false.~~
 
@@ -6505,7 +6509,7 @@ public Annotations Add<T>(T annotation);
 public Boolean Contains<T>();
 ```
 
-<h3 id="gett-method">4.54.5 ~~Get&lt;T&gt; Method~~</h3>
+<h3 id="gett-method">4.54.5 ~~Get\<T\> Method~~</h3>
 
 ~~This method returns the first element of type T found in the Annotations object. If there are no such elements, then it returns the default instance of T.~~
 
@@ -6515,7 +6519,7 @@ public Boolean Contains<T>();
 public T Get<T>();
 ```
 
-<h3 id="trygett-method">4.54.6 ~~TryGet&lt;T&gt; Method~~</h3>
+<h3 id="trygett-method">4.54.6 ~~TryGet\<T\> Method~~</h3>
 
 ~~This method returns true and sets its argument the first element of type T found in the Annotations object. If there are no such elements, then it returns false and sets the argument to the default instance of T.~~
 
@@ -6525,7 +6529,7 @@ public T Get<T>();
 public Boolean TryGet<T>(out T annotation);
 ```
 
-<h3 id="removet-method">4.54.7 ~~Remove&lt;T&gt; Method~~</h3>
+<h3 id="removet-method">4.54.7 ~~Remove\<T\> Method~~</h3>
 
 ~~This method returns a new Annotations object that is a copy of this Annotations object with all elements of type T removed from it.~~
 

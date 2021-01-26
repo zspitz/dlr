@@ -1,3 +1,7 @@
+---
+sort: 13
+---
+
 # 13 SymplSetMemberBinder and Binding .NET Instance Members
 
 At runtime, when trying to set a member of a .NET static object, the default .NET meta-object will call FallbackSetMember on SymplSetMemberBinder. There is more code to setting members than getting them, and by convention, the resulting DynamicMetaObject's expression needs to ensure it returns the value stored. As a reminder, if the object that flows into the CallSite is some dynamic object, then it's DynamicMetaObject's BindSetMember will produce a rule for setting the member.

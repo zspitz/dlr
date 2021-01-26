@@ -1,3 +1,7 @@
+---
+sort: 3
+---
+
 # 3 Walkthrough of Hello World
 
 We're going to start with walking through the infrastructure needed for Hello World. This section explains a lot of important concepts in the DLR needed to start implementing a language using the DLR. Later sections discuss the remaining concepts, which come in two forms as Sympl gains features. One is different kinds of dynamic call sites and runtime binders, and the other is simple syntax tree translations to Expression Trees. Do NOT skip this section just because it is Hello World!
@@ -37,7 +41,7 @@ This two line Sympl program requires a surprising amount of support if you do no
 
 - File modules or scopes -- do files provide some name isolation as in python or none at all as in elisp. Sympl has file globals. Import brings names from .NET assemblies and host globals into a file module in Sympl.
 
-- Keyword forms -- for example, import, defun, let\*, new, set, +, &lt;, and so on.
+- Keyword forms -- for example, import, defun, let\*, new, set, +, \<, and so on.
 
 - Function call.
 
@@ -108,7 +112,7 @@ Before explaining how Sympl fills the Sympl.Globals table with models of namespa
 
 The DLR has a notion of dynamic operations that extend beyond method invocation. There are twelve kinds of operations designed for interoperability, such as GetMember, SetMember, InvokeMember, GetIndex, Invoke, CreateInstance, BinaryOperation, UnaryOperation, and so on. See diagram below. They require runtime binding to inform a CallSite how to perform an operation given the object or objects that flowed into the call site. Binders represent the language that owns the CallSite as well as metadata to inform the binding search. Binders return a sort of rule, entailing how to perform the operation and when the particular implementation is appropriate to use. CallSites can cache these rules to avoid future binding searches on successive executions of the CallSite.
 
-![binders](media/image1.jpeg)
+<img src="media/image1.jpeg" style="width:7.04167in;height:4.38542in" alt="binders" />
 
 Figure 1: Twelve Standard Interop Binders
 
@@ -283,7 +287,7 @@ if (paramType == typeof(Type) &&
 
 You might think you could just use the Expression.Call factory to find a matching member. This is not generally a good idea for a few reasons. The first is that any real language should provide its own semantics for finding a most applicable method and resolving overloads when more than one could apply. The second is that Expression.Call can't handle special language semantics such as handling TypeModels or mapping nil to Boolean false. The third is that even though Sympl doesn't care and just picks the first matching MethodInfo, Expression.Call throws an error if it finds more than one matching.
 
-The last point to make now about matching parameters is that Sympl's very simple logic could be improved in two ways to enable more .NET interoperability. First, Sympl could check whether an argument DynamicMetaObject has a value (HasValue is true), and if the value is null. In this case, Sympl could test if the parameter's type is a class or interface, or if the parameter's type is a generic type and also Nullable&lt;T&gt;. These conditions would mean null matches while Sympl's current code does not find a match. The second improvement is to notice the last parameter is an array of some type for which all the remaining arguments match the element type. Sympl could then use Expression.NewArrayInit to create an expression collecting the last of the arguments for passing to the matching MethodInfo's method. Production-quality languages will do these kinds of tests as well as other checks such as built-in or user conversions.
+The last point to make now about matching parameters is that Sympl's very simple logic could be improved in two ways to enable more .NET interoperability. First, Sympl could check whether an argument DynamicMetaObject has a value (HasValue is true), and if the value is null. In this case, Sympl could test if the parameter's type is a class or interface, or if the parameter's type is a generic type and also Nullable\<T\>. These conditions would mean null matches while Sympl's current code does not find a match. The second improvement is to notice the last parameter is an array of some type for which all the remaining arguments match the element type. Sympl could then use Expression.NewArrayInit to create an expression collecting the last of the arguments for passing to the matching MethodInfo's method. Production-quality languages will do these kinds of tests as well as other checks such as built-in or user conversions.
 
 If there are applicable methods, Sympl binds the InvokeMember operation. Sympl does not try to match a most specific method. In fact, in Hello World Sympl actually invokes the object overload on WriteLine, not the string overload due to the order .NET Reflection happens to serve up the MethodInfos. The result of binding is a DynamicMetaObject with an expression that implements the member invocation and restrictions for when the implementation is valid. See the next section for a discussion of argument conversions and restrictions. Note that the MethodCallExpression may be wrapped by EnsureObjectResult (see below) because CallSites (except for Convert Operations) must return something strictly typed that's assignable to object.
 
@@ -479,7 +483,7 @@ In Sympl, it doesn't matter what the expression is that produces the callable ob
 
 Back to the outer IF's consequent branch, the function expression is a dotted expression. AnalyzeFunCallExpr analyzes the expression to get a target object (below is an explanation of dotted expression analysis). Next the function call analysis generates code for all the argument expressions. Then it builds a DynamicExpression with an InvokeMember operation. The metadata for InvokeMember operations is the member name, whether to ignore case, and argument count. Sympl's binders inherently set ignoreCase to true. As with the Invoke operation, the binder's CallInfo metadata counts only the argument expressions that you would normally think of as arguments to a function call. However, the 'args' variable includes as its first element the 'objExpr' resulting from the dotted expression.
 
-AnalyzeFunCallExpr picks off the simple case in the else branch, when the length of dotted expressions is only one. This is when there is an expression, a dot, and an identifier. In the general case, when length &gt; 1, AnalyzeFunCallExpr creates a new SymplDottedExpr AST node that excludes the last member of the dotted expression. Analyzing the first N-1 results in an Expression that produces a target object for an InvokeMember operation. The member to invoke, or last bit of the dotted expression, must be an identifier.
+AnalyzeFunCallExpr picks off the simple case in the else branch, when the length of dotted expressions is only one. This is when there is an expression, a dot, and an identifier. In the general case, when length \> 1, AnalyzeFunCallExpr creates a new SymplDottedExpr AST node that excludes the last member of the dotted expression. Analyzing the first N-1 results in an Expression that produces a target object for an InvokeMember operation. The member to invoke, or last bit of the dotted expression, must be an identifier.
 
 <h3 id="analyzing-dotted-expressions">3.4.2 Analyzing Dotted Expressions</h3>
 

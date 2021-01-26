@@ -1,3 +1,7 @@
+---
+sort: 5
+---
+
 # 5 Dynamic Object Conventions
 
 As a language implementer or library author, you may use the mechanisms described above to expose whatever arbitrary binding semantics you wish, including semantics that differ greatly from those of the language consuming your objects. The fallback system exposed by the DynamicMetaObjectBinder subclasses enables your objects to blend their semantics naturally with those of the language consuming them.
@@ -8,7 +12,7 @@ In addition to the fallback system, there are also some established conventions 
 
 An object that represents a sequence of other objects is considered to be *enumerable*. Enumerable objects may then be enumerated over in a language such as C\# that supports “foreach” blocks, yielding each element in its sequence in turn.
 
-In the static .NET world, objects are known to be enumerable if they implement the IEnumerable or IEnumerable&lt;T&gt; interface. This interface promises that your object implements a GetEnumerator method that returns an IEnumerator object, which can be used to move through your sequence. If you’re implementing an object library and know that a given class is always enumerable, the easiest way to specify enumerability is simply to implement IEnumerable&lt;T&gt; as normal.
+In the static .NET world, objects are known to be enumerable if they implement the IEnumerable or IEnumerable\<T\> interface. This interface promises that your object implements a GetEnumerator method that returns an IEnumerator object, which can be used to move through your sequence. If you’re implementing an object library and know that a given class is always enumerable, the easiest way to specify enumerability is simply to implement IEnumerable\<T\> as normal.
 
 However, you may be implementing library or language objects which are only sometimes enumerable, or which may become enumerable over time due to some dynamic operation on the object's type or itself. For example, in Python an object specifies that it is enumerable by defining an \_\_iter\_\_ method. Since this method may be added dynamically at runtime, the IronPython compiler cannot know whether to implement the IEnumerable interface on the objects it produces.
 

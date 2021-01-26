@@ -1,3 +1,7 @@
+---
+sort: 5
+---
+
 # 5 Function Definition and Dynamic Invocations
 
 This section focuses on defining Sympl functions and invoking them. Section 3.4 on function call and dotted expressions discusses Sympl semantics and AnalyzeFunCallExpr quite a bit. It may be useful to read the Sympl language definition about function calls, section 21.4.1.

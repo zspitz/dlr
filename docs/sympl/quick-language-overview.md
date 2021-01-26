@@ -1,3 +1,7 @@
+---
+sort: 2
+---
+
 # 2 Quick Language Overview
 
 This is a high-level description of language features to set the stage for starting to discuss the implementation. For a more detailed description (no language lawyer formal specification :-)), see section 10. For quick view of the simple hosting and runtime API, see section 22.

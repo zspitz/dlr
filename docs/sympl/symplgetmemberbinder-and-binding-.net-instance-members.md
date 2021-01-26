@@ -1,3 +1,7 @@
+---
+sort: 11
+---
+
 # 11 SymplGetMemberBinder and Binding .NET Instance Members
 
 Now that Sympl can instantiate types it is worth fleshing out its GetMemberBinder. At runtime, when trying to access a member of a .NET static object, the default .NET meta-object will call FallbackGetMember on SymplGetMemberBinder. This code is much simpler than the code for binding InvokeMember we looked at before. As a reminder, if the object that flows into the CallSite is some dynamic object, then it's DynamicMetaObject's BindGetMember will produce a rule for fetching the member.

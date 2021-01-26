@@ -1,3 +1,7 @@
+---
+sort: 3
+---
+
 # 3 DynamicObject
 
 The simplest way to give your own class custom dynamic dispatch semantics is to derive from the **DynamicObject** base class. While ExpandoObject only dynamically adds and removes members, DynamicObject lets your objects fully participate in the dynamic object interoperability protocol. There are several abstract operations users of your object can then request of it dynamically, such as getting a member, setting a member, invoking a member on the object, indexing the object, invoking the object itself, or performing standard operations such as addition, multiplication, etc. DynamicObject lets you choose which operations to implement, and lets you do it much more easily than a language implementer.

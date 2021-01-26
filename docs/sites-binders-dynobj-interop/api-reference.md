@@ -1,3 +1,7 @@
+---
+sort: 6
+---
+
 # 6 API Reference
 
 The following sections provide a detailed API reference for the types introduced in the conceptual overview above, with definitions for each type’s most important members.
@@ -648,11 +652,11 @@ Returns a BindingRestrictions instance that combines this instance with the rest
 
 Returns a BindingRestrictions instance which combines the restrictions from each of a set of DynamicMetaObject instances. This is an AND combination, requiring all restrictions to pass for the rule to match.
 
-<h2 id="callsite-and-callsitet-classes">6.19 CallSite and CallSite&lt;T&gt; Classes</h2>
+<h2 id="callsite-and-callsitet-classes">6.19 CallSite and CallSite\<T\> Classes</h2>
 
-An instance of CallSite&lt;T&gt; represents a given dynamic call site emitted by a language compiler when it encounters a dynamic expression. Compiling a DynamicExpression node in an expression tree also produces a CallSite&lt;T&gt;.
+An instance of CallSite\<T\> represents a given dynamic call site emitted by a language compiler when it encounters a dynamic expression. Compiling a DynamicExpression node in an expression tree also produces a CallSite\<T\>.
 
-When emitting a dynamic call site, the compiler must first generate a CallSite&lt;T&gt; object by calling the static method CallSite&lt;T&gt;.Create. The compiler passes in the language-specific binder it wants this call site to use to bind operations at runtime. The T in the CallSite&lt;T&gt; is the delegate type that provides the signature for the site’s Target delegate that holds the currently cached rule, and must accept a first parameter of type CallSite.
+When emitting a dynamic call site, the compiler must first generate a CallSite\<T\> object by calling the static method CallSite\<T\>.Create. The compiler passes in the language-specific binder it wants this call site to use to bind operations at runtime. The T in the CallSite\<T\> is the delegate type that provides the signature for the site’s Target delegate that holds the currently cached rule, and must accept a first parameter of type CallSite.
 
 <h3 id="class-summary-18">6.19.1 Class Summary</h3>
 
@@ -672,7 +676,7 @@ public sealed class CallSite<T> : CallSite {
 
 <h3 id="create-static-method-1">6.19.2 Create Static Method</h3>
 
-The static factory method Create on the CallSite&lt;T&gt; class returns a new instance of CallSite&lt;T&gt; for use as a dynamic call site. Compilers that generate assemblies directly as .NET IL (such as the C\# compiler) should make sure the user assembly caches these CallSite instances at runtime so they don’t need to be regenerated each time this call site is hit. Languages that use Expression Trees as their code generation (languages built on the DLR such as IronPython) can just use DynamicExpressions, letting the Expression Tree compiler do the work.
+The static factory method Create on the CallSite\<T\> class returns a new instance of CallSite\<T\> for use as a dynamic call site. Compilers that generate assemblies directly as .NET IL (such as the C\# compiler) should make sure the user assembly caches these CallSite instances at runtime so they don’t need to be regenerated each time this call site is hit. Languages that use Expression Trees as their code generation (languages built on the DLR such as IronPython) can just use DynamicExpressions, letting the Expression Tree compiler do the work.
 
 <h3 id="target-field">6.19.3 Target Field</h3>
 
@@ -684,7 +688,7 @@ Returns the delegate to be invoked from within the Target delegate’s implement
 
 <h2 id="strongbox-class">6.20 StrongBox Class</h2>
 
-An instance of StrongBox&lt;T&gt; may be used by binders to represent values passed by reference. The type parameter T represents the type of the value to be referenced.
+An instance of StrongBox\<T\> may be used by binders to represent values passed by reference. The type parameter T represents the type of the value to be referenced.
 
 <h3 id="class-summary-19">6.20.1 Class Summary</h3>
 

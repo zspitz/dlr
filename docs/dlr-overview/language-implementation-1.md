@@ -1,3 +1,7 @@
+---
+sort: 5
+---
+
 # 5 Language Implementation
 
 It is hard to separate language implementation concepts from the runtime concepts with dynamic languages. However, we try to do so by defining the language implementation aspects of the DLR as are shared ASTs (Expression Trees), LanguageContext, language interop with IDynamicMetaObjectProvider, compilation, and utilities.
@@ -68,7 +72,7 @@ Common ET nodes with a given node kind are either reducible always, or never. Th
 
 <h3 id="bound-unbound-and-dynamic-nodes">5.1.3 Bound, Unbound, and Dynamic Nodes</h3>
 
-There are three categories or states of being bound for modeling expressions. More commonly mathematicians or computer scientists think of only two, bound and unbound. For example, in the expression "for all x such that 0 &lt; x + y &lt; 10", 'x' is a bound variable while 'y' is a free reference or unbound variable. If 'y' were not present in the expression, the expression would be fully statically bound such that we could evaluate it. However, to evaluate the expression, we need to first bind 'y' to some value.
+There are three categories or states of being bound for modeling expressions. More commonly mathematicians or computer scientists think of only two, bound and unbound. For example, in the expression "for all x such that 0 \< x + y \< 10", 'x' is a bound variable while 'y' is a free reference or unbound variable. If 'y' were not present in the expression, the expression would be fully statically bound such that we could evaluate it. However, to evaluate the expression, we need to first bind 'y' to some value.
 
 **An unbound ET node:**
 
@@ -84,7 +88,7 @@ Consider a language that supported LINQ-like expression and that also had late-b
 o.Where( lambda (x) => x > 0 )   #o had late bound semantics
 ```
 
-To be able to execute an ET modeling this code, you would need to inspect the runtime type of 'o', search its 'Where' overloads, and pattern match for one that can take a delegate. Furthermore, you would need to match lambda expression to the delegate. The delegate needs take an argument and returns a value with some type. The delegate's type for 'x' needs to make sense to bind '&gt;' to an implementation taking the type of 'x', an operand assignable from integer, and returning the type of the delegate.
+To be able to execute an ET modeling this code, you would need to inspect the runtime type of 'o', search its 'Where' overloads, and pattern match for one that can take a delegate. Furthermore, you would need to match lambda expression to the delegate. The delegate needs take an argument and returns a value with some type. The delegate's type for 'x' needs to make sense to bind '\>' to an implementation taking the type of 'x', an operand assignable from integer, and returning the type of the delegate.
 
 A key observation in this situation is that the late-bound node representing the call to 'Where' necessarily has language-specific binding information representing the lambda. The representation cannot be language-neutral semantically. It also can't even be just syntax in any common representation because you need the language that produced the ET to process the lambda representation in the presence of runtime type information while binding. Support for unbound ETs may not be a good solution or one worth trying to share across languages.
 
@@ -96,7 +100,7 @@ A key observation in this situation is that the late-bound node representing the
 
 - could be dynamic expression
 
-A dynamic expression often has a Type property that is Object, but its Type that is not null. It might not be Object as well. For example, in "`if x > y`" the ET node for '&gt;' could be typed Boolean even if it is a dynamic node.
+A dynamic expression often has a Type property that is Object, but its Type that is not null. It might not be Object as well. For example, in "`if x > y`" the ET node for '\>' could be typed Boolean even if it is a dynamic node.
 
 **The ET v2 model includes dynamically bound nodes that:**
 
@@ -148,7 +152,7 @@ One quirk in the design is how to handle LabelExpression which has a LabelTarget
 
 <h4 id="gotoexpression-capabilities">5.1.4.3 GotoExpression Capabilities</h4>
 
-As stated, we expanded Goto capabilities beyond C\#'s. VB is not fully using the DLR yet, but when it does, we will need a more flexible Goto. If we do not allow more cases for GotoExpression, VB would need to produce a VBBlockExpression and their own VBGotoExpression that reduced to a complicated rewriting of the ET. It seems useful to provide the more general GotoExpression. However, VB would still need a special VBBlock to model their on\_error\_goto semantics, which seems too specific to a single language to generally model in common ET nodes.
+As stated, we expanded Goto capabilities beyond C\#'s. VB is not fully using the DLR yet, but when it does, we will need a more flexible Goto. If we do not allow more cases for GotoExpression, VB would need to produce a VBBlockExpression and their own VBGotoExpression that reduced to a complicated rewriting of the ET. It seems useful to provide the more general GotoExpression. However, VB would still need a special VBBlock to model their on_error_goto semantics, which seems too specific to a single language to generally model in common ET nodes.
 
 ETs v2 limit Goto lexically within a function. ETs allow jumping into and out of the following:
 
@@ -226,7 +230,7 @@ ETs v2 also supports explicit lifting of variables to support languages that pro
 
 <h3 id="lambdas-exits-and-result-types">5.1.7 Lambdas, Exits, and Result Types</h3>
 
-Lambdas are modeled with LambdaExpression and Expression&lt;T&gt;. The latter derives from the former, and the T is a delegate type. LambdaExpression.Type holds the same T, and there is a ReturnType property that holds the type of value the T delegate would return. All lambdas created by the factory methods are actually Expression&lt;T&gt;. LambdaExpression provides the general base type for code that needs to process any lambda, or if you need to make a lambda with a computed delegate type at runtime. LambdaExpression supports two Compile methods that return a delegate of type LambdaExpression.Type, which can be invoked dynamically at run time.
+Lambdas are modeled with LambdaExpression and Expression\<T\>. The latter derives from the former, and the T is a delegate type. LambdaExpression.Type holds the same T, and there is a ReturnType property that holds the type of value the T delegate would return. All lambdas created by the factory methods are actually Expression\<T\>. LambdaExpression provides the general base type for code that needs to process any lambda, or if you need to make a lambda with a computed delegate type at runtime. LambdaExpression supports two Compile methods that return a delegate of type LambdaExpression.Type, which can be invoked dynamically at run time.
 
 Handling arbitrary returns or exits from lambdas has some interesting issues. Returns from a lambda can be arbitrarily deep in control constructs and blocks. Lexical exits represent a sort of non-local exit from nested control constructs. The expression that is the body of a lambda might have a particular type from the last sub expression it contains. Execution of the ET may never reach this last sub expression because of a Goto node. Even though we've added these sorts of control flow to ETs v2, they still keep the constraints ETs v1 had regarding LambdaExpression.Type and .Body.Type.
 
@@ -306,7 +310,7 @@ A key concept in the DLR is using .NET's Object as the root of the type system. 
 
 Often implementations achieve interoperability through wrappers and marshaling layers, as this picture of Jython's system:
 
-> ![http://blogs.msdn.com/blogfiles/hugunin/WindowsLiveWriter/TheOneTrueObject\_9F7E/image%7B0%7D\_thumb%5B4%5D.png](media/image9.png)
+> <img src="media/image9.png" style="width:4.21875in;height:2.35417in" alt="http://blogs.msdn.com/blogfiles/hugunin/WindowsLiveWriter/TheOneTrueObject_9F7E/image%7B0%7D_thumb%5B4%5D.png" />
 
 In this pattern the Python types exist in their own little world. For every underlying type there is a Python-specific wrapper. This standard pattern is okay for supporting a single language. As long as all your code is Python code all your objects are PyObjects, and they work great together with the Python-specific information on them. Where this pattern breaks down is when you want to integrate multiple languages. Then every time an object moves from one language to another it needs to be unwrapped from the source language and rewrapped appropriately for the destination. This can have performance issues as these wrapper objects are created and discarded for any cross-language calls.
 

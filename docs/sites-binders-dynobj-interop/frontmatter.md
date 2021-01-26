@@ -1,3 +1,7 @@
+---
+sort: 0
+---
+
 **Alex Turner and Bill Chiles**
 
 **Alex Turner and Bill Chiles** 1
@@ -14,7 +18,7 @@
 
 2.2 CallSiteBinder 8
 
-2.3 CallSite&lt;T&gt; 9
+2.3 CallSite\<T\> 9
 
 2.3.1 L0 Cache: CallSite’s Target Delegate 9
 
@@ -222,7 +226,7 @@ SiteContainer.Site1 = 14
 
 6.18.6 Combine Static Method 37
 
-6.19 CallSite and CallSite&lt;T&gt; Classes 38
+6.19 CallSite and CallSite\<T\> Classes 38
 
 6.19.1 Class Summary 38
 

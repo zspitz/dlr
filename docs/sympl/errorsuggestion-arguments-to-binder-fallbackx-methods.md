@@ -1,3 +1,7 @@
+---
+sort: 12
+---
+
 # 12 ErrorSuggestion Arguments to Binder FallbackX Methods
 
 Recall that the convention in the DLR is for dynamic objects to call FallbackX methods so that the language owning the line of code that produced the CallSite can perform .NET static binding. Furthermore, from the description of the flow of execution when searching for a binding (see section 3.2.1), the DLR calls on DynamicMetaObjects first. You might ask yourself, should the object look for dynamic members first or static members, and how should this negotiation happen with the language binder.

@@ -1,3 +1,7 @@
+---
+sort: 1
+---
+
 # 1 Introduction
 
 One of the top DLR features is common hosting support for all languages implemented on the DLR. The primary goal is supporting .NET applications hosting the DLR’s ScriptRuntime and engines for the following high-level scenarios:

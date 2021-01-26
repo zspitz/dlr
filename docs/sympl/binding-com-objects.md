@@ -1,3 +1,7 @@
+---
+sort: 19
+---
+
 # 19 Binding COM Objects
 
 This support has been moved to Codeplex only (after the writing of the Sympl sample and this document). This is in the Microsoft.Dynamic.dll. It is the COM binding C\# uses, but C\# uses it privately now. Sympl has been updated with a new using statement to continue working. Note that this is the one bit of functionality that Sympl demonstrates in the base csharp directory that is not shipping functionality in .NET 4.0.

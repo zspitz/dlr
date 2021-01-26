@@ -1,3 +1,7 @@
+---
+sort: 1
+---
+
 # 1 Introduction
 
 In the .NET Framework 3.5 we created Expression Trees (ETs) to model code for LINQ expressions in C\# and VB. They were limited in .NET 3.5 to focus on LINQ requirements; for example, a LambdaExpression could not contain control flow, only a simple expression as its body. Looking forward, there are several reasons we'd like to extend ETs:

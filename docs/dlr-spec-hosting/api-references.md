@@ -1,3 +1,7 @@
+---
+sort: 4
+---
+
 # 4 API References
 
 Need to dope in what exceptions are thrown where I say we throw one, and need to add more details about argument checking and exceptions we throw.
@@ -333,9 +337,9 @@ public T GetVariable<T>(string name)
 
 GetVariableHandle is useful when the ScriptScope is remote so that you get back an ObjectHandle referring to the value.
 
-GetVariable&lt;T&gt; uses language-specific (based on the default language in the Engine property) conversions. These may be implicit only, or include explicit conversions too. This method throws a NotSupportedException if the engine cannot perform the requested type conversion. If there is no associated engine, this method essentially just casts to T, which could throw an ArgumentException.
+GetVariable\<T\> uses language-specific (based on the default language in the Engine property) conversions. These may be implicit only, or include explicit conversions too. This method throws a NotSupportedException if the engine cannot perform the requested type conversion. If there is no associated engine, this method essentially just casts to T, which could throw an ArgumentException.
 
-If you need an explicit conversion to T, you can use scope.Engine.Operations.ExplicitConvertTo&lt;T&gt;.
+If you need an explicit conversion to T, you can use scope.Engine.Operations.ExplicitConvertTo\<T\>.
 
 <h3 id="setvariable-methods">4.2.3 SetVariable Methods</h3>
 
@@ -367,9 +371,9 @@ public bool TryGetVariable<T>(string name, out T value)
 
 TryGetVariableHandle is useful when the ScriptScope is remote so that you get back an ObjectHandle referring to the value.
 
-TryGetVariable&lt;T&gt; uses language-specific (based on the default language in the Engine property) conversions. These may be implicit only, or include explicit conversions too. It throws a NotSupportedException if the engine cannot perform the requested type conversion. If there is no associated engine, this method uses standard .NET conversion, which could throw an ArgumentException.
+TryGetVariable\<T\> uses language-specific (based on the default language in the Engine property) conversions. These may be implicit only, or include explicit conversions too. It throws a NotSupportedException if the engine cannot perform the requested type conversion. If there is no associated engine, this method uses standard .NET conversion, which could throw an ArgumentException.
 
-If you need an explicit conversion to T, you can use scope.Engine.Operations.TryExplicitConvertTo&lt;T&gt;.
+If you need an explicit conversion to T, you can use scope.Engine.Operations.TryExplicitConvertTo\<T\>.
 
 <h3 id="containsvariable-method">4.2.5 ContainsVariable Method</h3>
 
@@ -539,7 +543,7 @@ public string[] GetRegisteredExtensions()
 
 These methods execute the strings as expressions and return a result in various ways. There are complementary overloads that take a ScriptScope. The overloads that do not take scopes create a new scope for each execution. These methods throw the scope away and use it for side effects only, returning the result in the same way the complementary overload does.
 
-Execute&lt;T&gt; returns the result as the specified type, using the engine's Operations.ConvertTo&lt;T&gt; method. If this method cannot convert to the specified type, then it throws a NotSupportedException.
+Execute\<T\> returns the result as the specified type, using the engine's Operations.ConvertTo\<T\> method. If this method cannot convert to the specified type, then it throws a NotSupportedException.
 
 ExecuteAndWrap returns an ObjectHandle for use when the engine and/or scope are remote.
 
@@ -605,7 +609,7 @@ public ObjectOperations CreateOperations()
 public ObjectOperations CreateOperations(ScriptScope Scope) 
 ```
 
-The overload that takes a ScriptScope supports pretty advanced or subtle scenarios. It allows you to get an ObjectOperations that uses the execution context built up in a ScriptScope. For example, the engine affiliated with the scope could be IronPython, and you could execute code that did an "import clr" or "from \_\_future\_\_ import true\_division". These change execution behaviors within that ScriptScope. If you obtained objects from that scope or executing expressions in that scope, you may want to operate on those objects with the same execution behaviors; however, you generally do not need to worry about these subtleties for typical object interactions.
+The overload that takes a ScriptScope supports pretty advanced or subtle scenarios. It allows you to get an ObjectOperations that uses the execution context built up in a ScriptScope. For example, the engine affiliated with the scope could be IronPython, and you could execute code that did an "import clr" or "from \_\_future\_\_ import true_division". These change execution behaviors within that ScriptScope. If you obtained objects from that scope or executing expressions in that scope, you may want to operate on those objects with the same execution behaviors; however, you generally do not need to worry about these subtleties for typical object interactions.
 
 <h3 id="createscriptsourcefromstring-methods">4.3.10 CreateScriptSourceFromString Methods</h3>
 
@@ -780,7 +784,7 @@ public CompilerOptions GetCompilerOptions()
 public CompilerOptions GetCompilerOptions(ScriptScope scope) 
 ```
 
-CompilerOptions type will likely change by the time the DLR Hosting APIs move into the .NET libraries, possibly becoming Dictionary&lt;str,obj&gt;.
+CompilerOptions type will likely change by the time the DLR Hosting APIs move into the .NET libraries, possibly becoming Dictionary\<str,obj\>.
 
 <h3 id="getsearchpaths-method">4.3.17 GetSearchPaths Method</h3>
 
@@ -899,7 +903,7 @@ public ScriptCodeParseResult GetCodeProperties
                              (CompilerOptions options) 
 ```
 
-CompilerOptions type will likely change by the time the DLR Hosting APIs move into the .NET libraries, possibly becoming Dictionary&lt;str,obj&gt;.
+CompilerOptions type will likely change by the time the DLR Hosting APIs move into the .NET libraries, possibly becoming Dictionary\<str,obj\>.
 
 <h3 id="engine-property-1">4.4.5 Engine Property</h3>
 
@@ -933,7 +937,7 @@ If you supply an error listener, and there were errors, these methods return nul
 
 These methods do not take a ScriptScope to compile against. That would prevent compilation from choosing optimized scope implementations. You can always execute compiled code against any scope (see Execute\* methods).
 
-CompilerOptions type will likely change by the time the DLR Hosting APIs move into the .NET libraries, possibly becoming Dictionary&lt;str,obj&gt;.
+CompilerOptions type will likely change by the time the DLR Hosting APIs move into the .NET libraries, possibly becoming Dictionary\<str,obj\>.
 
 <h3 id="execute-methods-1">4.4.7 Execute\* Methods</h3>
 
@@ -959,7 +963,7 @@ Execute returns an object that is the resulting value of running the code. When 
 
 ExecuteAndWrap returns an ObjectHandle for use when the engine and/or scope are remote.
 
-Execute&lt;T&gt; returns the result as the specified type, using the associated engine's Operations.ConvertTo&lt;T&gt; method. If this method cannot convert to the specified type, then it throws an exception.
+Execute\<T\> returns the result as the specified type, using the associated engine's Operations.ConvertTo\<T\> method. If this method cannot convert to the specified type, then it throws an exception.
 
 ExecuteProgram runs the source as though it were launched from an OS command shell and returns a process exit code indicating the success or error condition of executing the code. Each time this method is called it creates a fresh ScriptScope in which to run the source, and if you were to use ScriptEngine.GetScope, you'd get whatever last ScriptScope the engine created for the source.
 
@@ -1090,7 +1094,7 @@ public T Execute<T>(ScriptScope scope)
 
 ExecuteAndWrap returns an ObjectHandle for use when the engine and/or scope are remote.
 
-Execute&lt;T&gt; returns the result as the specified type, using the engine's Operations.ConvertTo&lt;T&gt; method. If this method cannot convert to the specified type, then it throws an exception.
+Execute\<T\> returns the result as the specified type, using the engine's Operations.ConvertTo\<T\> method. If this method cannot convert to the specified type, then it throws an exception.
 
 <h2 id="objectoperations-class">4.6 ObjectOperations Class</h2>
 
@@ -1325,7 +1329,7 @@ public Object CreateInstance(Object obj,
 
 These methods return a named member of an object.
 
-The generic overloads do not modify obj to convert to the requested type. If they cannot perform the requested conversion to the concrete type, then they throw a NotSupportedException. You can use Unwrap&lt;T&gt; after ConvertTo&lt;T&gt; on ObjectHandle to get a local T for the result. The generic overloads use language-specific conversions (based on the default language in the Engine property), like ConvertTo&lt;T&gt;.
+The generic overloads do not modify obj to convert to the requested type. If they cannot perform the requested conversion to the concrete type, then they throw a NotSupportedException. You can use Unwrap\<T\> after ConvertTo\<T\> on ObjectHandle to get a local T for the result. The generic overloads use language-specific conversions (based on the default language in the Engine property), like ConvertTo\<T\>.
 
 If the specified member does not exist, or if it is write-only, then these throw exceptions.
 
@@ -1410,7 +1414,7 @@ public void SetMember(Object obj, String name, Object value)
 
 <h3 id="convertto-methods">4.6.12 ConvertTo\* Methods</h3>
 
-These methods convert an object to the requested type using language-specific (based on the default language in the Engine property) conversions. These may be implicit only, or include explicit conversion too. The conversions do not modify obj. Obj may be returned if it is already the requested type. You can use Unwrap&lt;T&gt; after ConvertTo&lt;T&gt; on ObjectHandle to get a local T for the result.
+These methods convert an object to the requested type using language-specific (based on the default language in the Engine property) conversions. These may be implicit only, or include explicit conversion too. The conversions do not modify obj. Obj may be returned if it is already the requested type. You can use Unwrap\<T\> after ConvertTo\<T\> on ObjectHandle to get a local T for the result.
 
 If any of the arguments is null, then these throw an ArgumentNullException.
 
@@ -1429,7 +1433,7 @@ public ObjectHandle ConvertTo(ObjectHandle obj, Type type)
 
 These methods try to convert an object to the requested type language-specific (based on the default language in the Engine property) conversions. These may be implicit only, or include explicit conversion too. The conversions do not modify obj. They return whether they could perform the conversion and set the out result parameter. If the methods could not perform the conversion, then they set result to null.
 
-You can use Unwrap&lt;T&gt; after calling overloads on ObjectHandle to get a local T for the result.
+You can use Unwrap\<T\> after calling overloads on ObjectHandle to get a local T for the result.
 
 If they cannot perform the conversion to the requested type, then they throw a NotSupportedException.
 
@@ -1497,7 +1501,7 @@ public Boolean TryImplicitConvertTo(Object obj, Type type,
                                     out Object result)
 ```
 
-<h3 id="unwrapt-method">4.6.18 Unwrap&lt;T&gt; Method</h3>
+<h3 id="unwrapt-method">4.6.18 Unwrap\<T\> Method</h3>
 
 This method unwraps the remote object reference, converting it to the specified type before returning it. If this method cannot perform the requested conversion to the concrete type, then it throws a NotSupportedException. If the requested T does not serialize back to the calling app domain, the CLR throws an exception.
 
@@ -2237,7 +2241,7 @@ public static ScriptRuntimeSetup
 
 <h4 id="configuration-structure">4.13.3.1 Configuration Structure</h4>
 
-These lines must be included in the .config file as the first element under the &lt;configuration&gt; element for the DLR's default reader to work:
+These lines must be included in the .config file as the first element under the \<configuration\> element for the DLR's default reader to work:
 
 ``` csharp
 <configSections>
@@ -2275,9 +2279,9 @@ Attributes enclosed in \[…\]? are optional.
 
 {bool} is whatever Convert.ToBoolean(string) works for (“true”, “False”, “TRUE”, “1”, “0”).
 
-&lt;languages&gt; tag inherits content from parent .config files. You cannot remove a language in a child .config file once it is defined in a parent .config file. You can redefine a language if the value of the “type” attribute is the same as a defined in a parent .config file (last writer wins). If the displayName attribute is missing, ReadConfiguration sets it to the first name in the names attribute. If names is the empty string, then ReadConfiguration sets the display name to the type attribute. The names and extensions attributes support semi-colon and comma as separators.
+\<languages\> tag inherits content from parent .config files. You cannot remove a language in a child .config file once it is defined in a parent .config file. You can redefine a language if the value of the “type” attribute is the same as a defined in a parent .config file (last writer wins). If the displayName attribute is missing, ReadConfiguration sets it to the first name in the names attribute. If names is the empty string, then ReadConfiguration sets the display name to the type attribute. The names and extensions attributes support semi-colon and comma as separators.
 
-&lt;options&gt; tag inherits options from parent .config files. You can set, remove, and clear options (removes them all). The key in the options dictionary is a pair of option and language attributes. Language attribute is optional. If specified, the option applies to the language whose simple name is stated; otherwise, it applies to all languages. &lt;remove option=”foo”/&gt; removes the option from common options dictionary, not from all language dictionaries. &lt;remove option=”foo” language=”rb”/&gt; removes the option from Ruby language options.
+\<options\> tag inherits options from parent .config files. You can set, remove, and clear options (removes them all). The key in the options dictionary is a pair of option and language attributes. Language attribute is optional. If specified, the option applies to the language whose simple name is stated; otherwise, it applies to all languages. \<remove option=”foo”/\> removes the option from common options dictionary, not from all language dictionaries. \<remove option=”foo” language=”rb”/\> removes the option from Ruby language options.
 
 <h4 id="default-dlr-configuration">4.13.3.2 Default DLR Configuration</h4>
 
