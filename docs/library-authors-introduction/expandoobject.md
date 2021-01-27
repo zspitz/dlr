@@ -1,5 +1,6 @@
 ---
 sort: 2
+title: Getting Started with the DLR as a Library Author
 ---
 
 # 2 ExpandoObject

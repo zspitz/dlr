@@ -1,5 +1,6 @@
 ---
 sort: 2
+title: Dynamic Language Runtime
 ---
 
 # 2 Architecture Introduction

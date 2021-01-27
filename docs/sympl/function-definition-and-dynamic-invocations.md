@@ -1,5 +1,6 @@
 ---
 sort: 5
+title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 5 Function Definition and Dynamic Invocations

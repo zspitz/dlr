@@ -1,5 +1,6 @@
 ---
 sort: 1
+title: Expression Trees v2 Spec
 ---
 
 # 1 Introduction

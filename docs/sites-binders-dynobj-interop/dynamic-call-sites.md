@@ -1,5 +1,6 @@
 ---
 sort: 2
+title: Sites, Binders, and Dynamic Object Interop Spec
 ---
 
 # 2 Dynamic Call Sites

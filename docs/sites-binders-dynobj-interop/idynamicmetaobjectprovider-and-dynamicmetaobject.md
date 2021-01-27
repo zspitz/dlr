@@ -1,5 +1,6 @@
 ---
 sort: 3
+title: Sites, Binders, and Dynamic Object Interop Spec
 ---
 
 # 3 IDynamicMetaObjectProvider and DynamicMetaObject

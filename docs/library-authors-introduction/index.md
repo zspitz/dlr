@@ -1,5 +1,6 @@
 ---
 sort: 0
+title: Getting Started with the DLR as a Library Author
 ---
 
 **Alex Turner and Bill Chiles**

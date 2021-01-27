@@ -1,5 +1,6 @@
 ---
 sort: 23
+title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 23 Appendixes

@@ -1,5 +1,6 @@
 ---
 sort: 2
+title: DLR Hosting Spec
 ---
 
 # 2 High-level Hosting Model Concepts

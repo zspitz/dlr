@@ -1,5 +1,6 @@
 ---
 sort: 5
+title: Getting Started with the DLR as a Library Author
 ---
 
 # 5 Appendix

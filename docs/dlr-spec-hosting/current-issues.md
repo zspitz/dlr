@@ -1,5 +1,6 @@
 ---
 sort: 5
+title: DLR Hosting Spec
 ---
 
 # 5 Current Issues

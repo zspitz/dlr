@@ -1,5 +1,6 @@
 ---
 sort: 2
+title: Expression Trees v2 Spec
 ---
 
 # 2 Highlighted Concepts

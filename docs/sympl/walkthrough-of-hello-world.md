@@ -1,5 +1,6 @@
 ---
 sort: 3
+title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 3 Walkthrough of Hello World

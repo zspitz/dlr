@@ -1,5 +1,6 @@
 ---
 sort: 16
+title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 16 Generic Type Instantiation

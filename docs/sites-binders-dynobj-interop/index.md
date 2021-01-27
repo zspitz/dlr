@@ -1,5 +1,6 @@
 ---
 sort: 0
+title: Sites, Binders, and Dynamic Object Interop Spec
 ---
 
 **Alex Turner and Bill Chiles**

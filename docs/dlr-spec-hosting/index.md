@@ -1,5 +1,6 @@
 ---
 sort: 0
+title: DLR Hosting Spec
 ---
 
 **Bill Chiles**

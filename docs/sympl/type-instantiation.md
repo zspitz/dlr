@@ -1,5 +1,6 @@
 ---
 sort: 10
+title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 10 Type instantiation
