@@ -1,5 +1,6 @@
 ---
 sort: 16
+title: Generic Type Instantiation
 ---
 
 # 16 Generic Type Instantiation

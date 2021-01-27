@@ -1,5 +1,6 @@
 ---
 sort: 5
+title: Current Issues
 ---
 
 # 5 Current Issues

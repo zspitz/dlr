@@ -1,5 +1,6 @@
 ---
 sort: 14
+title: SymplInvokeMemberBinder and Binding .NET Member Invocations
 ---
 
 # 14 SymplInvokeMemberBinder and Binding .NET Member Invocations

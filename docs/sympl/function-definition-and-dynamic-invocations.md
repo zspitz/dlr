@@ -1,5 +1,6 @@
 ---
 sort: 5
+title: Function Definition and Dynamic Invocations
 ---
 
 # 5 Function Definition and Dynamic Invocations

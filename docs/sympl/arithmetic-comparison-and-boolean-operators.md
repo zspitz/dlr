@@ -1,5 +1,6 @@
 ---
 sort: 17
+title: Arithmetic, Comparison, and Boolean Operators
 ---
 
 # 17 Arithmetic, Comparison, and Boolean Operators

@@ -1,5 +1,6 @@
 ---
 sort: 3
+title: Hosts Requirements
 ---
 
 # 3 Hosts Requirements

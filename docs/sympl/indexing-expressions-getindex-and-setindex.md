@@ -1,5 +1,6 @@
 ---
 sort: 15
+title: "Indexing Expressions: GetIndex and SetIndex"
 ---
 
 # 15 Indexing Expressions: GetIndex and SetIndex

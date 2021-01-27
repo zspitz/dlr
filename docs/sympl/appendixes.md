@@ -1,5 +1,6 @@
 ---
 sort: 23
+title: Appendixes
 ---
 
 # 23 Appendixes

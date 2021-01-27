@@ -1,5 +1,6 @@
 ---
 sort: 3
+title: Common Hosting Model
 ---
 
 # 3 Common Hosting Model

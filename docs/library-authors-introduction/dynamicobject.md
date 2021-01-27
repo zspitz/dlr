@@ -1,5 +1,6 @@
 ---
 sort: 3
+title: DynamicObject
 ---
 
 # 3 DynamicObject

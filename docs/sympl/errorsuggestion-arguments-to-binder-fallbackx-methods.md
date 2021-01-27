@@ -1,5 +1,6 @@
 ---
 sort: 12
+title: ErrorSuggestion Arguments to Binder FallbackX Methods
 ---
 
 # 12 ErrorSuggestion Arguments to Binder FallbackX Methods

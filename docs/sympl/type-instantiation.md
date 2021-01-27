@@ -1,5 +1,6 @@
 ---
 sort: 10
+title: Type instantiation
 ---
 
 # 10 Type instantiation

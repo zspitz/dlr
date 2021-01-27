@@ -1,5 +1,6 @@
 ---
 sort: 6
+title: CreateThrow Runtime Binding Helper
 ---
 
 # 6 CreateThrow Runtime Binding Helper

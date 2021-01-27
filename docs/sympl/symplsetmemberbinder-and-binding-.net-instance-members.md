@@ -1,5 +1,6 @@
 ---
 sort: 13
+title: SymplSetMemberBinder and Binding .NET Instance Members
 ---
 
 # 13 SymplSetMemberBinder and Binding .NET Instance Members

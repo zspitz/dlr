@@ -1,5 +1,6 @@
 ---
 sort: 2
+title: ExpandoObject
 ---
 
 # 2 ExpandoObject

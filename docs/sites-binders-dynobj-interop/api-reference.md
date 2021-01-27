@@ -1,5 +1,6 @@
 ---
 sort: 6
+title: API Reference
 ---
 
 # 6 API Reference

@@ -1,5 +1,6 @@
 ---
 sort: 21
+title: SymPL Language Description
 ---
 
 # 21 SymPL Language Description

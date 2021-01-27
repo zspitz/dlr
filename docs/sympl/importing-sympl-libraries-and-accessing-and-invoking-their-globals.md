@@ -1,5 +1,6 @@
 ---
 sort: 9
+title: Importing Sympl Libraries and Accessing and Invoking Their Globals
 ---
 
 # 9 Importing Sympl Libraries and Accessing and Invoking Their Globals

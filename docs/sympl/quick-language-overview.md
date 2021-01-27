@@ -1,5 +1,6 @@
 ---
 sort: 2
+title: Quick Language Overview
 ---
 
 # 2 Quick Language Overview

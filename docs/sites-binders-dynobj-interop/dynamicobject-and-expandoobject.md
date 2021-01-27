@@ -1,5 +1,6 @@
 ---
 sort: 4
+title: DynamicObject and ExpandoObject
 ---
 
 # 4 DynamicObject and ExpandoObject

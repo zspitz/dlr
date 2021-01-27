@@ -1,5 +1,6 @@
 ---
 sort: 2
+title: High-level Hosting Model Concepts
 ---
 
 # 2 High-level Hosting Model Concepts

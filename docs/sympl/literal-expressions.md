@@ -1,5 +1,6 @@
 ---
 sort: 8
+title: Literal Expressions
 ---
 
 # 8 Literal Expressions

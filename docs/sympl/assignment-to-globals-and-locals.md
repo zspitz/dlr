@@ -1,5 +1,6 @@
 ---
 sort: 4
+title: Assignment to Globals and Locals
 ---
 
 # 4 Assignment to Globals and Locals

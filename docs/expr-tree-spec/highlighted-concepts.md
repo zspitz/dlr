@@ -1,5 +1,6 @@
 ---
 sort: 2
+title: Highlighted Concepts
 ---
 
 # 2 Highlighted Concepts

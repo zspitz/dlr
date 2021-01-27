@@ -1,5 +1,6 @@
 ---
 sort: 5
+title: Dynamic Object Conventions
 ---
 
 # 5 Dynamic Object Conventions

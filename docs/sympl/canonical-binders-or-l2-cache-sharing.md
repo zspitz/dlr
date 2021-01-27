@@ -1,5 +1,6 @@
 ---
 sort: 18
+title: Canonical Binders or L2 Cache Sharing
 ---
 
 # 18 Canonical Binders or L2 Cache Sharing

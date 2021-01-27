@@ -1,5 +1,6 @@
 ---
 sort: 2
+title: Dynamic Call Sites
 ---
 
 # 2 Dynamic Call Sites

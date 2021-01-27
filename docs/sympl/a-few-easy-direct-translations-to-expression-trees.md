@@ -1,5 +1,6 @@
 ---
 sort: 7
+title: A Few Easy, Direct Translations to Expression Trees
 ---
 
 # 7 A Few Easy, Direct Translations to Expression Trees

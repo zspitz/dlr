@@ -1,5 +1,6 @@
 ---
 sort: 3
+title: Walkthrough of Hello World
 ---
 
 # 3 Walkthrough of Hello World

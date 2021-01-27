@@ -1,5 +1,6 @@
 ---
 sort: 19
+title: Binding COM Objects
 ---
 
 # 19 Binding COM Objects

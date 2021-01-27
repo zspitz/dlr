@@ -1,5 +1,6 @@
 ---
 sort: 3
+title: IDynamicMetaObjectProvider and DynamicMetaObject
 ---
 
 # 3 IDynamicMetaObjectProvider and DynamicMetaObject
