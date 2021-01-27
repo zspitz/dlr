@@ -1,6 +1,5 @@
 ---
 sort: 1
-title: Sites, Binders, and Dynamic Object Interop Spec
 ---
 
 # 1 Introduction

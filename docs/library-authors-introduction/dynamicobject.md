@@ -1,6 +1,5 @@
 ---
 sort: 3
-title: Getting Started with the DLR as a Library Author
 ---
 
 # 3 DynamicObject

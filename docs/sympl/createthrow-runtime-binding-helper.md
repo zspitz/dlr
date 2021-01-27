@@ -1,6 +1,5 @@
 ---
 sort: 6
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 6 CreateThrow Runtime Binding Helper

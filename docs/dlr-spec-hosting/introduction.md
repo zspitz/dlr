@@ -1,6 +1,5 @@
 ---
 sort: 1
-title: DLR Hosting Spec
 ---
 
 # 1 Introduction

@@ -1,6 +1,5 @@
 ---
 sort: 4
-title: Sites, Binders, and Dynamic Object Interop Spec
 ---
 
 # 4 DynamicObject and ExpandoObject

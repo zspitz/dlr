@@ -1,6 +1,5 @@
 ---
 sort: 4
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 4 Assignment to Globals and Locals

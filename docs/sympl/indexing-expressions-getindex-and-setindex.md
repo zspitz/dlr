@@ -1,6 +1,5 @@
 ---
 sort: 15
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 15 Indexing Expressions: GetIndex and SetIndex

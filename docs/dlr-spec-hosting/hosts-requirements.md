@@ -1,6 +1,5 @@
 ---
 sort: 3
-title: DLR Hosting Spec
 ---
 
 # 3 Hosts Requirements

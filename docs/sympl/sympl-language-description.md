@@ -1,6 +1,5 @@
 ---
 sort: 21
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 21 SymPL Language Description

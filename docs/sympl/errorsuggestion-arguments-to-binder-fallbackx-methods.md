@@ -1,6 +1,5 @@
 ---
 sort: 12
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 12 ErrorSuggestion Arguments to Binder FallbackX Methods

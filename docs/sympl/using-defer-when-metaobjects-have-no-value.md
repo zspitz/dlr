@@ -1,6 +1,5 @@
 ---
 sort: 20
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 20 Using Defer When MetaObjects Have No Value

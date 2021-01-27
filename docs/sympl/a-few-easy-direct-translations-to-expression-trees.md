@@ -1,6 +1,5 @@
 ---
 sort: 7
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 7 A Few Easy, Direct Translations to Expression Trees

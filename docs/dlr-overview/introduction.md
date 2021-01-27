@@ -1,6 +1,5 @@
 ---
 sort: 1
-title: Dynamic Language Runtime
 ---
 
 # 1 Introduction

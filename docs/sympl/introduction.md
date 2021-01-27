@@ -1,6 +1,5 @@
 ---
 sort: 1
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 1 Introduction

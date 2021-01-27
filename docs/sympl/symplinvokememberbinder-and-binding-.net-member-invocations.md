@@ -1,6 +1,5 @@
 ---
 sort: 14
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 14 SymplInvokeMemberBinder and Binding .NET Member Invocations

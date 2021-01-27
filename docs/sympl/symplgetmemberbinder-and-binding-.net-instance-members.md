@@ -1,6 +1,5 @@
 ---
 sort: 11
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 11 SymplGetMemberBinder and Binding .NET Instance Members

@@ -1,6 +1,5 @@
 ---
 sort: 4
-title: Expression Trees v2 Spec
 ---
 
 # 4 API Reference

@@ -1,6 +1,5 @@
 ---
 sort: 4
-title: Getting Started with the DLR as a Library Author
 ---
 
 # 4 IDynamicMetaObjectProvider and DynamicMetaObject

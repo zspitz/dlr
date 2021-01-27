@@ -1,6 +1,5 @@
 ---
 sort: 9
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 9 Importing Sympl Libraries and Accessing and Invoking Their Globals

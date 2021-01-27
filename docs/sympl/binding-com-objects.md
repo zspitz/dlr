@@ -1,6 +1,5 @@
 ---
 sort: 19
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 19 Binding COM Objects

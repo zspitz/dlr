@@ -1,6 +1,5 @@
 ---
 sort: 22
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 22 Runtime and Hosting

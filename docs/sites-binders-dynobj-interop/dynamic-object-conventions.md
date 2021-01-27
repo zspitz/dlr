@@ -1,6 +1,5 @@
 ---
 sort: 5
-title: Sites, Binders, and Dynamic Object Interop Spec
 ---
 
 # 5 Dynamic Object Conventions

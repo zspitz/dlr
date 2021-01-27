@@ -1,6 +1,5 @@
 ---
 sort: 17
-title: SymPL Implementation on the Dynamic Language Runtime
 ---
 
 # 17 Arithmetic, Comparison, and Boolean Operators

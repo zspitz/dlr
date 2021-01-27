@@ -1,6 +1,5 @@
 ---
 sort: 6
-title: Sites, Binders, and Dynamic Object Interop Spec
 ---
 
 # 6 API Reference

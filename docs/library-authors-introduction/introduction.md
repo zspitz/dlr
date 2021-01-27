@@ -1,6 +1,5 @@
 ---
 sort: 1
-title: Getting Started with the DLR as a Library Author
 ---
 
 # 1 Introduction
