@@ -14,9 +14,7 @@ The DLR has high-level support for library authors too. If you have a library fo
 The DLR provides three key components:
 
 - language implementation services with language interoperability model
-
 - dynamic language runtime services with fast dynamic dispatch and library support
-
 - common hosting APIs across languages
 
 Language implementers get great .NET interoperability. They also have several mechanisms for keeping their language true to its semantics and feel. See sections 1.1 and 2 for summaries of these components.
@@ -24,11 +22,8 @@ Language implementers get great .NET interoperability. They also have several me
 The key goals of the DLR are making it easy to
 
 - port dynamic languages to .NET
-
 - add dynamic features to your existing language
-
 - author libraries whose objects support dynamic operations
-
 - employ dynamic languages in your applications and frameworks.
 
 The following sections provide an overview of the DLR, its overall architecture, and introductions to its key components.
@@ -45,7 +40,11 @@ The following sections provide an overview of the DLR, its overall architecture,
 
 <h2 id="open-source-projects">1.2 Open Source Projects</h2>
 
-Most of our DLR languages and all the DLR source code are available on CodePlex and RubyForge. The sources are available under the Microsoft Public License, which is Open Software Initiative approved. The DLR and all of our open source languages are available for one-stop shopping at www.codeplex.com/dlr, where we will add more samples, specs, and getting started documentation over time. Microsoft currently provides two DLR languages, IronPython and IronRuby. IronPython is available open source at www.codeplex.com/ironpython. IronRuby is available open source at http://rubyforge.org/projects/ironruby.
+DLR source code is available on [GitHub](https://github.com/IronLanguages/dlr) under the Apache 2.0 license.
+
+IronPython currently lives at https://ironpython.net/, with the source on [GitHub](https://github.com/IronLanguages/ironpython2) under the Apache 2.0 license.
+
+The source for [IronRuby](http://ironruby.net/) is also on [GitHub](https://github.com/IronLanguages/ironruby).
 
 <h2 id="why-dynamic-languages">1.3 Why Dynamic Languages</h2>
 
@@ -68,11 +67,7 @@ Dynamic languages make great glue code for snapping together applications or ext
 Some common uses of dynamic languages:
 
 - Scripting applications
-
 - Building web sites
-
 - Test harnesses
-
 - Server farm maintenance
-
 - One-off utilities or data crunching
