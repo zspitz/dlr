@@ -112,21 +112,13 @@ It is entirely up to each language what compile-time information it chooses to e
 
 See [Sites, Binders, and Dynamic Object Interop Spec](..\sites-binders-dynobj-interop\index) for details on binders and API reference. See the [section below on L2 Cache](#l2-cache-combined-rule-sets-of-all-equivalent-callsites) for high-level discussion of placing unique binder instances on multiple call sites when the binding metadata in the binders is equivalent.
 
-<h2 id="callsitet-and-caching">
-
-4.4 `CallSite<T>` and Caching
-
-</h2>
+<h2 id="callsitet-and-caching">4.4 CallSite&lt;T&gt; and Caching</h2>
 
 When a compiler emits a dynamic call site, it must first generate a **CallSite\<T\>** object by calling the static method `CallSite<T>.Create`. The compiler passes in the language-specific binder it wants this call site to use to bind operations at runtime. The `T` in the `CallSite<T>` is the delegate type that provides the signature for the site’s target delegate that holds the compiled rule cache. `T`’s delegate type often just takes `Object` as the type of each of its arguments and its return value, as a call site may encounter or return various types. However, further optimization is possible in more restricted situations by using more specific types. For example, in the expression `a > 3`, a compiler can encode in the delegate signature that the right argument is fixed as `int`, and the return type is fixed as `bool`, for any possible value of `a`.
 
 To allow for more advanced caching behavior at a given dynamic call site, as well as caching of rules across similar dynamic call sites, there are three distinct **caching levels** used, known as the L0, L1, and L2 caches. The code emitted at a dynamic site searches the L0 cache by invoking the site’s `Target` delegate, which will fall back to the L1 and L2 caches upon a cache miss. Only if all three caches miss will the site call the runtime binder to bind the operation.
 
-<h3 id="l0-cache-callsites-target-delegate">
-
-4.4.1 L0 Cache: CallSite’s `Target` Delegate
-
-</h3>
+<h3 id="l0-cache-callsites-target-delegate">4.4.1 L0 Cache: CallSite’s Target Delegate</h3>
 
 The core of the caching system is the **Target** delegate on each dynamic site, also called the site’s **L0 cache**, which points to a compiled dynamic method. This method implements the dynamic site’s current caching strategy by baking some subset of the rules the dynamic site has seen into a single pre-compiled method. Each dynamic site also contains an **Update** delegate which is responsible for handling L0 cache misses by continuing on to search the L1 and L2 caches, eventually falling back to the runtime binder. The current method referenced by the `Target` delegate always contains a call to `Update` in case the rule does not match.
 
@@ -155,19 +147,11 @@ Upon an L1 cache miss the binder would otherwise be required to generate a new d
 
 The general architecture of the DLR's call sites and rules is open to several optimization techniques. For example, the rule expression generated for a given execution of a call site may follow a similar template as the last rule generated, differing only in some `ConstantExpression` nodes. The DLR can recognize rules that are similar in this way and combine them into one compiled rule that replaces each differing `ConstantExpression` with a `ParameterExpression` that expects the value as a parameter. This saves the cost of rebuilding and re-JIT’ing the `Target` delegate as the constant changes. This is one example of various techniques call sites allow us to employ in the DLR.
 
-<h2 id="dynamicobject-and-expandoobject">
-
-4.5 `DynamicObject` and `ExpandoObject`
-
-</h2>
+<h2 id="dynamicobject-and-expandoobject">4.5 DynamicObject and ExpandoObject</h2>
 
 We make life much simpler for library authors who want to create objects in static languages so that the object can behave dynamically and participate in the interoperability and performance of dynamic call sites. Library authors can avoid the full power of `DynamicMetaObjects`, but they can also employ `DynamicMetaObjects` if they wish. The DLR provides two higher level abstractions over `DynamicMetaObject`: `DynamicObject` and `ExpandoObject`. For most APIs, these objects provide more than enough performance and flexibility to expose your functionality to dynamic hosts.
 
-<h3 id="dynamicobject">
-
-4.5.1 `DynamicObject`
-
-</h3>
+<h3 id="dynamicobject">4.5.1 DynamicObject</h3>
 
 The simplest way to give your own class custom dynamic dispatch semantics is to derive from the **DynamicObject** base class. `DynamicObject` lets your objects fully participate in the dynamic object interoperability protocol, supporting the full set of operations available to objects that provide their own custom `DynamicMetaObject`s. `DynamicObject` lets you choose which operations to implement, and allows you to implement them much more easily than a language implementer who uses `DynamicMetaObject` directly.
 
@@ -209,11 +193,7 @@ By default, the methods that you don’t override on `DynamicObject` fall back t
 
 In the full glory of the interoperability protocol, a dynamic object implements `IDynamicMetaObjectProvider` and returns a `DynamicMetaObject` to represent the dynamic view of the object at hand. The `DynamicMetaObject` looks a lot like `DynamicObject`, but its methods have to return Expression Trees that plug directly into the DLR's dynamic caching mechanisms. This gives you a great deal of power, and the ability to squeeze out some extra efficiency, while `DynamicObject` gives you nearly the same power in a form much simpler to consume. With `DynamicObject`, you simply override methods for the dynamic operations in which your dynamic object should participate. The DLR automatically creates a `DynamicMetaObject` for your `DynamicObject`. This `DynamicMetaObject` creates Expression Trees (for the DLR’s caching system) that simply call your overridden `DynamicObject` methods.
 
-<h3 id="expandoobject">
-
-4.5.2 `ExpandoObject`
-
-</h3>
+<h3 id="expandoobject">4.5.2 ExpandoObject</h3>
 
 The **ExpandoObject** class is an efficient implementation of a dynamic property bag provided for you by the DLR. It allows you to dynamically retrieve and set its member values, adding new members per instance as needed at runtime. Because `ExpandoObject` implements the standard DLR interface `IDynamicMetaObjectProvider`, it is portable between DLR-aware languages. You can create an instance of an `ExpandoObject` in C\#, give its members specific values and functions, and pass it on to an IronPython function, which can then evaluate and invoke its members as if it was a standard Python object. `ExpandoObject` is a useful library class when you need a reliable, plain-vanilla dynamic object.
 
