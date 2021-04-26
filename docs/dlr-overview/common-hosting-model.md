@@ -44,7 +44,7 @@ There's a rich set of ways to execute code. Our goal is to strike a balance betw
 
 ![Workflow for running code](media/image3.svg)
 
-<h2 id="level-one----script-runtimes-scopes-and-executing-files-and-snippets">3.2 Level One -- Script Runtimes, Scopes, and Executing Files and Snippets</h2>
+<h2 id="level-one----script-runtimes-scopes-and-executing-files-and-snippets">3.2 Level One &mdash; Script Runtimes, Scopes, and Executing Files and Snippets</h2>
 
 For simple application programmability, you want to provide a host object model that dynamic languages code can use. You then want to execute files of code that consume that object model. You may also want to get the values of variables from the dynamic language code to use dynamic functions as command implementations or event handlers.
 
@@ -58,7 +58,7 @@ These types are shown in the diagram:
 
 The ScriptRuntime.GetEngine and ScriptScope.Engine are bridges to more advanced hosting functionality. In Level Two and Level Three scenarios, the other members of ScriptRuntime and ScriptScope will be useful along with ScriptEngine.
 
-<h2 id="level-two----engines-compiled-code-sources-and-object-operations">3.3 Level Two -- Engines, Compiled Code, Sources, and Object Operations</h2>
+<h2 id="level-two----engines-compiled-code-sources-and-object-operations">3.3 Level Two &mdash; Engines, Compiled Code, Sources, and Object Operations</h2>
 
 The next level of engagement involves operating directly with engines and abstractions of source code and compiled code. You can compile code and run it in any scope or its default scope. You also have more control over how you provide sources to the DLR.
 
@@ -74,7 +74,7 @@ These are the main types of level two:
 
 ![ScriptEngine, ScriptSource, ObjectOperations](media/image5.png)
 
-<h2 id="level-three----full-control-remoting-tool-support-and-more">3.4 Level Three -- Full Control, Remoting, Tool Support, and More</h2>
+<h2 id="level-three----full-control-remoting-tool-support-and-more">3.4 Level Three &mdash; Full Control, Remoting, Tool Support, and More</h2>
 
 Level three engagement as a host gives you full control over the ScriptRuntime. There are many things hosts can do at this level from controlling runtime configuration, to handling runtime exceptions, to using remote ScriptRuntimes, to providing full programming tool support with completion, parameter info pop-ups, and colorization.
 
