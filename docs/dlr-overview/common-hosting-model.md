@@ -8,35 +8,22 @@ title: Common Hosting Model
 One of the top DLR features is common hosting support for all languages implemented on the DLR. The primary goal is supporting .NET applications hosting the DLR’s ScriptRuntime and engines for the following high-level scenarios:
 
 - SilverLight hosting in browsers
-
 - MerlinWeb on the server
-
 - Interaction consoles where the ScriptRuntime is possibly isolated in another app domain.
-
 - Editing tool with colorization, completion, and parameter tips (may only work on live objects in v1)
 
 A quick survey of functionality includes:
 
 - Create ScriptRuntimes locally or in remote app domains.
-
 - Execute snippets of code.
-
 - Execute files of code in their own execution context (ScriptScope).
-
 - Explicitly choose language engines to use or just execute files to let the DLR find the right engine.
-
 - Create scopes privately or publicly for executing code in.
-
 - Create scopes, set variables in the scope to provide host object models, and publish the scopes for dynamic languages to import, require, etc.
-
 - Create scopes, set variables to provide object models, and execute code within the scopes.
-
 - Fetch dynamic objects and functions from scopes bound to names or execute expressions that return objects.
-
 - Call dynamic functions as host command implementations or event handlers.
-
 - Get reflection information for object members, parameter information, and documentation.
-
 - Control how files are resolved when dynamic languages import other files of code.
 
 Hosts always start by calling statically on the ScriptRuntime to create a ScriptRuntime. In the simplest case, the host can set globals and execute files that access the globals. In more advanced scenarios, hosts can fully control language engines, get services from them, work with compiled code, explicitly execute code in specific scopes, interact in rich ways with dynamic objects from the ScriptRuntime, and so on.
@@ -45,17 +32,17 @@ Hosts always start by calling statically on the ScriptRuntime to create a Script
 
 The hosting APIs can be grouped by levels of engagement. Level One uses a couple of types for executing code in scopes and working with variable bindings in those scopes. Level Two involves a few more types and supports more control over how code executes, using compiled code in various scopes, and using various sources of code. Level Three opens up to several advanced concepts such as overriding how filenames are resolved, providing custom source content readers, reflecting over objects for design-time tool support, providing late bound variable values from the host, and using remote ScriptRuntimes.
 
-There are three basic mechanisms for partially isolating state for code executions within a process. .NET offers Appdomains, which allows for code to run at different trust levels and to be completely torn down and unloaded. The DLR offers multiple ScriptRuntimes within an AppDomain, each having its own global object of name bindings, distinct references to .NET namespaces from specified assemblies, distinct options, etc. The DLR also provides ScriptScopes which provide variable binding isolation, and you can execute code in different scopes to work with distinct bindings of free variable references.
+There are three basic mechanisms for partially isolating state for code executions within a process. .NET offers AppDomains, which allows for code to run at different trust levels and to be completely torn down and unloaded. The DLR offers multiple ScriptRuntimes within an AppDomain, each having its own global object of name bindings, distinct references to .NET namespaces from specified assemblies, distinct options, etc. The DLR also provides ScriptScopes which provide variable binding isolation, and you can execute code in different scopes to work with distinct bindings of free variable references.
 
 The following diagram shows conceptually how hosts relate to ScriptRuntimes and other hosting objects:
 
-![](media/image2.svg)
+![Hosts and ScriptRuntime](media/image2.svg)
 
 It is important for the DLR to support distinct ScriptRuntimes within .NET's AppDomains for a couple of reasons. First, key customers betting on us require the lighter-weight isolation than what AppDomains provide. Second, consider two independent .NET components loading as extensions to an application. Each component wants to provide scripting support to end users. The components should be able to do so without having to worry about how they might clash with other script-enabled components. Multiple ScriptRuntimes also makes the main application's job easier since it does not have to provide a model for independent components getting access to and coordinating code executions around a central ScriptRuntime.
 
 There's a rich set of ways to execute code. Our goal is to strike a balance between convenient execution methods on various objects and keeping redundancy across the types to a minimum. The diagram below shows how to navigate to the key objects for running code. The Sections on Levels One and Level Two below talk about types in this diagram (green being Level One types):
 
-![](media/image3.svg)
+![Workflow for running code](media/image3.svg)
 
 <h2 id="level-one----script-runtimes-scopes-and-executing-files-and-snippets">3.2 Level One -- Script Runtimes, Scopes, and Executing Files and Snippets</h2>
 
@@ -67,7 +54,7 @@ There are a lot of members on these types because they are also used for Level T
 
 These types are shown in the diagram:
 
-<img src="media/image4.png" style="width:5.19792in;height:4.82292in" />
+![ScriptRuntime and ScriptScope](media/image4.png)
 
 The ScriptRuntime.GetEngine and ScriptScope.Engine are bridges to more advanced hosting functionality. In Level Two and Level Three scenarios, the other members of ScriptRuntime and ScriptScope will be useful along with ScriptEngine.
 
@@ -85,7 +72,7 @@ ObjectOperations provide a large catalogue of object operations such as member a
 
 These are the main types of level two:
 
-<img src="media/image5.png" style="width:6.78125in;height:6.16667in" />
+![ScriptEngine, ScriptSource, ObjectOperations](media/image5.png)
 
 <h2 id="level-three----full-control-remoting-tool-support-and-more">3.4 Level Three -- Full Control, Remoting, Tool Support, and More</h2>
 
@@ -95,7 +82,7 @@ With level three support, you can create a ScriptRuntimeSetup object to control 
 
 Another simple mechanism in level three is deriving from ScriptHost. This lets you provide a custom PlatformAdaptationLayer object to override file name resolution. For example, you might only load files from a particular directory or go to a web server for files. A host communicates its sub type of ScriptHost to the DLR when it creates a ScriptRuntime. Many hosts can just use the DLR’s default ScriptHost. ScriptHost looks like:
 
-<img src="media/image6.png" style="width:2.3125in;height:2.08333in" />
+![ScriptHost](media/image6.png)
 
 The ObjectOperations class provides language-specific operations on objects, including some tool building support. ObjectOperations includes introspection of objects via members such as GetMemberNames, IsCallable, GetCallSignatures, GetDocumentation, and GetCodeRepresentation. These give you a language-specific view in that you see members of objects and signatures from the flavor of a specific language. For example, you would see the Python meta-programming members of objects that Python manifests on objects. ObjectOperations enables you to build tool support for dynamic languages on the DLR, but you need another set of objects for parsing code.
 
@@ -103,10 +90,10 @@ Hosts can get parsing support for providing colorization in editors and interpre
 
 This will definitely change in the future. For now, it is a place holder and represents some prototyping we did.
 
-<img src="media/image7.png" style="width:5.625in;height:3.16667in" />
+![TokenCategorizer](media/image7.png)
 
 Hosts that implement tools for programmers will likely also create ScriptSources and implement TextContentProviders so that tokenizers can read input directly from the host's data structures. For example, an editor with a file in memory (in an editor buffer) could implement a TextContentProviders that reads input directly from the buffer's data structure. The types relating to sources are:
 
-<img src="media/image8.png" style="width:5.67708in;height:3.625in" />
+![ScriptSource, SourceCodeKind, TextContentProvider, StreamContentProvider](media/image8.png)
 
 Advanced hosts can also provide late-bound values for variables that dynamic languages access. Each time the variable’s value is fetched the host can compute a new value or deliver one that’s cached in its data structures. Hosts do this by being the implementer of an IDynamicMetaObjectProvider that the hosts supply when creating a ScriptScope. A simple way to implement this interface is to derive from DynamicObject which implements the interface. Then just override methods such as TryGetMember and TrySetMember. If you don't need to do fancy late binding of names, you could use ExpandoObject as a fast property bag.
