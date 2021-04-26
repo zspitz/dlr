@@ -42,7 +42,7 @@ The following sections provide an overview of the DLR, its overall architecture,
 
 DLR source code is available on [GitHub](https://github.com/IronLanguages/dlr) under the Apache 2.0 license.
 
-IronPython currently lives at https://ironpython.net/, with the source on [GitHub](https://github.com/IronLanguages/ironpython2) under the Apache 2.0 license.
+[IronPython](https://ironpython.net/)'s source is on [GitHub](https://github.com/IronLanguages/ironpython2) under the Apache 2.0 license.
 
 The source for [IronRuby](http://ironruby.net/) is also on [GitHub](https://github.com/IronLanguages/ironruby).
 
