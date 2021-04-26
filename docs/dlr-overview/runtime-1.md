@@ -5,7 +5,7 @@ title: Runtime
 
 # 4 Runtime
 
-It is hard to separate language implementation concepts from the runtime concepts with dynamic languages. However, we try to do so by defining the runtime aspects of the DLR as DynamicSites, SiteBinders, and Rules for fast dynamic invocation. We include higher-level objects as helpers for library authors who want their objects to participate well in dynamic operations &mdash; DynamicObject and ExpandoObject. We also include utilities, default binding helpers, and COM IDispatch interoperability.
+It is hard to separate language implementation concepts from the runtime concepts with dynamic languages. However, we try to do so by defining the runtime aspects of the DLR as `DynamicSite`s, `SiteBinder`s, and Rules for fast dynamic invocation. We include higher-level objects as helpers for library authors who want their objects to participate well in dynamic operations &mdash; `DynamicObject` and `ExpandoObject`. We also include utilities, default binding helpers, and COM `IDispatch` interoperability.
 
 <h2 id="dynamic-call-sites">4.1 Dynamic Call Sites</h2>
 
