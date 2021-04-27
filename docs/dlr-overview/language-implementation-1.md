@@ -311,7 +311,7 @@ A key concept in the DLR is using .NET's Object as the root of the type system. 
 
 Often implementations achieve interoperability through wrappers and marshaling layers, as this picture of Jython's system:
 
-> <img src="media/image9.png" style="width:4.21875in;height:2.35417in" alt="http://blogs.msdn.com/blogfiles/hugunin/WindowsLiveWriter/TheOneTrueObject_9F7E/image%7B0%7D_thumb%5B4%5D.png" />
+![http://blogs.msdn.com/blogfiles/hugunin/WindowsLiveWriter/TheOneTrueObject_9F7E/image%7B0%7D_thumb%5B4%5D.png](media/image9.png)
 
 In this pattern the Python types exist in their own little world. For every underlying type there is a Python-specific wrapper. This standard pattern is okay for supporting a single language. As long as all your code is Python code all your objects are PyObjects, and they work great together with the Python-specific information on them. Where this pattern breaks down is when you want to integrate multiple languages. Then every time an object moves from one language to another it needs to be unwrapped from the source language and rewrapped appropriately for the destination. This can have performance issues as these wrapper objects are created and discarded for any cross-language calls.
 
@@ -399,81 +399,91 @@ Preferring language-based static member binding over the dynamic member binding 
 
 There are specific subclasses of DynamicMetaObjectBinder for each of 16 common language features in the interoperability protocol. For each feature you wish to support binding in your language, you must implement a binder that derives from its class. The interoperability subclasses are:
 
+<!-- markdownlint-disable MD033 -->
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th><strong>Binder base class</strong></th>
 <th><strong>Encodes language feature</strong></th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>GetMemberBinder</strong></td>
-<td><p>Represents an access to an object’s member that retrieves the value. In some languages the value may be a first-class function, such as a delegate, that closes over the instance, o, which can later be invoked.</p>
-<p><em>Example:</em> o.m</p>
-<p>If the member doesn't exist, the binder may return an expression that creates a new member with some language-specific default value, returns a sentinel value like $Undefined, throws an exception, etc.</p></td>
+<td><p>Represents an access to an object’s member that retrieves the value. In some languages the value may be a first-class function, such as a delegate, that closes over the instance, <code>o</code>, which can later be invoked.</p>
+<p><em>Example:</em> <code>o.m</code></p>
+<p>If the member doesn't exist, the binder may return an expression that creates a new member with some language-specific default value, returns a sentinel value like <code>$Undefined</code>, throws an exception, etc.</p></td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>SetMemberBinder</strong></td>
 <td><p>Represents an access to an object’s member that assigns a value.</p>
-<p><em>Example:</em> o.m = 12</p>
+<p><em>Example:</em> <code>o.m = 12</code></p>
 <p>If the member doesn't exist, the binder may return an expression that creates a new member to hold this value, throws an exception, etc.</p></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>DeleteMemberBinder</strong></td>
 <td><p>Represents an access to an object’s member that deletes the member.</p>
-<p><em>Example:</em> delete o.m</p>
+<p><em>Example:</em> <code>delete o.m</code></p>
 <p>This may not be supported on all objects.</p></td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>GetIndexBinder</strong></td>
 <td><p>Represents an access to an indexed element of an object that retrieves the value.</p>
-<p><em>Example:</em> o[10] <em>or</em> o[“key”]</p>
-<p>If the element doesn't exist, the binder may return an expression that creates a new element with some language-specific default value, return a sentinel value like $Undefined, throw an exception, etc.</p></td>
+<p><em>Example:</em> <code>o[10]</code> <em>or</em> <code>o[“key”]</code></p>
+<p>If the element doesn't exist, the binder may return an expression that creates a new element with some language-specific default value, return a sentinel value like <code>$Undefined</code>, throw an exception, etc.</p></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>SetIndexBinder</strong></td>
 <td><p>Represents an access to an indexed element of an object that assigns a value.</p>
-<p><em>Example:</em> o[10] = 12 <em>or</em> o[“key”] = value</p>
+<p><em>Example:</em> <code>o[10] = 12</code> <em>or</em> <code>o[“key”] = value</code></p>
 <p>If the member doesn't exist, the binder may return an expression that creates a new element to hold this value, throw an exception, etc.</p></td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>DeleteIndexBinder</strong></td>
 <td><p>Represents an access to an indexed element of an object that deletes the element.</p>
-<p><em>Example:</em> delete o.m[10] <em>or</em> delete o[“key”]</p>
+<p><em>Example:</em> <code>delete o.m[10]</code> <em>or</em> <code>delete o[“key”]</code></p>
 <p>This may not be supported on all indexable objects.</p></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>InvokeBinder</strong></td>
 <td><p>Represents invocation of an invocable object, such as a delegate or first-class function object.</p>
-<p><em>Example:</em> a(3)</p></td>
+<p><em>Example:</em> <code>a(3)</code></p></td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>InvokeMemberBinder</strong></td>
 <td><p>Represents invocation of an invocable member on an object, such as a method.</p>
-<p><em>Example:</em> a.b(3)</p>
-<p>If invoking a member is an atomic operation in a language, its compiler can choose to generate sites using InvokeMemberBinder instead of GetMemberBinder nested within InvokeBinder. For example, in C#, a.b may be a method group representing multiple overloads and would have no intermediate object representation for a GetMemberBinder to return.</p>
-<p>However, a language that chooses to emit InvokeMemberBinders might try a method invocation on any dynamic object. To support all DLR languages, objects from dynamic libraries must support both Invoke and InvokeMember operations. However, to generalize the implementation of InvokeMember, a dynamic object may fall back to the Invoke functionality in the language binder. Languages that define an InvokeMemberBinder are therefore required to implement the FallbackInvoke method alongside FallbackInvokeMember. Dynamic objects can then implement InvokeMember by resolving a GetMember operation themselves using their own semantics, and passing the resulting target DynamicMetaObject on to FallbackInvoke, which can be implemented by delegating to the language’s existing InvokeBinder functionality.</p></td>
+<p><em>Example:</em> <code>a.b(3)</code></p>
+<p>If invoking a member is an atomic operation in a language, its compiler can choose to generate sites using <code>InvokeMemberBinder</code> instead of <code>GetMemberBinder</code> nested within <code>InvokeBinder</code>. For example, in C#, <code>a.b</code> may be a method group representing multiple overloads and would have no intermediate object representation for a <code>GetMemberBinder</code> to return.</p>
+<p>However, a language that chooses to emit <code>InvokeMemberBinder</code>s might try a method invocation on any dynamic object. To support all DLR languages, objects from dynamic libraries must support both Invoke and <code>InvokeMember</code> operations. However, to generalize the implementation of <code>InvokeMember</code>, a dynamic object may fall back to the Invoke functionality in the language binder. Languages that define an <code>InvokeMemberBinder</code> are therefore required to implement the <code>FallbackInvoke</code> method alongside <code>FallbackInvokeMember</code>. Dynamic objects can then implement <code>InvokeMember</code> by resolving a <code>GetMember</code> operation themselves using their own semantics, and passing the resulting target <code>DynamicMetaObject</code> on to <code>FallbackInvoke</code>, which can be implemented by delegating to the language’s existing <code>InvokeBinder</code> functionality.</p></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>CreateInstanceBinder</strong></td>
 <td><p>Represents instantiation of an object with a set of constructor arguments. The object represents a type, prototype function, or other language construct that supports instantiation.</p>
-<p><em>Example:</em> new X(3, 4, 5)</p></td>
+<p><em>Example:</em> <code>new X(3, 4, 5)</code></p></td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>ConvertBinder</strong></td>
 <td><p>Represents a conversion of an object to a target type.</p>
 <p>This conversion may be marked as being an implicit compiler-inferred conversion, or an explicit conversion specified by the developer.</p>
-<p><em>Example:</em> (TargetType)o</p></td>
+<p><em>Example:</em> <code>(TargetType)o</code></p></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><p><strong>UnaryOperationBinder</strong></p>
 <p><strong>BinaryOperationBinder</strong></p></td>
 <td><p>Represents a miscellaneous operation, such as a unary operator or binary operator, respectively.</p>
-<p><em>Examples:</em> a + b, a * b, -a</p>
+<p><em>Examples:</em> <code>a + b</code>, <code>a * b</code>, <code>-a</code></p>
 <p>Contains an Operation string that specifies the operation to perform, such as Add, Subtract, Negate, etc.. There is a core set of operations defined that all language binders should support if they map reasonably to concepts in the language. Languages may also define their own Operation strings for features unique to their language, and may agree independently to share these strings to enable interop for these features.</p>
 <p>The operator strings in the core set are:</p>
-<p>Decrement, Increment, Negate, Positive, Not, Add, Subtract, Multiply, Divide, Mod, ExclusiveOr, BitwiseAnd, BitwiseOr, LeftShift, RightShift, Equals, GreaterThan, LessThan, NotEquals, GreaterThanOrEqual, Power, LessThanOrEqual, InPlaceMultiply, InPlaceSubtract, InPlaceExclusiveOr, InPlaceLeftShift, InPlaceRightShift, InPlaceMod, InPlaceAdd, InPlaceBitwiseAnd, InPlaceBitwiseOr, InPlaceDivide, InPlacePower</p></td>
+<p><strong>Decrement</strong>, <strong>Increment</strong>,<br>
+<strong>Negate</strong>, <strong>Positive</strong>, <strong>Not</strong>,<br>
+<strong>Add</strong>, <strong>Subtract</strong>, <strong>Multiply</strong>, <strong>Divide</strong>, <strong>Mod</strong>, <strong>Power</strong>,<br>
+<strong>ExclusiveOr</strong>, <strong>BitwiseAnd</strong>, <strong>BitwiseOr</strong>,<br>
+<strong>LeftShift</strong>, <strong>RightShift</strong>,<br>
+<strong>Equals</strong>, <strong>GreaterThan</strong>, <strong>LessThan</strong>, <strong>NotEquals</strong>, <strong>GreaterThanOrEqual</strong>, <strong>LessThanOrEqual</strong><br>
+<strong>InPlaceMultiply</strong>, <strong>InPlaceSubtract</strong>, <strong>InPlaceMod</strong>, <strong>InPlaceAdd</strong>, <strong>InPlaceDivide</strong>, <strong>InPlacePower</strong>
+<strong>InPlaceExclusiveOr</strong>, <strong>InPlaceLeftShift</strong>, <strong>InPlaceRightShift</strong>, <strong>InPlaceBitwiseAnd</strong>, <strong>InPlaceBitwiseOr</strong>
+</p></td>
 </tr>
 </tbody>
 </table>
+<!-- markdownlint-enable MD033 -->

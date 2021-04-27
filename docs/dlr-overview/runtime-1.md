@@ -13,7 +13,7 @@ Dynamic call sites allow dynamic language code to run fast. They manage the meth
 
 Dynamic language performance is hindered by the extra checks and searches that occur at each call site. Straightforward implementations have to repeatedly search class precedence lists for members and potentially resolve overloads on method argument types each time you execute a particular line of code. In an expression such as `o.m(x, y)` or `x + y`, dynamic languages need to check exactly what kind of object `o` is, what is `m` bound to for `o`, what type `x` is, what type `y` is, or what `+` means for the actual runtime types of `x` and `y`. In a statically typed language (or with enough type hints in the code and using type inference), you can emit exactly the instructions or runtime function calls that are appropriate at each call site. You can do this because you know from the static types what is needed at compile time.
 
-Dynamic languages provide great productivity enhancements and powerful terse expressions due to their dynamic capabilities. However, in practice code tends to execute on the same types of objects each time. This means you can improve performance by remembering the results of method searches the first time a section of code executes. For example, with `x + y`, if `x` and `y` are integers the first time that expression executes, we can remember a code sequence or exactly what runtime function performs addition given two integers. Then each time that expression executes, there is no search involved. The code just checks that x and y are integers again, and dispatches to the right code with no searching. The result can literally reduce to inlined code generation with a couple of type checks and an add instruction depending on the semantics of an operation and method caching mechanisms used.
+Dynamic languages provide great productivity enhancements and powerful terse expressions due to their dynamic capabilities. However, in practice code tends to execute on the same types of objects each time. This means you can improve performance by remembering the results of method searches the first time a section of code executes. For example, with `x + y`, if `x` and `y` are integers the first time that expression executes, we can remember a code sequence or exactly what runtime function performs addition given two integers. Then each time that expression executes, there is no search involved. The code just checks that `x` and `y` are integers again, and dispatches to the right code with no searching. The result can literally reduce to inlined code generation with a couple of type checks and an add instruction depending on the semantics of an operation and method caching mechanisms used.
 
 <h3 id="before-dynamic-call-sites">4.1.1 Before Dynamic Call Sites</h3>
 
@@ -28,7 +28,7 @@ object Add(object x, object y) {
 }
 ```
 
-… with this static method in the IntOps class:
+… with this static method in the `IntOps` class:
 
 ``` csharp
 object Add(int x, object y) {
@@ -48,13 +48,13 @@ Assuming you were willing to do the optimizations discussed above, it would be p
 
 However, this story breaks down when you want an IronPython object to call into, for example, an IronRuby library and dynamically invoke functions on the objects it gets back. With no standard mechanism to understand how to perform dynamic operations on an external dynamic object, IronPython could only treat the object as a .NET object, accessing its statically-known API. Most likely any visible methods will be an implementation detail of IronPython rather than a representation of the user’s intent.
 
-The DLR provides for this common currency when calling into objects defined in other dynamic languages by establishing a protocol for those implementing dynamic objects. As a language creator or library author who wants other DLR-aware languages to consume your objects dynamically, you must have the objects implement IDynamicMetaObjectProvider, offering up appropriate implementations of DynamicMetaObject when IDynamicMetaObjectProvide's GetDynamicMetaObject() is called.
+The DLR provides for this common currency when calling into objects defined in other dynamic languages by establishing a protocol for those implementing dynamic objects. As a language creator or library author who wants other DLR-aware languages to consume your objects dynamically, you must have the objects implement `IDynamicMetaObjectProvider`, offering up appropriate implementations of `DynamicMetaObject` when `IDynamicMetaObjectProvide`'s `GetDynamicMetaObject()` is called.
 
 <h3 id="creating-dynamic-call-sites">4.1.3 Creating Dynamic Call Sites</h3>
 
 At a high level there are two ways to create dynamic call sites. A call site encapsulates a language's binder and the dynamic expression or operation to perform. A regular .NET language compiler (for example, what C\# does for its `dynamic` feature) emits a call site where dynamic expressions occur. The language can create the ahead of time, stash them in a functions constants pool, put them in static types, or whatever. The compiler then emits a call to the site's Target delegate to invoke the dynamic operation.
 
-Dynamic languages built completely on the DLR, such as IronPython, use DynamicExpression nodes from Expression Trees v2 (which the DLR ships in .NET 4.0). The Expression.Compile method builds the call site objects and emits the right calls on their Target delegate when compiling.
+Dynamic languages built completely on the DLR, such as IronPython, use `DynamicExpression` nodes from Expression Trees v2 (which the DLR ships in .NET 4.0). The `Expression.Compile` method builds the call site objects and emits the right calls on their Target delegate when compiling.
 
 <h2 id="rules">4.2 Rules</h2>
 
@@ -149,7 +149,7 @@ The general architecture of the DLR's call sites and rules is open to several op
 
 <h2 id="dynamicobject-and-expandoobject">4.5 DynamicObject and ExpandoObject</h2>
 
-We make life much simpler for library authors who want to create objects in static languages so that the object can behave dynamically and participate in the interoperability and performance of dynamic call sites. Library authors can avoid the full power of `DynamicMetaObjects`, but they can also employ `DynamicMetaObjects` if they wish. The DLR provides two higher level abstractions over `DynamicMetaObject`: `DynamicObject` and `ExpandoObject`. For most APIs, these objects provide more than enough performance and flexibility to expose your functionality to dynamic hosts.
+We make life much simpler for library authors who want to create objects in static languages so that the object can behave dynamically and participate in the interoperability and performance of dynamic call sites. Library authors can avoid the full power of `DynamicMetaObject`s, but they can also employ `DynamicMetaObject`s if they wish. The DLR provides two higher level abstractions over `DynamicMetaObject`: `DynamicObject` and `ExpandoObject`. For most APIs, these objects provide more than enough performance and flexibility to expose your functionality to dynamic hosts.
 
 <h3 id="dynamicobject">4.5.1 DynamicObject</h3>
 
