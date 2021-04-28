@@ -5,33 +5,28 @@ title: Language Implementation
 
 # 5 Language Implementation
 
-It is hard to separate language implementation concepts from the runtime concepts with dynamic languages. However, we try to do so by defining the language implementation aspects of the DLR as are shared ASTs (Expression Trees), LanguageContext, language interop with IDynamicMetaObjectProvider, compilation, and utilities.
+It is hard to separate language implementation concepts from the runtime concepts with dynamic languages. However, we try to do so by defining the language implementation aspects of the DLR as are shared ASTs (Expression Trees), **LanguageContext**, language interop with **IDynamicMetaObjectProvider**, compilation, and utilities.
 
 <h2 id="expression-trees">5.1 Expression Trees</h2>
 
-In the .NET Framework 3.5 we created Expression Trees (ETs) to model code for LINQ expressions in C\# and VB. They were limited in .NET 3.5 to focus on LINQ requirements; for example, a LambdaExpression could not contain control flow, only a simple expression as its body. Looking forward, there are several reasons we'd like to extend ETs:
+In the .NET Framework 3.5 we created Expression Trees (ETs) to model code for LINQ expressions in C\# and VB. They were limited in .NET 3.5 to focus on LINQ requirements; for example, a **LambdaExpression** could not contain control flow, only a simple expression as its body. Looking forward, there are several reasons we'd like to extend ETs:
 
 - We'd like to further develop a single semantic code model as a common currency for compilation tools.
-
 - We're adding the Dynamic Language Runtime (DLR) into the .NET Framework, and it uses semantic trees to represent code as a means for making it easier to port new dynamic languages to .NET.
-
 - The DLR also uses semantic trees to represent how to perform abstract operations in its dynamic call site caching mechanism.
-
 - We want to support meta-programming going forward where customers can more readily get programs as data, manipulate the data, and emit new code as data based on the input code.
 
 Obviously, to support the above goals, we need more in the ET model than v1 provided. We need to model control flow, assignment, recursion, etc., in addition to simple expressions. There is no plan in .NET 4.0 to add modeling for types/declarations, but we'll consider these for V-next+1 (that is, the next major release after .NET 4.0).
 
 Some quick terminology:
 
-- The term "ET" indicates a tree structure of instances of Expression (direct or indirect).
-
-- The term "ET node" indicates a single instance of Expression (direct or indirect). The ET node could be the root of a tree.
-
-- The term "ET node type" means the specific class of which the ET node is an instance.
-
-- The term "ET kind" refers to the Expression.NodeType property or indicates the value of the ExpressionType enum. This is a legacy naming issue.
-
-- The term "sub ET" indicates the root of a tree where the root is an interior or leaf node of some other ET.
+| Term | Definition |
+| -- | -- |
+| **ET** | A tree structure of instances of **Expression** (direct or indirect). |
+| **ET node** | A single instance of **Expression** (direct or indirect). The ET node could be the root of a tree. |
+| **ET node type** | The specific class of which the ET node is an instance. |
+| **ET kind** | The **Expression.NodeType** property or indicates the value of the **ExpressionType** enum. This is a legacy naming issue. |
+| **sub ET** | The root of a tree where the root is an interior or leaf node of some other ET.
 
 The following sub sections are some highlighted concepts for Expression Trees v2.
 
@@ -41,23 +36,19 @@ One high-order bit to language design is whether to be expression-based. Do you 
 
 There are several reasons for this design:
 
-- Expression remains the base type for all ET nodes, and we avoid dual type hierarchies.
-
-- Void is already allowed as a type, indicating there is no return value for an expression.
-
+- **Expression** remains the base type for all ET nodes, and we avoid dual type hierarchies.
+- **Void** is already allowed as a type, indicating there is no return value for an expression.
 - Lambdas don’t change at all from v1 to v2.
-
 - Being expression-based matches many languages (Lisp, Scheme, Ruby, F\#), and it does no harm when modeling other languages. They can easily make expressions be void returning.
 
 Let's look at a couple of examples:
 
-- BlockExpression has a value. By default its value is the last expression in the sequence, and its type is the same type as the last expression. This design also allows us to avoid another CommaExpression since BlockExpression now models this semantics as well.
+- **BlockExpression** has a value. By default its value is the last expression in the sequence, and its type is the same type as the last expression. This design also allows us to avoid another **CommaExpression** since **BlockExpression** now models this semantics as well.
+- We model `if` with **ConditionalExpression**, which returns the value of its consequent or alternative expression, whichever executes. The types of the branches must match the type of the **ConditionalExpression**. If there's no alternative expression, then we use a **DefaultExpression** with the matching type. Languages with distinct notions for statements often have a `e1 ? e2 : e3` expression since their `if` cannot return values, but they can model this with **ConditionalExpression**.
 
-- We model 'if' with ConditionalExpression, which returns the value of its consequent or alternative expression, whichever executes. The types of the branches must match the type of the ConditionalExpression. If there's no alternative expression, then we use a DefaultExpression with the matching type. Languages with distinct notions for statements often have a 'e1 ? e2 : e3' expression since their 'if' cannot return values, but they can model this with ConditionalExpression.
+**DefaultExpression** serves two useful purposes in our expression-based model. First the **Expression.Empty** factory returns a **DefaultExpression** with **Type** void. This can be useful if you need an expression in a value-resulting position that matches the containing expressions result type. The second use of **DefaultExpression** is when you do have a non-void **Expression** in which you do need to sometimes return the `default(T)` value. Without this expression, you would have to generate a lot more ET to express `default(T)`.
 
-DefaultExpression serves two useful purposes in our expression-based model. First the Expression.Empty factory returns a DefaultExpression with Type void. This can be useful if you need an expression in a value-resulting position that matches the containing expressions result type. The second use of DefaultExpression is when you do have a non-void Expression in which you do need to sometimes return the "`default(T)`" value. Without this expression, you would have to generate a lot more ET to express "`default(T)`".
-
-Often you do not need to use Expression.Empty to match a containing node's result type. There are expressions used in common patterns, typically control flow expression, where the result value is not used. For these common patterns, some nodes implicitly convert to void or squelch a result value. SwitchExpression, ConditionalExpression, TryExpression, BlockExpression, LambdaExpression, GotoExpression, and LabelExpression all automatically convert their result expression to void if they themselves have a void Type property (or delegate with result type in the case of lambdas).
+Often you do not need to use **Expression.Empty** to match a containing node's result type. There are expressions used in common patterns, typically control flow expression, where the result value is not used. For these common patterns, some nodes implicitly convert to `void` or squelch a result value. **SwitchExpression**, **ConditionalExpression**, **TryExpression**, **BlockExpression**, **LambdaExpression**, **GotoExpression**, and **LabelExpression** all automatically convert their result expression to `void` if they themselves have a `void` **Type** property (or delegate with result type in the case of lambdas).
 
 <h3 id="reducible-nodes">5.1.2 Reducible Nodes</h3>
 
