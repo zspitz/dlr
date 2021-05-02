@@ -159,32 +159,18 @@ The simplest way to give your own class custom dynamic dispatch semantics is to 
 
 ``` csharp
 public abstract class DynamicObject : IDynamicMetaObjectProvider {
-    public virtual bool TryGetMember(GetMemberBinder binder,
-                                     out object result)
-    public virtual bool TrySetMember(SetMemberBinder binder,
-                                     object value)
+    public virtual bool TryGetMember(GetMemberBinder binder, out object result)
+    public virtual bool TrySetMember(SetMemberBinder binder, object value)
     public virtual bool TryDeleteMember(DeleteMemberBinder binder)
-    public virtual bool TryConvert(ConvertBinder binder,
-                                   out object result)        
-    public virtual bool TryUnaryOperation
-        (UnaryOperationBinder binder, out object result)
-    public virtual bool TryBinaryOperation
-        (BinaryOperationBinder binder, object arg,
-         out object result)
-    public virtual bool TryInvoke
-        (InvokeBinder binder, object[] args, out object result)
-    public virtual bool TryInvokeMember
-        (InvokeMemberBinder binder, object[] args,
-         out object result)
-    public virtual bool TryCreateInstance
-        (CreateInstanceBinder binder, object[] args,
-         out object result)
-    public virtual bool TryGetIndex
-        (GetIndexBinder binder, object[] args, out object result)
-    public virtual bool TrySetIndex
-        (SetIndexBinder binder, object[] indexes, object value)
-    public virtual bool TryDeleteIndex
-        (DeleteIndexBinder binder, object[] indexes)
+    public virtual bool TryConvert(ConvertBinder binder, out object result)        
+    public virtual bool TryUnaryOperation(UnaryOperationBinder binder, out object result)
+    public virtual bool TryBinaryOperation(BinaryOperationBinder binder, object arg, out object result)
+    public virtual bool TryInvoke(InvokeBinder binder, object[] args, out object result)
+    public virtual bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+    public virtual bool TryCreateInstance(CreateInstanceBinder binder, object[] args, out object result)
+    public virtual bool TryGetIndex(GetIndexBinder binder, object[] args, out object result)
+    public virtual bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
+    public virtual bool TryDeleteIndex(DeleteIndexBinder binder, object[] indexes)
 ```
 
 You could have your own **TryGetMember** implementation look up `“Foo”` in a dictionary, crawl through a dynamic model like XML, make a web request for a value, or some other custom operation. To do so, you would override the **TryGetMember** method and just implement whatever custom action you want to expose through member evaluation syntax. You return `true` from the method to indicate that your implementation has handled this situation, and supply the value you want returned as the out parameter, result.
