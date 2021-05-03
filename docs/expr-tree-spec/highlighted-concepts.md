@@ -14,45 +14,39 @@ One high-order bit to language design is whether to be expression-based. Do you 
 There are several reasons for this design:
 
 - Expression remains the base type for all ET nodes, and we avoid dual type hierarchies.
-
 - Void is already allowed as a type, indicating there is no return value for an expression.
-
 - Lambdas don’t change at all from v1 to v2.
-
 - Being expression-based matches many languages (Lisp, Scheme, Ruby, F\#), and it does no harm when modeling other languages. They can easily make expressions be void returning.
 
 Let's look at a couple of examples:
 
-- BlockExpression has a value. By default its value is the last expression in the sequence, and its type is the same type as the last expression. This design also allows us to avoid another CommaExpression since BlockExpression now models this semantics as well.
+- **BlockExpression** has a value. By default its value is the last expression in the sequence, and its type is the same type as the last expression. This design also allows us to avoid another **CommaExpression** since **BlockExpression** now models this semantics as well.
+- We model `if` with **ConditionalExpression**, which returns the value of its consequent or alternative expression, whichever executes. The types of the branches must match the type of the **ConditionalExpression**. If there's no alternative expression, then we use a ***DefaultExpression*** with the matching type. Languages with distinct notions for statements often have a 'e1 ? e2 : e3' expression since their `if` cannot return values, but they can model this with **ConditionalExpression**.
 
-- We model 'if' with ConditionalExpression, which returns the value of its consequent or alternative expression, whichever executes. The types of the branches must match the type of the ConditionalExpression. If there's no alternative expression, then we use a DefaultExpression with the matching type. Languages with distinct notions for statements often have a 'e1 ? e2 : e3' expression since their 'if' cannot return values, but they can model this with ConditionalExpression.
+**DefaultExpression** serves two useful purposes in our expression-based model. First the **Expression.Empty** factory returns a **DefaultExpression** with **Type** `void`. This can be useful if you need an expression in a value-resulting position that matches the containing expressions result type. The second use of **DefaultExpression** is when you do have a non-void **Expression** in which you do need to sometimes return the `default(T)` value. Without this expression, you would have to generate a lot more ET to express `default(T)`.
 
-DefaultExpression serves two useful purposes in our expression-based model. First the Expression.Empty factory returns a DefaultExpression with Type void. This can be useful if you need an expression in a value-resulting position that matches the containing expressions result type. The second use of DefaultExpression is when you do have a non-void Expression in which you do need to sometimes return the "`default(T)`" value. Without this expression, you would have to generate a lot more ET to express "`default(T)`".
-
-Often you do not need to use Expression.Empty to match a containing node's result type. There are expressions used in common patterns, typically control flow expression, where the result value is not used. For these common patterns, some nodes implicitly convert to void or squelch a result value. SwitchExpression, ConditionalExpression, TryExpression, BlockExpression, LambdaExpression, GotoExpression, and LabelExpression all automatically convert their result expression to void if they themselves have a void Type property (or delegate with result type in the case of lambdas).
+Often you do not need to use **Expression.Empty** to match a containing node's result type. There are expressions used in common patterns, typically control flow expression, where the result value is not used. For these common patterns, some nodes implicitly convert to void or squelch a result value. **SwitchExpression**, **ConditionalExpression**, **TryExpression**, **BlockExpression**, **LambdaExpression**, **GotoExpression**, and **LabelExpression** all automatically convert their result expression to void if they themselves have a void **Type** property (or delegate with result type in the case of lambdas).
 
 <h2 id="reducible-nodes">2.2 Reducible Nodes</h2>
 
-We have a tension for what level of abstraction to provide in our model (see section 1.3.2). While we think Design Time Language Models have a distinct mission from Expression Trees v2, we would like to allow for smooth interoperability between them. We enable higher-level models (even language-specific models) that can reduce to a common set of ET v2 node types that all consumers can process. Programs can query an ET node as to whether it reduces, and if so, a program can call on the node to reduce itself. When a node reduces, it returns a semantically equivalent ET with a root node than can replace the original ET node.
+We have a [tension for what level of abstraction to provide in our model](introduction#model-abstraction-level). While we think Design Time Language Models have a distinct mission from Expression Trees v2, we would like to allow for smooth interoperability between them. We enable higher-level models (even language-specific models) that can reduce to a common set of ET v2 node types that all consumers can process. Programs can query an ET node as to whether it reduces, and if so, a program can call on the node to reduce itself. When a node reduces, it returns a semantically equivalent ET with a root node than can replace the original ET node.
 
-Reductions are allowed to be partial. The resulting ET may include nodes that need to be further reduced. Typically the immediate result of reducing one node comprises only children that are common ET v2 node types. Expression.Compile only compiles common node types and those that reduce to common nodes. If a node type does not reduce or does not reduce to only common nodes, then it may still be useful as part of a library-specific set of extensions that model code. An example might be a Design Time Language Model for code that either has too many errors to reduce or that is part of a model too specific to tooling needs to bother reducing it to common nodes.
+Reductions are allowed to be partial. The resulting ET may include nodes that need to be further reduced. Typically the immediate result of reducing one node comprises only children that are common ET v2 node types. **Expression.Compile** only compiles common node types and those that reduce to common nodes. If a node type does not reduce or does not reduce to only common nodes, then it may still be useful as part of a library-specific set of extensions that model code. An example might be a Design Time Language Model for code that either has too many errors to reduce or that is part of a model too specific to tooling needs to bother reducing it to common nodes.
 
-The ET v2 common set of nodes will include some reducible nodes. For example, for meta-programming goals, there will be higher-level iteration models. We'll include ForExpression for counter termination, ForEachExpression for member iterations, WhileExpression for test first iterations, and RepeatUntilExpression for test last iterations. We'll also include a fundamental LoopExpression to which the other iteration models reduce. Other examples include BinaryExpression with node kind AddAssign (compound assignment) or UnaryExpression with node kinds PreIncrementAssign and PostIncrementAssign.
+The ET v2 common set of nodes will include some reducible nodes. For example, for meta-programming goals, there will be higher-level iteration models. We'll include **ForExpression** for counter termination, **ForEachExpression** for member iterations, **WhileExpression** for test first iterations, and **RepeatUntilExpression** for test last iterations. We'll also include a fundamental **LoopExpression** to which the other iteration models reduce. Other examples include **BinaryExpression** with node kind **AddAssign** (compound assignment) or **UnaryExpression** with node kinds **PreIncrementAssign** and **PostIncrementAssign**.
 
 Note, due to time constraints we cut the higher-level iteration node types for .NET 4.0, but they will likely show up soon in the DLR's codeplex open source project.
 
-Common ET nodes with a given node kind are either reducible always, or never. That is, a node is not conditionally reducible based on other properties it has that may be different for different instantiations. For example, the GeneratorExpression nodes are always reducible. Regardless of the reducibility, the compiler may have direct support for the node kind, or the compiler may reduce the nodes. For example, when we add ForEachExpression, the compiler will likely directly compile it without reducing it.
+Common ET nodes with a given node kind are either reducible always, or never. That is, a node is not conditionally reducible based on other properties it has that may be different for different instantiations. For example, the **GeneratorExpression** nodes are always reducible. Regardless of the reducibility, the compiler may have direct support for the node kind, or the compiler may reduce the nodes. For example, when we add **ForEachExpression**, the compiler will likely directly compile it without reducing it.
 
 <h2 id="bound-unbound-and-dynamic-nodes">2.3 Bound, Unbound, and Dynamic Nodes</h2>
 
-There are three categories or states of being bound for modeling expressions. More commonly mathematicians or computer scientists think of only two, bound and unbound. For example, in the expression "for all x such that 0 \< x + y \< 10", 'x' is a bound variable while 'y' is a free reference or unbound variable. If 'y' were not present in the expression, the expression would be fully statically bound such that we could evaluate it. However, to evaluate the expression, we need to first bind 'y' to some value.
+There are three categories or states of being bound for modeling expressions. More commonly mathematicians or computer scientists think of only two, bound and unbound. For example, in the expression "for all `x` such that `0 < x + y < 10`", `x` is a bound variable while `y` is a free reference or unbound variable. If `y` were not present in the expression, the expression would be fully statically bound such that we could evaluate it. However, to evaluate the expression, we need to first bind `y` to some value.
 
 **An unbound ET node:**
 
 - would need to be bound before executing it
-
 - would represent syntax more than semantics
-
 - would have a Type property that is null (see .NET 4.0 vs. V-next+1 note below)
 
 Consider a language that supported LINQ-like expression and that also had late-bound member access (for example, if VB added late-bound LINQ). You would then need to model unbound trees for the lambda expression in the following pseudo-code:
@@ -61,67 +55,62 @@ Consider a language that supported LINQ-like expression and that also had late-b
 o.Where( lambda (x) => x > 0 )   #o had late bound semantics
 ```
 
-To be able to execute an ET modeling this code, you would need to inspect the runtime type of 'o', search its 'Where' overloads, and pattern match for one that can take a delegate. Furthermore, you would need to match lambda expression to the delegate. The delegate needs take an argument and returns a value with some type. The delegate's type for 'x' needs to make sense to bind '\>' to an implementation taking the type of 'x', an operand assignable from integer, and returning the type of the delegate.
+To be able to execute an ET modeling this code, you would need to inspect the runtime type of `o`, search its `Where` overloads, and pattern match for one that can take a delegate. Furthermore, you would need to match lambda expression to the delegate. The delegate needs take an argument and returns a value with some type. The delegate's type for `x` needs to make sense to bind `>` to an implementation taking the type of `x`, an operand assignable from integer, and returning the type of the delegate.
 
-A key observation in this situation is that the late-bound node representing the call to 'Where' necessarily has language-specific binding information representing the lambda. The representation cannot be language-neutral semantically. It also can't even be just syntax in any common representation because you need the language that produced the ET to process the lambda representation in the presence of runtime type information while binding. Support for unbound ETs may not be a good solution or one worth trying to share across languages.
+A key observation in this situation is that the late-bound node representing the call to `Where` necessarily has language-specific binding information representing the lambda. The representation cannot be language-neutral semantically. It also can't even be just syntax in any common representation because you need the language that produced the ET to process the lambda representation in the presence of runtime type information while binding. Support for unbound ETs may not be a good solution or one worth trying to share across languages.
 
 **NOTE:** Since no languages currently support late bound LINQ expressions, we won't actually allow Expression.Type to be null in .NET 4.0. We'll reconsider this in V-next+1 if we think ETs are useful to languages that need to represent unbound trees like the lambda expression in the example above.
 
 **In the ET v2 model, a bound ET node:**
 
-- has non-null Type property (that is, we statically know its type)
-
+- has non-`null` **Type** property (that is, we statically know its type)
 - could be dynamic expression
 
-A dynamic expression often has a Type property that is Object, but its Type that is not null. It might not be Object as well. For example, in "`if x`` > y`" the ET node for '\>' could be typed Boolean even if it is a dynamic node.
+A dynamic expression often has a **Type** property that is **Object**, but its **Type** that is not `null`. It might not be **Object** as well. For example, in `if x > y` the ET node for `>` could be typed **Boolean** even if it is a dynamic node.
 
 **The ET v2 model includes dynamically bound nodes that:**
 
 - must be resolved at run time to determine how to perform the operation they model
-
-- represented by DynamicExpression nodes
+- represented by **DynamicExpression** nodes
 
 <h3 id="dynamicexpression-node">2.3.1 DynamicExpression Node</h3>
 
-The DynamicExpression has binding information representing the metadata that further describes the expression beyond the ET node type and any children it has. For example, an ET representing the dynamic expression for comparing a variable to a string literal might have a flag in its binding information indicating whether the compilation unit had an option set to compare strings case-sensitively (which VB has). The binding information also encapsulates the language that created the ET node. The language determines the semantics of the dynamic expression at runtime when its binder searches for an implementation of the operation represented by the node.
+The **DynamicExpression** has binding information representing the metadata that further describes the expression beyond the ET node type and any children it has. For example, an ET representing the dynamic expression for comparing a variable to a string literal might have a flag in its binding information indicating whether the compilation unit had an option set to compare strings case-sensitively (which VB has). The binding information also encapsulates the language that created the ET node. The language determines the semantics of the dynamic expression at runtime when its binder searches for an implementation of the operation represented by the node.
 
-One observation about the DynamicExpression node is that in some sense it marks a sub ET as being late-bound. These nodes need more information about what sort of operation they represent, unlike MethodCallExpression. Furthermore, they need to represent most of what all the other ET node types represent. This begs the question of having a dual representation for dynamic vs. fully bound static nodes. We went down the design path for quite a while using only the other node types with an optional BindingInfo property to mark the dynamic expressions.
+One observation about the **DynamicExpression** node is that in some sense it marks a sub ET as being late-bound. These nodes need more information about what sort of operation they represent, unlike **MethodCallExpression**. Furthermore, they need to represent most of what all the other ET node types represent. This begs the question of having a dual representation for dynamic vs. fully bound static nodes. We went down the design path for quite a while using only the other node types with an optional **BindingInfo** property to mark the dynamic expressions.
 
-It turned out in practice that while we thought we had a more economic design, the usage of the model with an optional BindingInfo property was too awkward:
+It turned out in practice that while we thought we had a more economic design, the usage of the model with an optional **BindingInfo** property was too awkward:
 
-- Hosted language scenarios need more arguments (often in the form of run-time context). For example, BinaryExpression Divide or Equal can require an extra context argument for the specific semantics in a module for Python or VB, meaning the operation does not fit the binary shape.
-
-- A BinaryExpression with node kind Assign and a Left operand that is a MemberExpression is not intuitive as to where the extra dynamic metadata belongs. Does it go on the BinaryExpression or the MemberExpression, or both?
-
+- Hosted language scenarios need more arguments (often in the form of run-time context). For example, **BinaryExpression**s of **Divide** or **Equal** can require an extra context argument for the specific semantics in a module for Python or VB, meaning the operation does not fit the binary shape.
+- A **BinaryExpression** with node kind **Assign** and a **Left** operand that is a **MemberExpression** is not intuitive as to where the extra dynamic metadata belongs. Does it go on the **BinaryExpression** or the **MemberExpression**, or both?
 - Due to how we compile dynamic expression to use the DLR's fast dynamic dispatch caching, we need a delegate type to describe the dynamic call site. We don't generate the delegate types, and languages may need to control their creation such as pre-building some of them. This extra data also makes these expressions not fit the fully static nodes' shapes (number of operands or children), but all the dynamic expression do match shape (binding info, delegate type, arguments).
-
-- The programming model for ET consumers always included a check for the BindingInfo Property to handle every node type. Since consumers want to handle dynamic nodes a specific way, using the ExpressionVisitor and other helper code, handling them now is a simple object-oriented method dispatch.
+- The programming model for ET consumers always included a check for the **BindingInfo** Property to handle every node type. Since consumers want to handle dynamic nodes a specific way, using the **ExpressionVisitor** and other helper code, handling them now is a simple object-oriented method dispatch.
 
 <h3 id="binding-information-in-expression-nodes">2.3.2 Binding Information in Expression Nodes</h3>
 
-Expression nodes can have semantic hints or specifications that are more detailed than, for example, BinaryExpression Add on Int32s or MethodCallExpression with instance and name. These nodes can have MethodInfos attached to them to indicate the exact implementation of Add or resolution of method name to invoke. The MethodInfos serve two main purposes. The first is to be very exact when creating a node what the implementation is for the node's semantics. Language implementations should supply MethodInfos rather than leaving method resolution to the Expression factories because those factories may not resolve overloads in the same way the language would. The second job of the MethodInfos is to provide hints to LINQ providers that might interpret ETs. Those providers can have tables mapping to implementations of the node's semantics when they aren't actually compiling the ET and executing in a .NET run time.
+Expression nodes can have semantic hints or specifications that are more detailed than, for example, **BinaryExpression Add** on **Int32**s or **MethodCallExpression** with instance and name. These nodes can have **MethodInfo**s attached to them to indicate the exact implementation of **Add** or resolution of method name to invoke. The **MethodInfo**s serve two main purposes. The first is to be very exact when creating a node what the implementation is for the node's semantics. Language implementations should supply **MethodInfo**s rather than leaving method resolution to the **Expression** factories because those factories may not resolve overloads in the same way the language would. The second job of the **MethodInfo**s is to provide hints to LINQ providers that might interpret ETs. Those providers can have tables mapping to implementations of the node's semantics when they aren't actually compiling the ET and executing in a .NET run time.
 
-This extra information is required with DynamicExpression nodes. They must have binding information that can be emitted when compiling. The binding information informs the run-time binder how to search for a correct implementation of the node's semantics, given the run-time operands that flow into the operation represented by the ET node. ETs use a CallSiteBinder as the binding information representation, not MethodInfo. In fact, the CallSiteBinder is also the run-time object used in the DLR's CallSites that manage the fast dynamic dispatch for dynamic operations. CallSiteBinder encapsulates both the binding information for the exact semantics of the node and the language that created the node, which governs the binding of the operation at run time.
+This extra information is required with **DynamicExpression** nodes. They must have binding information that can be emitted when compiling. The binding information informs the run-time binder how to search for a correct implementation of the node's semantics, given the run-time operands that flow into the operation represented by the ET node. ETs use a **CallSiteBinder** as the binding information representation, not **MethodInfo**. In fact, the **CallSiteBinder** is also the run-time object used in the DLR's **CallSite**s that manage the fast dynamic dispatch for dynamic operations. **CallSiteBinder** encapsulates both the binding information for the exact semantics of the node and the language that created the node, which governs the binding of the operation at run time.
 
-Two design issues arise immediately from the choice to use CallSiteBinders vs. MethodInfos. The first is serializability. The ET design supports fully serializable ETs but doesn't enforce that they are always serializable. One reason we use the CallSiteBinders in the DynamicExpression is that they naturally fit exactly what the binding information is that the ET needs and help in hosted execution scenarios. If a language produces an ET as part of a hosting scenario to immediately execute the ET, then the binder can tuck away pointers to live data structures used by the language's engine. Languages can still produce ETs with DynamicExpressions that are serializable if they need to do so.
+Two design issues arise immediately from the choice to use **CallSiteBinders** vs. **MethodInfo**s. The first is serializability. The ET design supports fully serializable ETs but doesn't enforce that they are always serializable. One reason we use the **CallSiteBinder**s in the **DynamicExpression** is that they naturally fit exactly what the binding information is that the ET needs and help in hosted execution scenarios. If a language produces an ET as part of a hosting scenario to immediately execute the ET, then the binder can tuck away pointers to live data structures used by the language's engine. Languages can still produce ETs with **DynamicExpression**s that are serializable if they need to do so.
 
-The second design issue is re-using MethodInfos by deriving custom implementations for use with DynamicExpression nodes. There's a nice consistency in representing the binding information as a MethodInfo, looking on at ETs only. However, the roles played by the MethodInfo are different than the binding information on DynamicExpression. It is more important to have the dynamic binding information be consistent across ETs, the DLR fast dynamic CallSites, and the DLR interoperability MetaObject protocol. Not only does MethodInfo have many members that would throw exceptions if used for dynamic binding information, it would be awkward to require creating an LCG method so that the MethodInfo was invocable. CallSiteBinders are best for detailed semantics capture in DynamicExpression nodes, not MethodInfos.
+The second design issue is re-using **MethodInfo**s by deriving custom implementations for use with **DynamicExpression** nodes. There's a nice consistency in representing the binding information as a **MethodInfo**, looking on at ETs only. However, the roles played by the **MethodInfo** are different than the binding information on **DynamicExpression**. It is more important to have the dynamic binding information be consistent across ETs, the DLR fast dynamic **CallSite**s, and the DLR interoperability MetaObject protocol. Not only does **MethodInfo** have many members that would throw exceptions if used for dynamic binding information, it would be awkward to require creating an LCG method so that the **MethodInfo** was invocable. **CallSiteBinder**s are best for detailed semantics capture in **DynamicExpression** nodes, not **MethodInfo**s.
 
 <h2 id="iteration-gotos-and-exits">2.4 Iteration, Goto's, and Exits</h2>
 
-Representing iteration has a couple of interesting concepts and design points. How to represent iteration goes to the heart of what abstraction level to model for expressions (see section 1.3.2). Whether to include Goto goes back ages in language design. ETs v2 provides a nice combination of high-level modeling and lower-level support if needed. There are some higher level modeling nodes so that you almost never need Goto, but we provide Goto for reducing some node types to more primitive control flow.
+Representing iteration has a couple of interesting concepts and design points. How to represent iteration goes to the heart of [what abstraction level to model for expressions]((introduction#model-abstraction-level). Whether to include Goto goes back ages in language design. ETs v2 provides a nice combination of high-level modeling and lower-level support if needed. There are some higher level modeling nodes so that you almost never need Goto, but we provide Goto for reducing some node types to more primitive control flow.
 
-We provide GotoExpression because it is needed for C\#, VB, and other languages. The ET v2 GotoExpression started with simple, clean semantics designed into C\#. Basically this meant that the target label of the Goto must be lexically within the same function body, and you could only exit inner basic blocks to outer basic blocks. However, we need to accommodate more of VB's older Goto semantics, and we need a richer Goto for some of the ET transformations we do internally (see section 2.4.3).
+We provide **GotoExpression** because it is needed for C\#, VB, and other languages. The ET v2 **GotoExpression** started with simple, clean semantics designed into C\#. Basically this meant that the target label of the Goto must be lexically within the same function body, and you could only exit inner basic blocks to outer basic blocks. However, we need to accommodate more of VB's older Goto semantics, and we need a richer Goto for some of the ET transformations we do internally (see section 2.4.3).
 
-GotoExpression has an optional Value expression. This allows GotoExpression to enable other node types to truly be expressions. The value expression's type must be ref assignable with the type of the GotoExpression's label target. See the following sub sections for more details.
+**GotoExpression** has an optional **Value** expression. This allows **GotoExpression** to enable other node types to truly be expressions. The value expression's type must be ref assignable with the type of the **GotoExpression**'s label target. See the following sub sections for more details.
 
-GotoExpression has a Kind property with a value from GotoExpressionKind (Goto, Break, Continue, Return). This is explained further in the following sub sections. This is convenience for meta-programming purposes.
+**GotoExpression** has a **Kind** property with a value from **GotoExpressionKind** (**Goto**, **Break**, **Continue**, **Return**). This is explained further in the following sub sections. This is convenience for meta-programming purposes.
 
 <h3 id="loopexpression-and-higher-level-iteration-node-types">2.4.1 LoopExpression and Higher-level Iteration Node Types</h3>
 
-Given Goto, we provide a basic LoopExpression with explicit label targets for where to break to and where to continue to. Explict labels in LoopExpressions have multiple benefits. You can use GotoExpression inside the LoopExpression's Body expression and verify the jumps are to the right locations. Explicit labels support languages that can return from or break out of outer loops or scopes, such as JScript or Lisp. Explicit label targets make transformations easier to get right and allow for better error reporting when transformations are not right.
+Given Goto, we provide a basic **LoopExpression** with explicit label targets for where to break to and where to continue to. Explict labels in **LoopExpressions** have multiple benefits. You can use **GotoExpression** inside the **LoopExpression**'s Body expression and verify the jumps are to the right locations. Explicit labels support languages that can return from or break out of outer loops or scopes, such as JScript or Lisp. Explicit label targets make transformations easier to get right and allow for better error reporting when transformations are not right.
 
-For meta-programming goals, there will be higher-level iteration models. We'll include ForExpression for counter termination, ForExachExpression for member iterations, WhileExpression for test first iterations, and RepeatUntilExpression for test last iterations. These will be common nodes that reduce to combinations of LoopExpression, BlockExpression, GotoExpression, etc.
+For meta-programming goals, there will be higher-level iteration models. We'll include **ForExpression** for counter termination, **ForExachExpression** for member iterations, **WhileExpression** for test first iterations, and **RepeatUntilExpression** for test last iterations. These will be common nodes that reduce to combinations of **LoopExpression**, **BlockExpression**, **GotoExpression**, etc.
 
 Due to time constraints we cut the higher-level iteration node types for .NET 4.0, but they will likely show up soon in the DLR's codeplex open source project.
 
@@ -129,79 +118,68 @@ Due to time constraints we cut the higher-level iteration node types for .NET 4.
 
 As many have observed, lexical exits are ultimately just a Goto, proceeding to the end of the function and then returning. Sometimes when you leave a function, you leave one or more values on the stack. The ET model only supports a single return value inherently. Once we had to have Goto, there is an economy of design obtained by merging the models of explicit function return and Goto.
 
-There are a couple of very nice benefits from merging lexical exits and Goto. The biggest is that by having Goto optionally carry a value to its target, more of our nodes became truly expression-based. This makes the overall model more consistent by more fully embracing the benefits of being expression-based. For example, LoopExpression is truly an expression that can be used anywhere because you can exit the loop with a value at the break label target.
+There are a couple of very nice benefits from merging lexical exits and Goto. The biggest is that by having Goto optionally carry a value to its target, more of our nodes became truly expression-based. This makes the overall model more consistent by more fully embracing the benefits of being expression-based. For example, **LoopExpression** is truly an expression that can be used anywhere because you can exit the loop with a value at the break label target.
 
-The second benefit of merging Goto with lexical exits is that we've added explicit label targets to some nodes. This enables more Goto checking in factories and better error messages when compiling. For example, when you have a Goto expression inside a LoopExpression with kind Break, the expression compiler can ensure the Goto's target is the containing Loop's break label target. Also, when you form a GotoExpression, you have to supply the label target which has a Type property. The factory can ensure the Goto and the label target match by type, and the compiler can check the types match the type of the containing expression. Having label targets explicit in the tree also enables tree transformations to be safer and more reliable.
+The second benefit of merging Goto with lexical exits is that we've added explicit label targets to some nodes. This enables more Goto checking in factories and better error messages when compiling. For example, when you have a Goto expression inside a **LoopExpression** with kind **Break**, the expression compiler can ensure the Goto's target is the containing Loop's break label target. Also, when you form a **GotoExpression**, you have to supply the label target which has a **Type** property. The factory can ensure the Goto and the label target match by type, and the compiler can check the types match the type of the containing expression. Having label targets explicit in the tree also enables tree transformations to be safer and more reliable.
 
-One quirk in the design is how to handle LabelExpression which has a LabelTarget that marks a destination in code for Goto. If a LabelExpression has non-void type, and execution gets to the target via Goto with a value of that type, we're consistent. What happens if I encounter the target location by straight line sequence, and how do we keep the IL value stack consistent? We solve this by adding an optional default value expression to a LabelExpression and by specifying the semantics of LabelExpression to place its target AFTER the default expression. In practice this works very naturally. For example, a LambdaExpression's Body can be a LabelExpression whose default value expression is the actual body of the function. Then the actual body of the function, an expression, is the value left on the stack if you naturally flow through the expressions in the body. If you exit via a GotoExpression (with node kind Return), you have a verifiable target at the end of the function and a verifiable value type that matches the return type from the Type property of the LambdaExpression's.
+One quirk in the design is how to handle **LabelExpression** which has a **LabelTarget** that marks a destination in code for Goto. If a **LabelExpression** has non-void type, and execution gets to the target via Goto with a value of that type, we're consistent. What happens if I encounter the target location by straight line sequence, and how do we keep the IL value stack consistent? We solve this by adding an optional default value expression to a **LabelExpression** and by specifying the semantics of **LabelExpression** to place its target AFTER the default expression. In practice this works very naturally. For example, a **LambdaExpression**'s **Body** can be a **LabelExpression** whose default value expression is the actual body of the function. Then the actual body of the function, an expression, is the value left on the stack if you naturally flow through the expressions in the body. If you exit via a **GotoExpression** (with node kind **Return**), you have a verifiable target at the end of the function and a verifiable value type that matches the return type from the **Type** property of the **LambdaExpression**.
 
 <h3 id="gotoexpression-capabilities">2.4.3 GotoExpression Capabilities</h3>
 
-As stated, we expanded Goto capabilities beyond C\#'s. VB is not fully using the DLR yet, but when it does, we will need a more flexible Goto. If we do not allow more cases for GotoExpression, VB would need to produce a VBBlockExpression and their own VBGotoExpression that reduced to a complicated rewriting of the ET. It seems useful to provide the more general GotoExpression. However, VB would still need a special VBBlock to model their on_error_goto semantics, which seems too specific to a single language to generally model in common ET nodes.
+As stated, we expanded Goto capabilities beyond C\#'s. VB is not fully using the DLR yet, but when it does, we will need a more flexible Goto. If we do not allow more cases for **GotoExpression**, VB would need to produce a **VBBlockExpression** and their own **VBGotoExpression** that reduced to a complicated rewriting of the ET. It seems useful to provide the more general **GotoExpression**. However, VB would still need a special **VBBlock** to model their on_error_goto semantics, which seems too specific to a single language to generally model in common ET nodes.
 
 ETs v2 limit Goto lexically within a function. ETs allow jumping into and out of the following:
 
-- BlockExpressions
+- **BlockExpression**s
+- **ConditionalExpression**s
+- **LoopExpression**s
+- **SwitchExpression**s
+- **TryExpression**s (under certain situations)
+- **LabelExpression**s
 
-- ConditionalExpressions
+ETs allow some jumps relative to **TryExpression**s:
 
-- LoopExpressions
+- jumping out of **TryExpression**’s body
+- jumping out of a **CatchBlock**’s body
+- jumping into **TryExpression**’s body from one of its own **CatchBlock**s
 
-- SwitchExpressions
-
-- TryExpressions (under certain situations)
-
-- LabelExpressions
-
-ETs allow some jumps relative to TryExpressions:
-
-- jumping out of TryExpression’s body
-
-- jumping out of a CatchBlock’s body
-
-- jumping into TryExpression’s body from one of its own CatchBlocks
-
-The above constitutes what ETs v2 allow. Just by way of examples, we do not allow jumping into the middle of argument expressions, such as those in binary operands, method calls, invocations, indexing, instance creation, etc. We do not allow jumping into or out of GeneratorExpressions. You could however jump within a BlockExpression used as an argument expression.
+The above constitutes what ETs v2 allow. Just by way of examples, we do not allow jumping into the middle of argument expressions, such as those in binary operands, method calls, invocations, indexing, instance creation, etc. We do not allow jumping into or out of **GeneratorExpression**s. You could however jump within a **BlockExpression** used as an argument expression.
 
 <h2 id="assignments-and-l-values">2.5 Assignments and L-values</h2>
 
-We model assignments with BinaryExpression nodes that have an Assign node kind. The factory methods restrict the Left expression of the BinaryExpression to a fixed set of common ET node types that the compiler recognizes. This permitted ET node types are ParameterExpressions, MemberExpressions, and IndexExpressions.
+We model assignments with **BinaryExpression** nodes that have an **Assign** node kind. The factory methods restrict the **Left** expression of the **BinaryExpression** to a fixed set of common ET node types that the compiler recognizes. This permitted ET node types are **ParameterExpression**s, **MemberExpression**s, and **IndexExpression**s.
 
-For ref and out parameters, we also restrict ET node types, but we do allow a few more node types. We additionally allow BinaryExpressions with node kind ArrayIndex, MethodCallExpressions with MethodInfo that is Array.Get, and the new UnboxExpression. The first two are legacy from LINQ ETs v1, and we will obsolete them eventually (see section 2.5.1). Expression.Compile handles write backs for these expressions passed to ref and out parameters. We explicitly do not support property accesses wrapped in conversion expressions due to ambiguities with how to convert back when writing back the out or ref value.
+For `ref` and `out` parameters, we also restrict ET node types, but we do allow a few more node types. We additionally allow **BinaryExpression**s with node kind **ArrayIndex**, **MethodCallExpression**s with **MethodInfo** that is **Array.Get**, and the new **UnboxExpression**. The first two are legacy from LINQ ETs v1, and we will [obsolete them eventually](#"indexed-locations). **Expression.Compile** handles write backs for these expressions passed to `ref` and `out` parameters. We explicitly do not support property accesses wrapped in conversion expressions due to ambiguities with how to convert back when writing back the `out` or `ref` value.
 
-We considered CanWrite and CanRead flags on Expression, but cut them. This would allow assignment factories to check the Left expression. It turns out they weren't that useful. They felt more like form over function since you had to fill them in to call the assignment factory methods without error, but you'd get a nice error anyway from the compiler if you formed your tree incorrectly.
+We considered **CanWrite** and **CanRead** flags on **Expression**, but cut them. This would allow assignment factories to check the **Left** expression. It turns out they weren't that useful. They felt more like form over function since you had to fill them in to call the assignment factory methods without error, but you'd get a nice error anyway from the compiler if you formed your tree incorrectly.
 
-We considered supporting reducible Left expressions in the assignment factory methods, but cut them. The Left expression would have to reduce to the common recognized set of node types. If your assignment needed complicated logic with temps and a block of code, you would have to use a reducible node for the entire BinaryExpression (with Assign node kind). This design felt stilted, so we'll look at this again in v-next+1.
+We considered supporting reducible **Left** expressions in the assignment factory methods, but cut them. The **Left** expression would have to reduce to the common recognized set of node types. If your assignment needed complicated logic with temps and a block of code, you would have to use a reducible node for the entire **BinaryExpression** (with **Assign** node kind). This design felt stilted, so we'll look at this again in v-next+1.
 
 We believe in V-next+1 we can introduce a generalized l-value model. We would add pre and post expressions for temps set up and for write backs. We don't think this model would be overly complex. If added, then l-value positions could be any node type that was writable and had pre and post ETs for setting up temps and writing back values. We would still NOT support l-value positions with property accesses wrapped in conversion expressions.
 
 <h3 id="indexed-locations">2.5.1 Indexed Locations</h3>
 
-In ETs v2 we have IndexExpression that handles array access, indexers, and indexed properties. You can use these as l-values for assignments and ref/out parameters.
+In ETs v2 we have **IndexExpression** that handles array access, indexers, and indexed properties. You can use these as l-values for assignments and ref/out parameters.
 
-We will obsolete the LINQ v1 support for BinaryExpressions with node kind ArrayIndex and MethodCallExpressions with methodinfo Array.Get. We only support those for ref/out parameters for LINQ v1 compatibility, and we do not support them for the new BinaryExpression with node kind Assign. The plan, which could change, is as follows:
+We will obsolete the LINQ v1 support for **BinaryExpression**s with node kind **ArrayIndex** and **MethodCallExpression**s with methodinfo **Array.Get**. We only support those for ref/out parameters for LINQ v1 compatibility, and we do not support them for the new **BinaryExpression** with node kind **Assign**. The plan, which could change, is as follows:
 
-- In .NET 4.0, add bold red text to MSDN docs around ArrayIndex factories. Add bold red text to MethodCallExpression factories if methodinfo has ref/out parameters, and you’re using one of the two nodes (BinaryExpressions with node kind ArrayIndex or MethodCallExpressions with methodinfo Array.Get).
-
+- In .NET 4.0, add bold red text to MSDN docs around **ArrayIndex** factories. Add bold red text to **MethodCallExpression** factories if methodinfo has `ref`/`out` parameters, and you’re using one of the two nodes (**BinaryExpression**s with node kind **ArrayIndex** or **MethodCallExpression**s with methodinfo **Array.Get**).
 - In v-next+1, mark the factory methods as obsolete.
-
-- In v-next+1, issue warnings when compiling ref/out parameters whose expressions are BinaryExpressions with node kind ArrayIndex or MethodCallExpressions with methodinfo Array.Get.
-
-- In v-next+2, remove ArrayIndex factories.
-
+- In v-next+1, issue warnings when compiling `ref`/`out` parameters whose expressions are **BinaryExpression**s with node kind **ArrayIndex** or **MethodCallExpressions** with methodinfo **Array.Get**.
+- In v-next+2, remove **ArrayIndex** factories.
 - In v-next+2, throw exceptions where we issues warnings in v-next+1.
 
-We also disallow ref and out arguments for IndexExpression. Neither VB nor C\# support these. They are not part of .NET CLS.
+We also disallow ref and out arguments for **IndexExpression**. Neither VB nor C\# support these. They are not part of .NET CLS.
 
-When creating IndexExpressions, you must supply PropertyInfo. Another clean up to the LINQ v1 trees is that you cannot use random get/set method pairs.
+When creating **IndexExpressions**, you must supply **PropertyInfo**. Another clean up to the LINQ v1 trees is that you cannot use random get/set method pairs.
 
 <h3 id="compound-assignment-or-in-place-binary-and-unary-operations">2.5.2 Compound Assignment or In-place Binary and Unary Operations</h3>
 
-We represent operations such as "+=" and "++" as BinaryExpression or UnaryExpression nodes with distinct node kinds (for example, AddAssign). These nodes are reducible common nodes. They reduce to the appropriate binary assignment expressions or blocks with temps to ensure sub-expressions are evaluated at most once. Regarding dynamic expressions at run time, some languages will need to inspect the l-value expression for .NET types to handle events, properties with delegates, etc., the right way when binding the expression.
+We represent operations such as "+=" and "++" as **BinaryExpression** or **UnaryExpression** nodes with distinct node kinds (for example, **AddAssign**). These nodes are reducible common nodes. They reduce to the appropriate binary assignment expressions or blocks with temps to ensure sub-expressions are evaluated at most once. Regarding dynamic expressions at run time, some languages will need to inspect the l-value expression for .NET types to handle events, properties with delegates, etc., the right way when binding the expression.
 
 <h3 id="user-defined-setting-syntax">2.5.3 User-defined Setting Syntax</h3>
 
-Languages that have user-defined setting forms for storable locations should provide language-specific reducible nodes. These nodes can reduce, for example, to a MethodCallExpression that takes the arguments defining the location and an argument for the value. We don't provide extensibility for this sort of language feature.
+Languages that have user-defined setting forms for storable locations should provide language-specific reducible nodes. These nodes can reduce, for example, to a **MethodCallExpression** that takes the arguments defining the location and an argument for the value. We don't provide extensibility for this sort of language feature.
 
 <h3 id="destructuring-assignment">2.5.4 Destructuring Assignment</h3>
 
@@ -209,21 +187,21 @@ Languages that support destructuring assignment should provide language-specific
 
 <h2 id="array-access">2.6 Array Access</h2>
 
-In ETs v2 we have IndexExpression that handles array access, indexers, and indexed properties. You can use these as l-values for assignments and ref/out parameters. See section 2.5.1.
+In ETs v2 we have **IndexExpression** that handles array access, indexers, and indexed properties. You can use these as l-values for assignments and ref/out parameters. See [Indexed Locations](#indexed-locations).
 
-We continue to support the LINQ v1 ArrayIndex factory methods that return BinaryExpression and MethodCallExpression for fetching array elements for backward compatibility. Eventually, we will obsolete them in lieu of IndexExpression.
+We continue to support the LINQ v1 **ArrayIndex** factory methods that return **BinaryExpression** and **MethodCallExpression** for fetching array elements for backward compatibility. Eventually, we will obsolete them in lieu of **IndexExpression**.
 
 <h2 id="blocks-scopes-variables-parameterexpression-and-explicit-lifting">2.7 Blocks, Scopes, Variables, ParameterExpression, and Explicit Lifting</h2>
 
-ETs v2 model variable references with ParameterExpression nodes and a node kind value of Parameter. Initially for readability of code we chose to introduce a VariableExpression node type. It turns out in practice this meant much code that processed ETs had to be duplicated due to static typing in languages or had to use typeof() to dispatch to the right code if using Expression as a variable's type. Very little code actually needed to treat the declarations or references differently.
+ETs v2 model variable references with **ParameterExpression** nodes and a node kind value of **Parameter**. Initially for readability of code we chose to introduce a **VariableExpression** node type. It turns out in practice this meant much code that processed ETs had to be duplicated due to static typing in languages or had to use `typeof()` to dispatch to the right code if using **Expression** as a variable's type. Very little code actually needed to treat the declarations or references differently.
 
-ETs v2 includes a BlockExpression node type that has an explicit list of variables. It creates a binding scope. Producers of ETs can use these to introduce new lexical variables, including temporaries. Blocks do not guarantee definite assignment. Languages need to do that when producing ETs. To initialize variables, BlockExpressions must explicitly include expressions in their body to set the variables. Definite assignment semantics is the concern of consumers of trees and compilers that enforce those semantics. Different languages have varying semantics here from definite assignment, to explicit unbound errors, to sentinel $Unassigned first class values. Lastly, recall ETs v2 is expression-based, so the value of a BlockExpression is the value of the last expression in its body.
+ETs v2 includes a **BlockExpression** node type that has an explicit list of variables. It creates a binding scope. Producers of ETs can use these to introduce new lexical variables, including temporaries. Blocks do not guarantee definite assignment. Languages need to do that when producing ETs. To initialize variables, **BlockExpression**s must explicitly include expressions in their body to set the variables. Definite assignment semantics is the concern of consumers of trees and compilers that enforce those semantics. Different languages have varying semantics here from definite assignment, to explicit unbound errors, to sentinel `$Unassigned` first class values. Lastly, recall ETs v2 is expression-based, so the value of a **BlockExpression** is the value of the last expression in its body.
 
-Some languages have strong lexical semantics for unique binding of variables. For example, in Common Lisp or Scheme, each iteration around a loop or any basic block of code creates unique bindings for variables introduced in those basic blocks. Thus, returning a lambda would create unique closures environments for each iteration. Some languages, such as Python and F\#, move all variables to the implicit scope of their containing function. ETs v2 supports both models, all depending on where you create the BlockExpression in the ET and list variables. For the stronger lexical model, for example with the loop, place the BlockExpression inside the loop body and list variables there, instead of putting the Block Expression outside the loop or at the start of the function. See section 4.22.1.3 for an example.
+Some languages have strong lexical semantics for unique binding of variables. For example, in Common Lisp or Scheme, each iteration around a loop or any basic block of code creates unique bindings for variables introduced in those basic blocks. Thus, returning a lambda would create unique closures environments for each iteration. Some languages, such as Python and F\#, move all variables to the implicit scope of their containing function. ETs v2 supports both models, all depending on where you create the **BlockExpression** in the ET and list variables. For the stronger lexical model, for example with the loop, place the **BlockExpression** inside the loop body and list variables there, instead of putting the **BlockExpression** outside the loop or at the start of the function. See [Lexical Semantics with Blocks and Loops Involved](api-reference#lexical-semantics-with-blocks-and-loops-involved) for an example.
 
-ETs v2 also supports explicit lifting of variables to support languages that provide explicit meta-programming of local variables. For example, Python has a "locals" keyword that returns a dictionary of the lexical variables within a function so that you can manipulate them or 'eval' code against your function's environment. You can use the RuntimeVariablesExpression to list the ParameterExpressions that you need explicitly lifted.
+ETs v2 also supports explicit lifting of variables to support languages that provide explicit meta-programming of local variables. For example, Python has a `locals` keyword that returns a dictionary of the lexical variables within a function so that you can manipulate them or `eval` code against your function's environment. You can use the **RuntimeVariablesExpression** to list the **ParameterExpression**s that you need explicitly lifted.
 
-~~Annotations on variable references are an issue. Each reference aliases the one ParameterExpression object representing the introduction of the variable to a lambda or a scope. Therefore, annotating each reference with source location to accurately report null deferences, unassigned references, etc., has to be managed outside the ParameterExpression node. This is design legacy from ETs v1~~.
+~~Annotations on variable references are an issue. Each reference aliases the one **ParameterExpression** object representing the introduction of the variable to a lambda or a scope. Therefore, annotating each reference with source location to accurately report null deferences, unassigned references, etc., has to be managed outside the **ParameterExpression** node. This is design legacy from ETs v1~~.
 
 <h2 id="lambdas">2.8 Lambdas</h2>
 

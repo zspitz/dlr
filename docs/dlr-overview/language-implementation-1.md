@@ -25,8 +25,8 @@ Some quick terminology:
 | **ET** | A tree structure of instances of **Expression** (direct or indirect). |
 | **ET node** | A single instance of **Expression** (direct or indirect). The ET node could be the root of a tree. |
 | **ET node type** | The specific class of which the ET node is an instance. |
-| **ET kind** | The **Expression.NodeType** property or indicates the value of the **ExpressionType** enum. This is a legacy naming issue. |
-| **sub ET** | The root of a tree where the root is an interior or leaf node of some other ET.
+| **ET kind** | The value of the **Expression.NodeType** property, which is of the **ExpressionType** enum. This is a legacy naming issue. |
+| **sub ET** | The root of a tree where the root is an interior or leaf node of some other ET. |
 
 The following sub sections are some highlighted concepts for Expression Trees v2.
 
@@ -72,7 +72,7 @@ There are three categories or states of being bound for modeling expressions. Mo
 
 - would need to be bound before executing it
 - would represent syntax more than semantics
-- would have a Type property that is null (see .NET 4.0 vs. V-next+1 note below)
+- would have a **Type** property that is `null` (see .NET 4.0 vs. V-next+1 note below)
 
 Consider a language that supported LINQ-like expression and that also had late-bound member access (for example, if VB added late-bound LINQ). You would then need to model unbound trees for the lambda expression in the following pseudo-code:
 
@@ -84,14 +84,14 @@ To be able to execute an ET modeling this code, you would need to inspect the ru
 
 A key observation in this situation is that the late-bound node representing the call to `Where` necessarily has language-specific binding information representing the lambda. The representation cannot be language-neutral semantically. It also can't even be just syntax in any common representation because you need the language that produced the ET to process the lambda representation in the presence of runtime type information while binding. Support for unbound ETs may not be a good solution or one worth trying to share across languages.
 
-**NOTE:** Since no languages currently support late bound LINQ expressions, we won't actually allow **Expression.Type** to be null in .NET 4.0. We'll reconsider this in V-next+1 if we think ETs are useful to languages that need to represent unbound trees like the lambda expression in the example above.
+**NOTE:** Since no languages currently support late bound LINQ expressions, we won't actually allow **Expression.Type** to be `null` in .NET 4.0. We'll reconsider this in V-next+1 if we think ETs are useful to languages that need to represent unbound trees like the lambda expression in the example above.
 
 **In the ET v2 model, a bound ET node:**
 
 - has non-`null` **Type** property (that is, we statically know its type)
 - could be dynamic expression
 
-A dynamic expression often has a **Type** property that is **Object**, but its **Type** that is not null. It might not be **Object** as well. For example, in `if x > y` the ET node for `>` could be typed **Boolean** even if it is a dynamic node.
+A dynamic expression often has a **Type** property that is **Object**, but its **Type** that is not `null`. It might not be **Object** as well. For example, in `if x > y` the ET node for `>` could be typed **Boolean** even if it is a dynamic node.
 
 **The ET v2 model includes dynamically bound nodes that:**
 
@@ -108,7 +108,7 @@ Expression nodes can have semantic hints or specifications that are more detaile
 
 This extra information is required with **DynamicExpression** nodes. They must have binding information that can be emitted when compiling. The binding information informs the run-time binder how to search for a correct implementation of the node's semantics, given the run-time operands that flow into the operation represented by the ET node. ETs use a **CallSiteBinder** as the binding information representation, not **MethodInfo**. In fact, the **CallSiteBinder** is also the run-time object used in the DLR's **CallSite**s that manage the fast dynamic dispatch for dynamic operations. **CallSiteBinder** encapsulates both the binding information for the exact semantics of the node and the language that created the node, which governs the binding of the operation at run time.
 
-Two design issues arise immediately from the choice to use **CallSiteBinders** vs. **MethodInfo**s. The first is serializability. The ET design supports fully serializable ETs but doesn't enforce that they are always serializable. One reason we use the **CallSiteBinder**s in the **DynamicExpression** is that they naturally fit exactly what the binding information is that the ET needs and help in hosted execution scenarios. If a language produces an ET as part of a hosting scenario to immediately execute the ET, then the binder can tuck away pointers to live data structures used by the language's engine. Languages can still produce ETs with **DynamicExpression**s that are serializable if they need to do so.
+Two design issues arise immediately from the choice to use **CallSiteBinder**s vs. **MethodInfo**s. The first is serializability. The ET design supports fully serializable ETs but doesn't enforce that they are always serializable. One reason we use the **CallSiteBinder**s in the **DynamicExpression** is that they naturally fit exactly what the binding information is that the ET needs and help in hosted execution scenarios. If a language produces an ET as part of a hosting scenario to immediately execute the ET, then the binder can tuck away pointers to live data structures used by the language's engine. Languages can still produce ETs with **DynamicExpression**s that are serializable if they need to do so.
 
 The second design issue is re-using **MethodInfo**s by deriving custom implementations for use with **DynamicExpression** nodes. There's a nice consistency in representing the binding information as a **MethodInfo**, looking on at ETs only. However, the roles played by the **MethodInfo** are different than the binding information on **DynamicExpression**. It is more important to have the dynamic binding information be consistent across ETs, the DLR fast dynamic **CallSite**s, and the DLR interoperability **MetaObject** protocol. Not only does **MethodInfo** have many members that would throw exceptions if used for dynamic binding information, it would be awkward to require creating an LCG method so that the **MethodInfo** was invocable. **CallSiteBinder**s are best for detailed semantics capture in **DynamicExpression** nodes, not **MethodInfo**s.
 
